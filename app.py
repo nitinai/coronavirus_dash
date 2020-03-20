@@ -16,6 +16,8 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
                       "Orange": "rgb(255, 165, 0)"}
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server # the Flask app to run it on web server
+
 BORDER = '1px solid black'
 
 df_all_day = model.load_all_day_data()
@@ -167,6 +169,7 @@ app.layout = html.Div(children=[
 
 
 if __name__ == '__main__':
-    #app.run_server(debug=True)
-    app.server
+    # to run locally
+    app.run_server(debug=True)
+    
 

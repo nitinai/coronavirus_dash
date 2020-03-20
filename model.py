@@ -102,14 +102,6 @@ def load_all_day_data():
     df_all['Count'] = df_all['Count'].astype(int)
     df_all['hover'] = ""
 
-    # Ugly patch to fix the missing Active entry. Otherwise it causes Nepal appear on top of bar chart
-    # UPDATE : Still appears at top
-    #df_all.loc[len(df_all)] = ['Nepal', 0 , 'Active', DATE,""]
-    
-    ## TOO UGLY
-    df_all.drop(df_all[df_all["Country/Region"] == 'Nepal'].index, inplace=True)
-    df_all.drop(df_all[df_all["Country/Region"] == 'Bulgaria'].index, inplace=True)
-
     df_all.reset_index(drop=True, inplace=True)
 
     for i in range(len(df_all)):
@@ -125,7 +117,16 @@ def load_all_day_data():
     return df_all
 
 def all_day_bar_plot(df_all, speed=500, plain_bg=True):
-    count = df_all["Country"].nunique() 
+    
+    # Ugly patch to fix the missing Active entry. Otherwise it causes Nepal appear on top of bar chart
+    # UPDATE : Still appears at top
+    #df_all.loc[len(df_all)] = ['Nepal', 0 , 'Active', DATE,""]
+    
+    ## TOO UGLY
+    df_all.drop(df_all[df_all["Country"] == 'Nepal'].index, inplace=True)
+    df_all.drop(df_all[df_all["Country"] == 'Bulgaria'].index, inplace=True)
+    
+    count = df_all["Country"].nunique()
     fig = px.bar(df_all, x="Count", y="Country", color="Type",
                   #animation_frame="date", animation_group="Country/Region",
                   text='hover',
@@ -208,7 +209,7 @@ def relative_trend_graph(df_co_inp, df_re_inp):
     fig = px.scatter(df_co,color_discrete_sequence=["orange", "green", "red", 'blue'],height=700, )        
     ## China    
     fig.add_scatter(x=df_co.date, y=df_re.recovered, name='China Recovered', mode='markers+lines')
-    fig.add_scatter(x=df_co.date, y=df_co.confirmed, name='China Confirmed', mode='markers+lines')
+    fig.add_scatter(x=df_co.date, y=df_co.confirmed, name='China Total', mode='markers+lines')
     
     ## Others
     df_co2, df_re2 = prepare_trend_df(df_co_inp[df_co_inp["Country/Region"] != 'China'],
@@ -217,10 +218,10 @@ def relative_trend_graph(df_co_inp, df_re_inp):
     assert((df_co.date == df_co2.date).all())
     
     fig.add_scatter(x=df_co.date, y=df_re2.recovered, name='Others Recovered', mode='markers+lines')
-    fig.add_scatter(x=df_co.date, y=df_co2.confirmed, name='Others Confirmed', mode='markers+lines')
+    fig.add_scatter(x=df_co.date, y=df_co2.confirmed, name='Others Total', mode='markers+lines')
         
     fig.layout.xaxis.tickangle=-45
-    fig.layout.yaxis.title='Total coronavirus cases'
+    #fig.layout.yaxis.title='Total coronavirus cases'
     
     return fig
 
