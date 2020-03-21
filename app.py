@@ -168,8 +168,8 @@ app.layout = html.Div(children=[
 # Div_1 end
 
 
-#if __name__ == '__main__':
+if __name__ == '__main__':
     # to run locally
-#    app.run_server(debug=True)
+    app.run_server(debug=True)
     
 

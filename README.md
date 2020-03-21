@@ -1,3 +1,4 @@
 # Coronavirus Dashboard
 
-You can try it at https://digits-recognize.herokuapp.com/
+Please check out at https://covid19updates.herokuapp.com
+
