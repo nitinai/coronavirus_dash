@@ -44,6 +44,16 @@ def get_latest_date():
     print("get_latest_date :: ", DATE)
     return DATE
 
+def get_latest_file_name_India():
+    DATA_PATH = ""
+    for date in get_files_descending():
+        DATA_PATH = f"{PATH}/{date}_India.csv"
+        if(os.path.exists(DATA_PATH)):
+            break
+    print("get_latest_file_name_India :: ", DATA_PATH)
+    return DATA_PATH
+
+
 def get_latest_day_data_file():
     DATA_PATH = ""
     for date in get_files_descending():
@@ -141,9 +151,15 @@ def all_day_bar_plot(df_all, speed=500, plain_bg=True):
     fig.layout.yaxis.showticklabels=False
     fig.layout.xaxis.title='Total coronavirus cases'
     #fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = speed
+    fig.layout.xaxis.fixedrange = True # Disable zoom
+    fig.layout.yaxis.fixedrange = True
+    
     if plain_bg:
         fig.layout.plot_bgcolor = 'rgba(0, 0, 0, 0)'
         fig.layout.paper_bgcolor = 'rgba(0, 0, 0, 0)'
+    fig.update_layout(
+        margin=dict(l=5, r=5, t=5, b=5), # Set graph margin
+    )
     return fig
 
 
@@ -168,21 +184,42 @@ def load_latest_data():
     return df_world
 
 
-def graph_scatter_mapbox(df_world):
-    fig = px.scatter_mapbox(df_world, lat="Latitude", lon= "Longitude",
+def graph_scatter_mapbox(df_world, isIndia=False):
+    fig = None
+    if isIndia:
+        fig = px.scatter_mapbox(df_world, lat="Latitude", lon= "Longitude",
                         size="Confirmed",
                         hover_name="hover_name",
                         hover_data=["Confirmed","Deaths","Recovered", "Active"],
                         #labels={"Confirmed":"Confirmed","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
                         color_discrete_sequence=["red"],
-                        #center={'lat':28.0339,'lon':1.6596}, # Algeria
+                        center={'lat':20.5937,'lon':78.9629}, # India
                         #mapbox_style='dark',
                         #range_color=[0,1],
-                        zoom=1,
+                        zoom=4,
                         size_max=60,
-                        width=1200,
-                        height=700
+                        width=800,
+                        height=800
                   )
+    else:
+        fig = px.scatter_mapbox(df_world, lat="Latitude", lon= "Longitude",
+                            size="Confirmed",
+                            hover_name="hover_name",
+                            hover_data=["Confirmed","Deaths","Recovered", "Active"],
+                            #labels={"Confirmed":"Confirmed","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
+                            color_discrete_sequence=["red"],
+                            #center={'lat':28.0339,'lon':1.6596}, # Algeria
+                            #mapbox_style='dark',
+                            #range_color=[0,1],
+                            zoom=1,
+                            size_max=60,
+                            width=1200,
+                            height=700
+                    )
+
+    fig.update_layout(
+        margin=dict(l=5, r=5, t=5, b=5), # Set graph margin
+    )
     return fig
 
 ### TREND
@@ -222,7 +259,10 @@ def relative_trend_graph(df_co_inp, df_re_inp):
         
     fig.layout.xaxis.tickangle=-45
     #fig.layout.yaxis.title='Total coronavirus cases'
-    
+    fig.update_layout(
+        margin=dict(l=5, r=5, t=5, b=5), # Set graph margin
+        legend_orientation="h",
+    )  
     return fig
 
 #PATH_JHU = "D:/workdir/ML/ml_units/kaggle/Vis/coronavirus/COVID-19/csse_covid_19_data"
@@ -239,3 +279,102 @@ def load_time_series_data(country = 'China'):
     df_recovered = pd.read_csv(DATA_PATH)
 
     return df_confirmed, df_recovered
+
+
+####################################################################
+# India
+def load_India_latest_data():
+    df_India = pd.read_csv(get_latest_file_name_India()).fillna(0)
+
+    df_India['Confirmed'] = df_India ["Total Confirmed cases (Indian National)"] + df_India["Total Confirmed cases ( Foreign National )"]
+    df_India["Recovered"] = df_India["Cured/Discharged/Migrated"]
+    df_India["State/UT"] = df_India["Name of State / UT"]
+    df_India['Deaths'] = df_India['Death']
+
+    df_India['Active'] = df_India['Confirmed'] - df_India['Deaths'] - df_India['Recovered']
+
+    gActive = df_India.groupby(["State/UT"])["Active"].sum().sort_values(ascending=True)#[-TOP:]
+    gDeaths = df_India[df_India["State/UT"].isin(gActive.index.values)].groupby(["State/UT"])["Deaths"].sum()
+    gRecovered = df_India[df_India["State/UT"].isin(gActive.index.values)].groupby(["State/UT"])["Recovered"].sum()
+
+    deaths = gDeaths.reset_index(name='Count')
+    recovered = gRecovered.reset_index(name='Count')
+    active = gActive.reset_index(name='Count')
+
+    deaths.drop(deaths[deaths["Count"] == 0].index, inplace=True)
+    recovered.drop(recovered[recovered["Count"] == 0].index, inplace=True)
+    active.drop(active[active["Count"] == 0].index, inplace=True)
+
+    deaths['Type'] = 'Deaths'
+    active['Type'] = 'Active'
+    recovered['Type'] = 'Recovered'
+
+    df= pd.concat([active, recovered,deaths],copy=True)
+
+    #DATE = get_month_day(date)
+    #df['date'] = DATE
+    #dfs.append(df.copy(deep=True))
+
+    df.dropna(inplace=True)
+    df['Count'] = df['Count'].astype(int)
+
+    df["hover_name"] = df_India["State/UT"]
+
+    df['hover'] = ""
+
+    df.reset_index(drop=True, inplace=True)
+
+    for i in range(len(df)):
+        if df.at[i, 'Type'] == 'Active':
+            df.at[i,'hover'] = df.at[i,'State/UT'] + ", " + str(df.at[i,'Count'])
+        else:
+            df.at[i,'hover'] = str(df.at[i,'Count'])
+    
+    #cols = list(df.columns)
+    #cols[0] = "Country"
+    #df.columns = cols
+
+    return df
+
+
+def bar_graph_India(df_all, speed=500, plain_bg=True):
+    count = df_all["State/UT"].nunique()
+    fig = px.bar(df_all, x="Count", y="State/UT", color="Type",
+                  #animation_frame="date", animation_group="State/UT",
+                  text='hover',
+                  orientation='h',
+                  height=30*count, 
+                  log_x=True,
+                  color_discrete_sequence=["orange", "green", "red"],
+                  labels={"Type": "Cases"},)
+    
+    fig.layout.xaxis.tickangle=-45
+    fig.layout.yaxis.title=""
+    fig.layout.yaxis.showticklabels=False
+    fig.layout.xaxis.title='Total coronavirus cases'
+    #fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = speed
+    fig.layout.xaxis.fixedrange = True # Disable zoom
+    fig.layout.yaxis.fixedrange = True
+
+    if plain_bg:
+        fig.layout.plot_bgcolor = 'rgba(0, 0, 0, 0)'
+        fig.layout.paper_bgcolor = 'rgba(0, 0, 0, 0)'
+    fig.update_layout(
+        margin=dict(l=0, r=10, t=20, b=5), # Set graph margin
+        legend_orientation="h",
+    )
+    return fig
+
+def load_India_latest_data_mapbox():
+
+    df_India = pd.read_csv(get_latest_file_name_India()).fillna(0)
+
+    df_India['Confirmed'] = df_India ["Total Confirmed cases (Indian National)"] + df_India["Total Confirmed cases ( Foreign National )"]
+    df_India["Recovered"] = df_India["Cured/Discharged/Migrated"]
+    df_India["State/UT"] = df_India["Name of State / UT"]
+    df_India['Deaths'] = df_India['Death']
+    df_India['hover_name'] = df_India['State/UT']
+
+    df_India['Active'] = df_India['Confirmed'] - df_India['Deaths'] - df_India['Recovered']
+
+    return df_India
