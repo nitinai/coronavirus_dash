@@ -86,8 +86,8 @@ app.layout = html.Div(children=[
             children=[
                 #html.Nav(#className="navbar navbar-expand-lg navbar-light bg-light",
                 #children=[
-                            dcc.Markdown(className="navbar-brand", children="# Coronavirus COVID-19 Updates",),
-                            html.Div(className="last_update",
+                            dcc.Markdown(className="navbar-brand nine columns", children="# Coronavirus COVID-19 Updates",),
+                            html.Div(className="three columns last_update",
                                     children=[
                                             dcc.Markdown(className="nav-link",children="Last update",),
                                             dcc.Markdown(className="nav-link",children=last_update()),
@@ -194,7 +194,7 @@ app.layout = html.Div(children=[
                     html.Div(className="title one columns",
                     children=[#html.Br(),
                              dcc.Markdown(children="# World",),
-                            ], #style={'margin-left':20}
+                            ], style={'margin-left':20}
                             ),# Div
 
                     html.Div(className="two columns",

@@ -43,8 +43,8 @@ Navbar
 .navbar-brand {
     color: #ffffff !important;
     margin-left: 30px;
-    margin-top: 30px;
-    margin-bottom: 30px;
+    /*margin-top: 30px;*/
+    /*margin-bottom: 30px;*/
     font-size: 1.9em;
 }
 
@@ -59,7 +59,7 @@ Navbar
 
 .last_update {
     float: right;
-    text-align: left;
+    text-align: right;
 }
 
 /*#nav-bar ul li a:hover, .navbar-brand:hover {
@@ -80,6 +80,7 @@ Anchor Links
 ---------------------------------------------------------*/
 a {
     position: relative;
+    color: #1100ff !important;
 }
 
 a:after {
