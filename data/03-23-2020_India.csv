@@ -4,8 +4,8 @@ S. No.,Name of State / UT,Total Confirmed cases (Indian National),Total Confirme
 3,Chhattisgarh,1,0,0,0,2020-03-23,21.2787,81.8661
 4,Delhi,28,1,5,1,2020-03-23,28.7041,77.1025
 5,Gujarat,29,0,0,1,2020-03-23,22.2587,71.1924
-6,Haryana,12,14,0,0,2020-03-23,29.0588,76.0856
-7,Himachal Pradesh,2,0,0,0,2020-03-23,31.1048,77.1734
+6,Haryana,12,14,11,0,2020-03-23,29.0588,76.0856
+7,Himachal Pradesh,3,0,0,1,2020-03-23,31.1048,77.1734
 8,Karnataka,33,0,2,1,2020-03-23,15.3173,75.7139
 9,Kerala,60,7,3,0,2020-03-23,10.8505,76.2711
 10,Madhya Pradesh,6,0,0,0,2020-03-23,22.9734,78.6569
@@ -21,4 +21,4 @@ S. No.,Name of State / UT,Total Confirmed cases (Indian National),Total Confirme
 20,Ladakh,13,0,0,0,2020-03-23,34.2996,78.2932
 21,Uttar Pradesh,30,1,9,0,2020-03-23,26.8467,80.9462
 22,Uttarakhand,3,0,0,0,2020-03-23,30.0668,79.0193
-23,West Bengal,7,0,0,0,2020-03-23,22.9868,87.855
+23,West Bengal,7,0,0,1,2020-03-23,22.9868,87.855
