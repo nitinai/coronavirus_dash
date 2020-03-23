@@ -243,7 +243,7 @@ def relative_trend_graph(df_co_inp, df_re_inp):
     df_co, df_re = prepare_trend_df(df_co_inp[df_co_inp["Country/Region"] == 'China'],
           df_re_inp[df_re_inp["Country/Region"] == 'China'])
     
-    fig = px.scatter(df_co,color_discrete_sequence=["orange", "green", "red", 'blue'],height=700, )        
+    fig = px.scatter(df_co,color_discrete_sequence=["orange", "green", "red", 'blue'],height=600, )        
     ## China    
     fig.add_scatter(x=df_co.date, y=df_re.recovered, name='China Recovered', mode='markers+lines')
     fig.add_scatter(x=df_co.date, y=df_co.confirmed, name='China Total', mode='markers+lines')
@@ -254,10 +254,13 @@ def relative_trend_graph(df_co_inp, df_re_inp):
     
     assert((df_co.date == df_co2.date).all())
     
-    fig.add_scatter(x=df_co.date, y=df_re2.recovered, name='Others Recovered', mode='markers+lines')
-    fig.add_scatter(x=df_co.date, y=df_co2.confirmed, name='Others Total', mode='markers+lines')
+    fig.add_scatter(x=df_co.date, y=df_re2.recovered, name='Others Nations Recovered', mode='markers+lines')
+    fig.add_scatter(x=df_co.date, y=df_co2.confirmed, name='Others Nations Total', mode='markers+lines')
         
     fig.layout.xaxis.tickangle=-45
+    fig.layout.xaxis.fixedrange = True # Disable zoom
+    fig.layout.yaxis.fixedrange = True
+    
     #fig.layout.yaxis.title='Total coronavirus cases'
     fig.update_layout(
         margin=dict(l=5, r=5, t=5, b=5), # Set graph margin

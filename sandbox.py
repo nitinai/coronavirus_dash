@@ -84,7 +84,7 @@ app.layout = html.Div(children=[
             # Header div start
             html.Div(className="navbar", # style={'border':BORDER},
             children=[
-                html.Nav(className="navbar navbar-expand-lg navbar-light bg-light",
+                html.Nav(className="navbar navbar-expand-lg navbar-light bg-light ten columns",
                 children=[
                     #html.Div(#className="container",
                     #children=[
@@ -93,7 +93,10 @@ app.layout = html.Div(children=[
                             dcc.Markdown(className="navbar-brand", children="# Coronavirus COVID-19 Updates",),
                             
 
-                            html.Div(className="collapse navbar-collapse",id="navbarSupportedContent",
+                            
+                                ]),
+                    #        ]),
+                    html.Div(className="collapse navbar-collapse two columns",id="navbarSupportedContent",
                             children=[
                                     #html.Ul(className="nav navbar-nav mr-auto"),
                                     html.Ul(className="navbar-nav",
@@ -101,8 +104,6 @@ app.layout = html.Div(children=[
                                     dcc.Markdown(className="nav-link",children="Last update",),
                             dcc.Markdown(className="nav-link",children=last_update()),
                                     ]),
-                                    ]),
-                    #        ]),
                     ]),
             ]),
     # Header div end

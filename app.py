@@ -19,7 +19,7 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server # the Flask app to run it on web server
 
-BORDER = '1px solid black'
+TEST_BORDER = ''
 
 BORDER = '1px solid black'
 
@@ -57,7 +57,7 @@ def last_update():
 
 def get_num_countries():
     count = df_all_day["Country"].nunique() 
-    return f"""{MD_HEADING} {count} / 195"""
+    return f"""{MD_HEADING} {count}/195"""
 
 def get_total_count(df):
     total_cases = df["Confirmed"].sum()
@@ -78,32 +78,22 @@ def get_death_count(df):
 
 def get_num_states_ut():
     count = df_India["State/UT"].nunique() 
-    return f"""{MD_HEADING} {count} / 36"""
+    return f"""{MD_HEADING} {count}/36"""
 
 app.layout = html.Div(children=[
             # Header div start
-            html.Div(className="navbar", # style={'border':BORDER},
+            html.Div(className="row navbar", # style={'border':BORDER},
             children=[
-                html.Nav(className="navbar navbar-expand-lg navbar-light bg-light",
-                children=[
-                    #html.Div(#className="container",
-                    #children=[
-                            #html.H1(className="navbar-brand",
-                            #children="Coronavirus COVID-19 Updates"),
+                #html.Nav(#className="navbar navbar-expand-lg navbar-light bg-light",
+                #children=[
                             dcc.Markdown(className="navbar-brand", children="# Coronavirus COVID-19 Updates",),
-                            
-
-                            html.Div(className="collapse navbar-collapse",id="navbarSupportedContent",
-                            children=[
-                                    #html.Ul(className="nav navbar-nav mr-auto"),
-                                    html.Ul(className="navbar-nav",
+                            html.Div(className="last_update",
                                     children=[
-                                    dcc.Markdown(className="nav-link",children="Last update",),
-                            dcc.Markdown(className="nav-link",children=last_update()),
-                                    ]),
-                                    ]),
+                                            dcc.Markdown(className="nav-link",children="Last update",),
+                                            dcc.Markdown(className="nav-link",children=last_update()),
+                                            ]),
+                #                ]),
                     #        ]),
-                    ]),
             ]),
     # Header div end
 
@@ -118,10 +108,10 @@ app.layout = html.Div(children=[
                 html.Div(className="stats",
                 children=[
 
-                    html.Div(className="title two columns",
-                    children=[html.Br(),
+                    html.Div(className="title one columns",
+                    children=[#html.Br(),
                              dcc.Markdown(children="# India",),
-                            ], #style={'margin-left':20}
+                            ], style={'margin-left':20, 'border':TEST_BORDER}
                             ),# Div
 
                     html.Div(className="two columns",
@@ -133,28 +123,28 @@ app.layout = html.Div(children=[
                     html.Div(className="two columns",
                     children=[  dcc.Markdown(children="##### Total Cases",),
                                 dcc.Markdown(children=get_total_count(df_India),
-                                            style = {'color':COLOR_MAP["Brown"]}
+                                            style = {'color':COLOR_MAP["Brown"], 'border':TEST_BORDER}
                                         ),
                             ]),# Div
 
                     html.Div(className="two columns",
                     children=[  dcc.Markdown(children="##### Recovered Cases",),
                                 dcc.Markdown(children=get_recovered_count(df_India),
-                                            style = {'color':COLOR_MAP["Green"]}
+                                            style = {'color':COLOR_MAP["Green"], 'border':TEST_BORDER}
                                         ),
                             ]),# Div
                             
                     html.Div(className="two columns",
                     children=[  dcc.Markdown(children="##### Deaths",),
                                 dcc.Markdown(children=get_death_count(df_India),
-                                            style = {'color':COLOR_MAP["Red"]}
+                                            style = {'color':COLOR_MAP["Red"], 'border':TEST_BORDER}
                             ),
                             ]),# Div
 
                     html.Div(className="two columns",
                     children=[  dcc.Markdown(children="##### Active Cases",),
                                 dcc.Markdown(children=get_active_count(df_India),
-                                            style = {'color':COLOR_MAP["Orange"]})
+                                            style = {'color':COLOR_MAP["Orange"], 'border':TEST_BORDER})
                             ]),# Div
 
                     ]),#row
@@ -169,7 +159,8 @@ app.layout = html.Div(children=[
                             figure=scatter_mapbox_graph_India,
                             config={"fillFrame":True},
                         ),
-                        ],#style = { 'border':BORDER},
+                        ],style = { "height":800, #'border':BORDER
+                                    },
                         ),
                 
                         html.Div(className="five columns",
@@ -183,7 +174,7 @@ app.layout = html.Div(children=[
                                         },
                                     ),
                         ],style={'overflowY': 'scroll', # Add scrollbar
-                                },
+                                "height":800},
                         ),
                 
                 ], #style = { 'border':BORDER},
@@ -195,15 +186,13 @@ app.layout = html.Div(children=[
 
         ########################################################################
         #### World plot start
-
-
         html.Div(className="row",
         children=[
                 html.Div(className="stats",
                 children=[
 
-                    html.Div(className="title two columns",
-                    children=[html.Br(),
+                    html.Div(className="title one columns",
+                    children=[#html.Br(),
                              dcc.Markdown(children="# World",),
                             ], #style={'margin-left':20}
                             ),# Div
@@ -256,19 +245,13 @@ app.layout = html.Div(children=[
                         ],#style = { 'border':BORDER},
                         ),
                 
-                        html.Div(className="four columns",
-                        children=[
-                            dcc.Graph(
-                            figure=relative_trend_graph,
-                            #config={"fillFrame":True},
-                        ),
-                        ],#style = { 'border':BORDER},
-                        ),
+                        
                 
                 ]),
 
         html.Div(className="row",
                 children=[
+                        
                         html.Div([
                             dcc.Graph(
                                 figure=fig_bar_chart,
@@ -281,8 +264,19 @@ app.layout = html.Div(children=[
                         ],style={'overflowY': 'scroll', # Add scrollbar
                         'height': 600, #'border':BORDER
                         },
-                        #className="eight columns",
+                        className="eight columns",
                         ),
+
+                        html.Div(className="four columns",
+                        children=[
+                            dcc.Graph(
+                            figure=relative_trend_graph,
+                            config={'displayModeBar': False, # Hide the floating toolbar
+                            },
+                        ),
+                        ],style = {'height': 600,},
+                        ),
+                        
                     ]),
     #### World plot end                    
     ########################################################################
@@ -291,15 +285,15 @@ app.layout = html.Div(children=[
     # Header div start
     html.B( className="footer",
                 children=
-                [ "Developed by ",
+                [ "Developed by Nitin Patil",
                     html.A(href="https://twitter.com/_nitinp",
-                        children="Nitin Patil"
+                        children="Twitter"
                         ),
                         ]
             ),
     html.B( className="footer",
                 children=
-                [ "\nSources: ",
+                [ "Data sources: ",
                     html.A(href="https://www.mohfw.gov.in",
                         children="https://www.mohfw.gov.in"
                         ),
