@@ -59,22 +59,25 @@ def get_num_countries():
     count = df_all_day["Country"].nunique() 
     return f"""{MD_HEADING} {count}/195"""
 
+# To print number with commna separator 10,000,000
+#num = 10000000
+#print(f"{num:,d}")
+
 def get_total_count(df):
     total_cases = df["Confirmed"].sum()
-    return f"""{MD_HEADING} {total_cases}"""
+    return f"""{MD_HEADING} {total_cases:,d}"""
 
 def get_active_count(df):
     count = df["Active"].sum()
-    return f"""{MD_HEADING} {count}"""
+    return f"""{MD_HEADING} {count:,d}"""
 
 def get_recovered_count(df):
     count = df["Recovered"].sum()
-    return f"""{MD_HEADING} {count}"""
+    return f"""{MD_HEADING} {count:,d}"""
 
 def get_death_count(df):
     count = df["Deaths"].sum()
-    return f"""{MD_HEADING} {count}"""
-
+    return f"""{MD_HEADING} {count:,d}"""
 
 def get_num_states_ut():
     count = df_India["State/UT"].nunique() 
@@ -286,7 +289,7 @@ app.layout = html.Div(children=[
     # Header div start
     html.B( className="footer",
                 children=
-                [ "Developed by Nitin Patil",
+                [ "Developed by Nitin Patil ",
                     html.A(href="https://twitter.com/_nitinp",
                         children="Twitter"
                         ),
