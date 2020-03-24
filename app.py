@@ -81,7 +81,7 @@ def get_num_states_ut():
     return f"""{MD_HEADING} {count}/36"""
 
 app.layout = html.Div(children=[
-            html.Title(children="COVID-19 Updates"),
+            #html.Title(children="COVID-19 Updates"),
             # Header div start
             html.Div(className="row navbar", # style={'border':BORDER},
             children=[
@@ -116,7 +116,7 @@ app.layout = html.Div(children=[
                             ),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### State and UT",),
+                    children=[  dcc.Markdown(children="##### State/UT",),
                                 dcc.Markdown(children=get_num_states_ut(),
                                         ),
                             ]),# Div
