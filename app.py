@@ -116,7 +116,7 @@ app.layout = html.Div(children=[
                             ),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### State/UT",),
+                    children=[  dcc.Markdown(children="##### States and UT",),
                                 dcc.Markdown(children=get_num_states_ut(),
                                         ),
                             ]),# Div
