@@ -2,5 +2,5 @@
 __pycache__/*
 README.txt
 heroku_logs.txt
-
+data_sources/*
 
