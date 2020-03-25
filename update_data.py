@@ -7,6 +7,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 import shutil
 
+cwd = os.path.dirname(os.path.realpath(__file__))
+
 def clean_data(df):
     now  = datetime.now()
     df['Date'] = now.strftime("%m/%d/%Y") 
@@ -37,7 +39,8 @@ def clean_data(df):
         'Himachal Pradesh': 31.1048, 
         'Madhya Pradesh':  22.9734,
         "Bihar":25.0961,
-        "Manipur":24.6637}
+        "Manipur":24.6637,
+        "Mizoram":23.1645}
 
     long = {'Delhi':77.1025,
             'Haryana':76.0856,
@@ -62,12 +65,13 @@ def clean_data(df):
             'Himachal Pradesh': 77.1734, 
             'Madhya Pradesh':  78.6569,
         "Bihar": 85.3131,
-        "Manipur":93.9063}
+        "Manipur":93.9063,
+        "Mizoram":92.9376}
 
     df['Latitude'] = df['Name of State / UT'].map(lat)
     df['Longitude'] = df['Name of State / UT'].map(long)
 
-    assert(df.isna().sum().values.sum() == 0)
+    #assert(df.isna().sum().values.sum() == 0)
 
     return df
 
@@ -105,21 +109,24 @@ def download_India_data():
     df = clean_data(df)
     # saving data
     # -----------
-    if df.isna().sum().values.sum() == 0:
-        now  = datetime.now()
-        file_name = now.strftime("%m-%d-%Y")+'_India.csv'
-        DATA_PATH = os.path.join("./data_sources/covid-19-india-data/", file_name)
+    now  = datetime.now()
+    file_name = now.strftime("%m-%d-%Y")+'_India.csv'
+    DATA_PATH = os.path.join(cwd, "data_sources\covid-19-india-data", file_name).replace('\\', '/')
+    try:
         df.to_csv(DATA_PATH, index=False)
+        print("Data saved to: ", DATA_PATH)
+        if df.isna().sum().values.sum() != 0: print("Some data is NULL")
+    except Exception as ex:
+        print("Error while saving India data : ", str(ex))
 
-        return DATA_PATH
-
-    return None
+    return DATA_PATH
 
 if __name__ == '__main__':
+    
     DATA_PATH = download_India_data()
 
-    if not DATA_PATH:
-        folder, filename = os.path.split(DATA_PATH)
-        DST = os.path.join("./data/", filename)
-        shutil.copyfile(DATA_PATH, DST)
-        print(DST)
+    #if not DATA_PATH:
+    #    folder, filename = os.path.split(DATA_PATH)
+    #    DST = os.path.join("./data/", filename)
+    #    shutil.copyfile(DATA_PATH, DST)
+    #    print(DST)
