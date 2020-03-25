@@ -83,9 +83,9 @@ def load_all_day_data():
         df_world = pd.read_csv(DATA_PATH).fillna(0)
         df_world['Active'] = df_world['Confirmed'] - df_world['Deaths'] - df_world['Recovered']
 
-        gActive = df_world.groupby(["Country/Region"])["Active"].sum().sort_values(ascending=True)#[-TOP:]
-        gDeaths = df_world[df_world["Country/Region"].isin(gActive.index.values)].groupby(["Country/Region"])["Deaths"].sum()
-        gRecovered = df_world[df_world["Country/Region"].isin(gActive.index.values)].groupby(["Country/Region"])["Recovered"].sum()
+        gActive = df_world.groupby(["Country_Region"])["Active"].sum().sort_values(ascending=True)#[-TOP:]
+        gDeaths = df_world[df_world["Country_Region"].isin(gActive.index.values)].groupby(["Country_Region"])["Deaths"].sum()
+        gRecovered = df_world[df_world["Country_Region"].isin(gActive.index.values)].groupby(["Country_Region"])["Recovered"].sum()
 
         deaths = gDeaths.reset_index(name='Count')
         recovered = gRecovered.reset_index(name='Count')
@@ -108,7 +108,7 @@ def load_all_day_data():
 
     df_all = pd.concat(dfs, sort=False)
     df_all.dropna(inplace=True)
-    df_all["Country/Region"].replace({"Mainland China": "China","Korea, South": "South Korea"},inplace=True)
+    df_all["Country_Region"].replace({"Mainland China": "China","Korea, South": "South Korea"},inplace=True)
     df_all['Count'] = df_all['Count'].astype(int)
     df_all['hover'] = ""
 
@@ -116,7 +116,7 @@ def load_all_day_data():
 
     for i in range(len(df_all)):
         if df_all.at[i, 'Type'] == 'Active':
-            df_all.at[i,'hover'] = df_all.at[i,'Country/Region'] + ", " + str(df_all.at[i,'Count'])
+            df_all.at[i,'hover'] = df_all.at[i,'Country_Region'] + ", " + str(df_all.at[i,'Count'])
         else:
             df_all.at[i,'hover'] = str(df_all.at[i,'Count'])
     
@@ -133,12 +133,12 @@ def all_day_bar_plot(df_all, speed=500, plain_bg=True):
     #df_all.loc[len(df_all)] = ['Nepal', 0 , 'Active', DATE,""]
     
     ## TOO UGLY
-    df_all.drop(df_all[df_all["Country"] == 'Nepal'].index, inplace=True)
-    df_all.drop(df_all[df_all["Country"] == 'Bulgaria'].index, inplace=True)
+    #df_all.drop(df_all[df_all["Country"] == 'Nepal'].index, inplace=True)
+    #df_all.drop(df_all[df_all["Country"] == 'Bulgaria'].index, inplace=True)
     
     count = df_all["Country"].nunique()
     fig = px.bar(df_all, x="Count", y="Country", color="Type",
-                  #animation_frame="date", animation_group="Country/Region",
+                  #animation_frame="date", animation_group="Country_Region",
                   text='hover',
                   orientation='h',
                   height=30*count, 
@@ -171,10 +171,10 @@ def load_latest_data():
     print("load_latest_data")
     df_world = pd.read_csv(get_latest_day_data_file())
 
-    df_world["Province/State"].fillna("", inplace=True)
-    df_world["Country/Region"].replace({"Mainland China": "China","Korea, South": "South Korea"},inplace=True)
-    df_world["Province/State"] = df_world["Province/State"].map(lambda x : x+", " if x else x)
-    df_world["hover_name"] = df_world["Province/State"] + df_world["Country/Region"]
+    df_world["Province_State"].fillna("", inplace=True)
+    df_world["Country_Region"].replace({"Mainland China": "China","Korea, South": "South Korea"},inplace=True)
+    df_world["Province_State"] = df_world["Province_State"].map(lambda x : x+", " if x else x)
+    df_world["hover_name"] = df_world["Province_State"] + df_world["Country_Region"]
     df_world["Active"]= df_world["Confirmed"]-df_world["Recovered"]-df_world["Deaths"]
 
     cols = list(df_world.columns)
@@ -202,7 +202,7 @@ def graph_scatter_mapbox(df_world, isIndia=False):
                         height=800
                   )
     else:
-        fig = px.scatter_mapbox(df_world, lat="Latitude", lon= "Longitude",
+        fig = px.scatter_mapbox(df_world, lat="Lat", lon= "Long_",
                             size="Confirmed",
                             hover_name="hover_name",
                             hover_data=["Confirmed","Deaths","Recovered", "Active"],
@@ -232,8 +232,8 @@ def prepare_trend_df(df_co, df_re):
 
     df_co['date'] = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(df_co['index'])]
 
-    df_re = df_re[date_cols].sum()
-    df_re = df_re.reset_index(name='recovered')
+    #df_re = df_re[date_cols].sum()
+    #df_re = df_re.reset_index(name='recovered')
     
     return df_co, df_re
 
@@ -243,9 +243,10 @@ def relative_trend_graph(df_co_inp, df_re_inp):
     df_co, df_re = prepare_trend_df(df_co_inp[df_co_inp["Country/Region"] == 'China'],
           df_re_inp[df_re_inp["Country/Region"] == 'China'])
     
-    fig = px.scatter(df_co,color_discrete_sequence=["orange", "green", "red", 'blue'],height=600, )        
+    fig = px.scatter(#df_co,color_discrete_sequence=["orange", "green", "red", 'blue'],
+                    height=600, )        
     ## China    
-    fig.add_scatter(x=df_co.date, y=df_re.recovered, name='China Recovered', mode='markers+lines')
+    #fig.add_scatter(x=df_co.date, y=df_re.recovered, name='China Recovered', mode='markers+lines')
     fig.add_scatter(x=df_co.date, y=df_co.confirmed, name='China Total', mode='markers+lines')
     
     ## Others
@@ -254,13 +255,13 @@ def relative_trend_graph(df_co_inp, df_re_inp):
     
     assert((df_co.date == df_co2.date).all())
     
-    fig.add_scatter(x=df_co.date, y=df_re2.recovered, name='Others Nations Recovered', mode='markers+lines')
+#    fig.add_scatter(x=df_co.date, y=df_re2.recovered, name='Others Nations Recovered', mode='markers+lines')
     fig.add_scatter(x=df_co.date, y=df_co2.confirmed, name='Others Nations Total', mode='markers+lines')
         
     fig.layout.xaxis.tickangle=-45
     fig.layout.xaxis.fixedrange = True # Disable zoom
     fig.layout.yaxis.fixedrange = True
-    
+
     #fig.layout.yaxis.title='Total coronavirus cases'
     fig.update_layout(
         margin=dict(l=5, r=5, t=5, b=5), # Set graph margin
@@ -271,12 +272,14 @@ def relative_trend_graph(df_co_inp, df_re_inp):
 #PATH_JHU = "D:/workdir/ML/ml_units/kaggle/Vis/coronavirus/COVID-19/csse_covid_19_data"
 
 def load_time_series_data(country = 'China'):
-    #DATA_PATH = os.path.join(PATH_JHU,"csse_covid_19_time_series/time_series_19-covid-Confirmed.csv")
-    #df_confirmed = pd.read_csv(DATA_PATH)
-    #DATA_PATH = os.path.join(PATH_JHU,"csse_covid_19_time_series/time_series_19-covid-Recovered.csv")
-    #df_recovered = pd.read_csv(DATA_PATH)
-    
-    DATA_PATH = os.path.join(PATH,"time_series_19-covid-Confirmed.csv")
+    """
+    These files were deprecated from 24 Mar 2020
+    time_series_19-covid-Confirmed.csv
+    time_series_19-covid-Deaths.csv
+    time_series_19-covid-Recovered.csv
+    """
+    #DATA_PATH = os.path.join(PATH,"time_series_19-covid-Confirmed.csv")
+    DATA_PATH = os.path.join(PATH,"time_series_covid19_confirmed_global.csv")
     df_confirmed = pd.read_csv(DATA_PATH)
     DATA_PATH = os.path.join(PATH,"time_series_19-covid-Recovered.csv")
     df_recovered = pd.read_csv(DATA_PATH)
