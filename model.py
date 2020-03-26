@@ -375,11 +375,14 @@ def load_India_latest_data_mapbox():
     df_India = pd.read_csv(get_latest_file_name_India()).fillna(0)
 
     df_India['Confirmed'] = df_India ["Total Confirmed cases (Indian National)"] + df_India["Total Confirmed cases ( Foreign National )"]
-    df_India["Recovered"] = df_India["Cured/Discharged/Migrated"]
+    df_India["Recovered"] = df_India["Cured/Discharged/Migrated"].astype(int)
     df_India["State/UT"] = df_India["Name of State / UT"]
-    df_India['Deaths'] = df_India['Death']
+    df_India['Deaths'] = df_India['Death'].astype(int)
     df_India['hover_name'] = df_India['State/UT']
 
     df_India['Active'] = df_India['Confirmed'] - df_India['Deaths'] - df_India['Recovered']
+
+    df_India['Confirmed'] = df_India['Confirmed'].astype(int)
+    df_India['Active'] = df_India['Active'].astype(int)
 
     return df_India
