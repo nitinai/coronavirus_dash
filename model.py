@@ -243,8 +243,7 @@ def relative_trend_graph(df_co_inp, df_re_inp):
     df_co, df_re = prepare_trend_df(df_co_inp[df_co_inp["Country/Region"] == 'China'],
           df_re_inp[df_re_inp["Country/Region"] == 'China'])
     
-    fig = px.scatter(#df_co,color_discrete_sequence=["orange", "green", "red", 'blue'],
-                    height=600, )        
+    fig = px.scatter(df_co,color_discrete_sequence=["orange", "green", "red", 'blue'],height=600, )        
     ## China    
     #fig.add_scatter(x=df_co.date, y=df_re.recovered, name='China Recovered', mode='markers+lines')
     fig.add_scatter(x=df_co.date, y=df_co.confirmed, name='China Total', mode='markers+lines')
