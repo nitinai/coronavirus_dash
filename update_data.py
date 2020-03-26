@@ -40,7 +40,8 @@ def clean_data(df):
         'Madhya Pradesh':  22.9734,
         "Bihar":25.0961,
         "Manipur":24.6637,
-        "Mizoram":23.1645}
+        "Mizoram":23.1645,
+        "Goa":15.2993}
 
     long = {'Delhi':77.1025,
             'Haryana':76.0856,
@@ -66,7 +67,8 @@ def clean_data(df):
             'Madhya Pradesh':  78.6569,
         "Bihar": 85.3131,
         "Manipur":93.9063,
-        "Mizoram":92.9376}
+        "Mizoram":92.9376,
+        "Goa":74.1240}
 
     df['Latitude'] = df['Name of State / UT'].map(lat)
     df['Longitude'] = df['Name of State / UT'].map(long)
