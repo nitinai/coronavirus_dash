@@ -6,8 +6,17 @@ import datetime as dt
 
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
 MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
 px.set_mapbox_access_token(MAPBOX_TOKEN)
+
+COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
+            "Black": "rgb(0, 0, 0)",
+            "Red": "rgb(255, 0, 0)", # 
+            "Green": "rgb(3, 125, 50)", # 
+            "Blue": "rgb(0, 0, 255)", # 
+            "Orange": "rgb(255, 165, 0)"}
 
 PATH = "./data"
 #PATH = "D:/workdir/ML/ml_units/kaggle/Vis/coronavirus/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports"
@@ -193,7 +202,8 @@ def graph_scatter_mapbox(df_world, isIndia=False):
                         hover_data=["Confirmed","Deaths","Recovered", "Active"],
                         #labels={"Confirmed":"Confirmed","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
                         color_discrete_sequence=["red"],
-                        center={'lat':20.5937,'lon':78.9629}, # India
+                        #center={'lat':20.5937,'lon':78.9629}, # India
+                        center={'lat':23,'lon':81},
                         #mapbox_style='dark',
                         #range_color=[0,1],
                         zoom=4,
@@ -208,13 +218,13 @@ def graph_scatter_mapbox(df_world, isIndia=False):
                             hover_data=["Confirmed","Deaths","Recovered", "Active"],
                             #labels={"Confirmed":"Confirmed","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
                             color_discrete_sequence=["red"],
-                            #center={'lat':28.0339,'lon':1.6596}, # Algeria
+                            center={'lat':34,'lon':38},
                             #mapbox_style='dark',
                             #range_color=[0,1],
                             zoom=1,
                             size_max=60,
-                            width=1200,
-                            height=700
+                            width=1100,
+                            height=600
                     )
 
     fig.update_layout(
@@ -238,39 +248,163 @@ def prepare_trend_df(df_co, df_re):
     return df_co, df_re
 
 
-def relative_trend_graph(df_co_inp, df_re_inp):
+def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     
-    df_co, df_re = prepare_trend_df(df_co_inp[df_co_inp["Country/Region"] == 'China'],
-          df_re_inp[df_re_inp["Country/Region"] == 'China'])
-    
-    fig = px.scatter(df_co,color_discrete_sequence=["orange", "green", "red", 'blue'],height=600, )        
-    ## China    
-    #fig.add_scatter(x=df_co.date, y=df_re.recovered, name='China Recovered', mode='markers+lines')
-    fig.add_scatter(x=df_co.date, y=df_co.confirmed, name='China Total', mode='markers+lines')
-    
-    ## Others
-    df_co2, df_re2 = prepare_trend_df(df_co_inp[df_co_inp["Country/Region"] != 'China'],
-          df_re_inp[df_re_inp["Country/Region"] != 'China'])
-    
-    assert((df_co.date == df_co2.date).all())
-    
-#    fig.add_scatter(x=df_co.date, y=df_re2.recovered, name='Others Nations Recovered', mode='markers+lines')
-    fig.add_scatter(x=df_co.date, y=df_co2.confirmed, name='Others Nations Total', mode='markers+lines')
-        
-    fig.layout.xaxis.tickangle=-45
-    fig.layout.xaxis.fixedrange = True # Disable zoom
-    fig.layout.yaxis.fixedrange = True
+    df_ac_inp = df_co_inp.copy(deep=True)
 
+    countries=["China","Rest of the World"]
+    
+    fig = make_subplots(rows=1, cols=2, shared_yaxes='all', shared_xaxes=True, 
+                        horizontal_spacing=0.01, vertical_spacing=0.05,
+                       subplot_titles=countries).update_xaxes(
+                                                            fixedrange = True, # Disable zoom
+                                                            tickangle=-45
+                                                        ).update_yaxes(
+                                                            fixedrange = True, # Disable zoom
+                                                            )
+    
+    Types = ["confirmed", 'recovered', 'deceased']
+    Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
+
+    gActive = df_ac_inp[df_ac_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+    gRecovered = df_re_inp[df_re_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+    gDeaths = df_de_inp[df_de_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+
+    x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
+    
+    country = "China"
+    gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
+    
+    trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
+    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
+    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+
+    
+    fig.add_trace(trace1, row=1, col=1)
+    fig.add_trace(trace2, row=1, col=1)
+    fig.add_trace(trace3, row=1, col=1)
+
+    gActive = df_ac_inp[df_ac_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+    gRecovered = df_re_inp[df_re_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+    gDeaths = df_de_inp[df_de_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+
+    active = gActive.sum() - gRecovered.sum() - gDeaths.sum()
+    
+    
+    trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
+    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
+    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+
+    
+    fig.add_trace(trace1, row=1, col=2)
+    fig.add_trace(trace2, row=1, col=2)
+    fig.add_trace(trace3, row=1, col=2)
+
+    
     #fig.layout.yaxis.title='Total coronavirus cases'
     fig.update_layout(
-        margin=dict(l=5, r=5, t=5, b=5), # Set graph margin
-        legend_orientation="h",
+        margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
+        showlegend=False,
+        hovermode='x',
+    )  
+
+    return fig
+
+# trend graph for said country
+def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
+    
+    #df_ac_inp = df_co_inp.copy(deep=True)
+
+    # Mismatch in Date column formating
+    #df_re_inp.columns = df_co_inp.columns
+    if country is None: return go.Figure()
+
+    Types = ["confirmed", 'recovered', 'deceased']
+    Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
+
+    gActive = df_co_inp[df_co_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+    gRecovered = df_re_inp[df_re_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+    gDeaths = df_de_inp[df_de_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+
+    x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
+    
+    gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
+    
+    trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
+    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
+    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+    
+    fig = go.Figure(data=[trace1,trace2,trace3])
+    fig.update_layout(
+        margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
+        showlegend=False,
+        hovermode='x',
+        #title=country,
+        xaxis= {"fixedrange" : True, # Disable zoom
+                    "tickangle":-45},
+        yaxis= {"fixedrange" : True, # Disable zoom
+                    },
+                                                      
+    )  
+
+    return fig
+
+
+# Combined relative subplot for multiple countries
+def relative_trend_graphs(df_co_inp, df_re_inp, df_de_inp, df_world, TOP=5):
+    
+    gActive = df_world.groupby(["Country_Region"])["Active"].sum().sort_values(ascending=False)#[-TOP:]
+    active = gActive.reset_index(name='Count') 
+    countries = ["China"]+list(active.Country_Region[:TOP-1].values)
+
+    df_ac = df_co_inp.copy(deep=True)
+
+    # Mismatch in Date column formating
+    #df_re_inp.columns = df_ac.columns
+    
+    gActive = df_ac.groupby(["Country/Region"]).sum()
+    gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
+    gDeaths = df_de_inp.groupby(["Country/Region"]).sum()
+
+    x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
+    COL=6
+    ROW=2#len(countries)//COL
+    
+    fig = make_subplots(rows=ROW, cols=COL, shared_yaxes='all', shared_xaxes=True, 
+                        horizontal_spacing=0.01, vertical_spacing=0.05,
+                       subplot_titles=countries).update_xaxes(
+                                                            fixedrange = True, # Disable zoom
+                                                            tickangle=-45
+                                                        ).update_yaxes(
+                                                            fixedrange = True, # Disable zoom
+                                                            )
+
+    Types = ["confirmed", 'recovered', 'deceased']
+    Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
+    
+    for i, country in enumerate(countries):
+        gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
+        
+        trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
+        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
+        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+        
+        fig.add_trace(trace1, row=1 if i<COL else 2, col=i+1 if i<COL else i+1-COL)
+        fig.add_trace(trace2, row=1 if i<COL else 2, col=i+1  if i<COL else i+1-COL)
+        fig.add_trace(trace3, row=1 if i<COL else 2, col=i+1 if i<COL else i+1-COL)
+        
+    #fig.layout.yaxis.title='Total coronavirus cases'
+    fig.update_layout(
+        margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
+        showlegend=False,
+        hovermode='x',
     )  
     return fig
 
+
 #PATH_JHU = "D:/workdir/ML/ml_units/kaggle/Vis/coronavirus/COVID-19/csse_covid_19_data"
 
-def load_time_series_data(country = 'China'):
+def load_time_series_data():
     """
     These files were deprecated from 24 Mar 2020
     time_series_19-covid-Confirmed.csv
@@ -280,11 +414,21 @@ def load_time_series_data(country = 'China'):
     #DATA_PATH = os.path.join(PATH,"time_series_19-covid-Confirmed.csv")
     DATA_PATH = os.path.join(PATH,"time_series_covid19_confirmed_global.csv")
     df_confirmed = pd.read_csv(DATA_PATH)
-    DATA_PATH = os.path.join(PATH,"time_series_19-covid-Recovered.csv")
+    
+    DATA_PATH = os.path.join(PATH,"time_series_covid19_recovered_global.csv")
     df_recovered = pd.read_csv(DATA_PATH)
+    
+    DATA_PATH = os.path.join(PATH,"time_series_covid19_deaths_global.csv")
+    df_deaths = pd.read_csv(DATA_PATH)
+    
+    df_confirmed.drop(["Lat","Long"], axis=1, inplace=True)
+    df_recovered.drop(["Lat","Long"], axis=1, inplace=True)
+    df_deaths.drop(["Lat","Long"], axis=1, inplace=True)
 
-    return df_confirmed, df_recovered
-
+    # Mismatch in Date column formating
+    df_recovered.columns = df_confirmed.columns
+    
+    return df_confirmed, df_recovered, df_deaths
 
 ####################################################################
 # India

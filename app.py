@@ -3,6 +3,7 @@ __author__ = "Nitin Patil"
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
 import model
 import datetime as dt
 
@@ -36,9 +37,11 @@ df_world = model.load_latest_data()
 scatter_mapbox_graph = model.graph_scatter_mapbox(df_world)
 
 ## TREND
-df_co, df_re = model.load_time_series_data()
-relative_trend_graph = model.relative_trend_graph(df_co, df_re)
+df_co, df_re, df_de = model.load_time_series_data()
+relative_trend_graph_china_vs_world = model.relative_trend_graph_china_vs_world(df_co, df_re, df_de)
 
+relative_trend_graphs = model.relative_trend_graphs(df_co, df_re, df_de, df_world, TOP=12)
+all_countries = df_co["Country/Region"].unique()
 
 ####################################################################
 # India
@@ -236,9 +239,10 @@ app.layout = html.Div(children=[
 
         ], style = { 'border':BORDER},), # stats
 
+        # World Map
         html.Div(className="row",
                 children=[
-                        html.Div(className="eight columns",
+                        html.Div(className="columns",
                         children=[
                             dcc.Graph(
                             figure=scatter_mapbox_graph,
@@ -246,11 +250,45 @@ app.layout = html.Div(children=[
                         ),
                         ],#style = { 'border':BORDER},
                         ),
-                
-                        
-                
-                ]),
+                    ]),
 
+        # World trend
+        html.Div(className="row",
+                children=[
+                        html.Div(className="eight columns",
+                        children=[
+                            dcc.Markdown(children="China vs Rest of the World trend",),
+
+                            dcc.Graph(
+                            figure=relative_trend_graph_china_vs_world,
+                            config={'displayModeBar': False,
+                            "scrollZoom": False, # Hide the floating toolbar
+                            },
+                        ),
+                        ],#style = {'height': 600,},
+                        ),
+
+                        html.Div(className="four columns",
+                        children=[
+                            html.Label(["Select country", 
+                                    dcc.Dropdown(children="Select country",
+                                        placeholder="Select country",
+                                        options=[{'label':c, 'value':c} for c in all_countries],
+                                        value='Italy',
+                                        id='countries_dropdown',
+                                        #style={'border':BORDER}
+                                        ),
+                            ]),
+                            dcc.Graph(id="country_trend",
+                            #figure=relative_trend_graph_china_vs_world,
+                            config={'displayModeBar': False, # Hide the floating toolbar
+                                    "scrollZoom": False,},
+                        ),
+                        ],#style = { 'border':BORDER},
+                        ),
+                    ]),
+
+        # World countries bar chart        
         html.Div(className="row",
                 children=[
                         
@@ -266,20 +304,12 @@ app.layout = html.Div(children=[
                         ],style={'overflowY': 'scroll', # Add scrollbar
                         'height': 600, #'border':BORDER
                         },
-                        className="eight columns",
+                        className="columns",
                         ),
 
-                        html.Div(className="four columns",
-                        children=[
-                            dcc.Graph(
-                            figure=relative_trend_graph,
-                            config={'displayModeBar': False, # Hide the floating toolbar
-                            },
-                        ),
-                        ],style = {'height': 600,},
-                        ),
+                ]),
                         
-                    ]),
+                    
     #### World plot end                    
     ########################################################################
 
@@ -311,6 +341,16 @@ app.layout = html.Div(children=[
             ),                        
     # Header div end
 ])
+
+# Slider graph callback
+@app.callback(
+    Output('country_trend', 'figure'),
+    [Input('countries_dropdown', 'value')]
+    )
+def update_country_trend(selected_country):
+    print("Selected country : ",selected_country)
+    
+    return model.get_country_trend(df_co, df_re, df_de, selected_country)
 
 if __name__ == '__main__':
     # to run locally

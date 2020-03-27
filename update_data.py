@@ -120,8 +120,6 @@ def download_India_data():
     df = clean_data(df)
     # saving data
 
-
-
     # -----------
     now  = datetime.now()
     file_name = now.strftime("%m-%d-%Y")+'_India.csv'
@@ -147,6 +145,10 @@ def download_India_data():
         # if anything has changed
         if (np.array_equal(df[columns].sum().values, prev_df[columns].sum().values)):
             df.to_csv(DATA_PATH, index=False)
+            print("Data is same as previous. Still new file is saved at :", DATA_PATH)
+
+        else:
+            df.to_csv(DATA_PATH, index=False)
             print("Data saved to: ", DATA_PATH)
             
             if df.isna().sum().values.sum() != 0: 
@@ -154,10 +156,6 @@ def download_India_data():
 
             last_update()
 
-        else:
-            df.to_csv(DATA_PATH, index=False)
-            print("Data is same as previous. Still new file is saved at :", DATA_PATH)
-            
 
     except Exception as ex:
         print("Error while saving India data : ", str(ex))
