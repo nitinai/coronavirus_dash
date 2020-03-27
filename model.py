@@ -92,7 +92,7 @@ def load_all_day_data():
         df_world = pd.read_csv(DATA_PATH).fillna(0)
         df_world['Active'] = df_world['Confirmed'] - df_world['Deaths'] - df_world['Recovered']
 
-        gActive = df_world.groupby(["Country_Region"])["Active"].sum().sort_values(ascending=True)#[-TOP:]
+        gActive = df_world.groupby(["Country_Region"])["Active"].sum().sort_values(ascending=True)[-TOP:]
         gDeaths = df_world[df_world["Country_Region"].isin(gActive.index.values)].groupby(["Country_Region"])["Deaths"].sum()
         gRecovered = df_world[df_world["Country_Region"].isin(gActive.index.values)].groupby(["Country_Region"])["Recovered"].sum()
 
@@ -151,7 +151,7 @@ def all_day_bar_plot(df_all, speed=500, plain_bg=True):
                   text='hover',
                   orientation='h',
                   height=30*count, 
-                  log_x=True,
+                  #log_x=True,
                   color_discrete_sequence=["orange", "green", "red"],
                   labels={"Type": "Cases"},)
     
@@ -493,7 +493,7 @@ def bar_graph_India(df_all, speed=500, plain_bg=True):
                   text='hover',
                   orientation='h',
                   height=30*count, 
-                  log_x=True,
+                  #log_x=True,
                   color_discrete_sequence=["orange", "green", "red"],
                   labels={"Type": "Cases"},)
     
