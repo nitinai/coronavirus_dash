@@ -1,13 +1,20 @@
 __author__ = "Nitin Patil"
 
+import datetime as dt
 from datetime import datetime
 import os
 import requests 
+import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
 import shutil
 
 cwd = os.path.dirname(os.path.realpath(__file__))
+
+def last_update():
+    with open("./data/LastUpdate.txt", "w") as f:
+        today_dt = datetime.now()
+        f.write(f"""{today_dt.today().strftime('%d/%m/%Y, %H:%M:%S')}""")
 
 def clean_data(df):
     now  = datetime.now()
@@ -41,7 +48,8 @@ def clean_data(df):
         "Bihar":25.0961,
         "Manipur":24.6637,
         "Mizoram":23.1645,
-        "Goa":15.2993}
+        "Goa":15.2993,
+        "Andaman and Nicobar Islands":11.7401}
 
     long = {'Delhi':77.1025,
             'Haryana':76.0856,
@@ -68,7 +76,8 @@ def clean_data(df):
         "Bihar": 85.3131,
         "Manipur":93.9063,
         "Mizoram":92.9376,
-        "Goa":74.1240}
+        "Goa":74.1240,
+        "Andaman and Nicobar Islands":92.6586}
 
     df['Latitude'] = df['Name of State / UT'].map(lat)
     df['Longitude'] = df['Name of State / UT'].map(long)
@@ -110,14 +119,46 @@ def download_India_data():
 
     df = clean_data(df)
     # saving data
+
+
+
     # -----------
     now  = datetime.now()
     file_name = now.strftime("%m-%d-%Y")+'_India.csv'
     DATA_PATH = os.path.join(cwd, "data_sources\covid-19-india-data", file_name).replace('\\', '/')
+
     try:
-        df.to_csv(DATA_PATH, index=False)
-        print("Data saved to: ", DATA_PATH)
-        if df.isna().sum().values.sum() != 0: print("Some data is NULL")
+        PREVIOUS_DATA_PATH = os.path.join(cwd, "data", file_name).replace('\\', '/')
+        if(not os.path.exists(PREVIOUS_DATA_PATH)):
+            prev = now - dt.timedelta(days=1)
+            prev_file_name = prev.strftime("%m-%d-%Y")+'_India.csv'
+            PREVIOUS_DATA_PATH = os.path.join(cwd, "data", prev_file_name).replace('\\', '/')
+            
+        if(os.path.exists(PREVIOUS_DATA_PATH)):
+            prev_df = pd.read_csv(PREVIOUS_DATA_PATH)
+
+            columns = ['Total Confirmed cases (Indian National)',
+                        'Total Confirmed cases ( Foreign National )',
+                        'Cured/Discharged/Migrated', 'Death']
+
+        #for c in columns:
+        #    df[c] = df[c].astype(int)
+
+        # if anything has changed
+        if (np.array_equal(df[columns].sum().values, prev_df[columns].sum().values)):
+            df.to_csv(DATA_PATH, index=False)
+            print("Data saved to: ", DATA_PATH)
+            
+            if df.isna().sum().values.sum() != 0: 
+                print("Some data is NULL")
+
+            last_update()
+
+        else:
+            df.to_csv(DATA_PATH, index=False)
+            print("Data is same as previous. Still new file is saved at :", DATA_PATH)
+            
+
     except Exception as ex:
         print("Error while saving India data : ", str(ex))
 

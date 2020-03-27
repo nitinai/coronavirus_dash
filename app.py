@@ -51,9 +51,14 @@ scatter_mapbox_graph_India = model.graph_scatter_mapbox(df_India, isIndia=True)
 
 MD_HEADING = "#"
 
+#def last_update():
+#    today_dt = dt.datetime.now()
+#    return f"""**{today_dt.today().strftime('%d/%m/%Y, %H:%M:%S')}**"""
+
 def last_update():
-    today_dt = dt.datetime.now()
-    return f"""**{today_dt.today().strftime('%d/%m/%Y, %H:%M:%S')}**"""
+    with open("./data/LastUpdate.txt", "r") as f:
+        update_date = f.read()
+        return (f"""**{update_date}**""")
 
 def get_num_countries():
     count = df_all_day["Country"].nunique() 
