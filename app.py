@@ -62,7 +62,7 @@ MD_HEADING = "#"
 def last_update():
     with open("./data/LastUpdate.txt", "r") as f:
         update_date = f.read()
-        return (f"""**{update_date}**""")
+        return (f"""**{update_date} IST**""")
 
 def get_num_countries():
     count = df_world["Country_Region"].nunique() 
@@ -319,30 +319,27 @@ app.layout = html.Div(children=[
 
 
     # Header div start
-    html.B( className="footer",
-                children=
-                [ "Developed by Nitin Patil ",
+        html.Label( className="footer",
+                children=[ "Developed by Nitin Patil ",
                     html.A(href="https://twitter.com/_nitinp",
-                        children="Twitter"
-                        ),
-                        ]
-            ),
-    html.B( className="footer",
-                children=
-                [ "Data sources: ",
-                    html.A(href="https://www.mohfw.gov.in",
-                        children="https://www.mohfw.gov.in"
-                        ),
-                        ]
-            ),
-            html.B( className="footer",
-                children=
-                [
-                    html.A(href="https://www.who.int",
-                        children="https://www.who.int"
-                        ),
-                        ]
-            ),                        
+                    children="Twitter"),
+                    ]),
+        html.Label( className="footer",
+            children=[ "Data sources: ",
+                html.A(href="https://www.mohfw.gov.in",
+                    children="https://www.mohfw.gov.in"),
+                    ]),
+        html.Label( className="footer",
+            children=[
+                html.A(href="https://github.com/CSSEGISandData/COVID-19",
+                    children="Covid-19 cases by JHU CSSE"),
+                    ]),
+        html.Label( className="footer",
+            children=[
+                html.A(href="https://www.who.int",
+                    children="https://www.who.int"),
+                    ]),
+                        
     # Header div end
 ])
 

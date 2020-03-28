@@ -511,6 +511,7 @@ def bar_graph_India(df_all, speed=500, plain_bg=True):
     fig.update_layout(
         margin=dict(l=0, r=10, t=20, b=5), # Set graph margin
         legend_orientation="h",
+        hovermode='closest',
     )
     return fig
 
