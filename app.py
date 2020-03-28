@@ -320,9 +320,9 @@ app.layout = html.Div(children=[
 
     # Header div start
         html.Label( className="footer",
-                children=[ "Developed by Nitin Patil ",
-                    html.A(href="https://twitter.com/_nitinp",
-                    children="Twitter"),
+                children=[ "Developed by Nitin Patil >> ",
+                    html.A(href="https://www.linkedin.com/in/nitinai/",
+                    children="Linkedin"),
                     ]),
         html.Label( className="footer",
             children=[ "Data sources: ",
