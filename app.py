@@ -288,7 +288,7 @@ app.layout = html.Div(children=[
                         ),
                         ],#style = { 'border':BORDER},
                         ),
-                    ]),
+                    ],style = { 'border-top':BORDER, 'border-bottom':BORDER},),
 
         # World countries bar chart        
         html.Div(className="row",
