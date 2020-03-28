@@ -24,7 +24,8 @@ TEST_BORDER = ''
 
 BORDER = '1px solid black'
 
-df_all_day = model.load_all_day_data()
+TOP = 20
+df_all_day = model.load_all_day_data(TOP=TOP)
 
 #LATEST_DATE = model.get_latest_date()
 #MONTH_DATE = model.get_month_day(LATEST_DATE)
@@ -64,7 +65,7 @@ def last_update():
         return (f"""**{update_date}**""")
 
 def get_num_countries():
-    count = df_all_day["Country"].nunique() 
+    count = df_world["Country_Region"].nunique() 
     return f"""{MD_HEADING} {count}/195"""
 
 # To print number with commna separator 10,000,000
@@ -133,21 +134,21 @@ app.layout = html.Div(children=[
                             ]),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Recovered Cases",),
+                    children=[  dcc.Markdown(children="##### Recovered",),
                                 dcc.Markdown(children=get_recovered_count(df_India),
                                             style = {'color':COLOR_MAP["Green"], 'border':TEST_BORDER}
                                         ),
                             ]),# Div
                             
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Deaths",),
+                    children=[  dcc.Markdown(children="##### Deceased",),
                                 dcc.Markdown(children=get_death_count(df_India),
                                             style = {'color':COLOR_MAP["Red"], 'border':TEST_BORDER}
                             ),
                             ]),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Active Cases",),
+                    children=[  dcc.Markdown(children="##### Active",),
                                 dcc.Markdown(children=get_active_count(df_India),
                                             style = {'color':COLOR_MAP["Orange"], 'border':TEST_BORDER})
                             ]),# Div
@@ -216,21 +217,21 @@ app.layout = html.Div(children=[
                             ]),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Recovered Cases",),
+                    children=[  dcc.Markdown(children="##### Recovered",),
                                 dcc.Markdown(children=get_recovered_count(df_world),
                                             style = {'color':COLOR_MAP["Green"]}
                                         ),
                             ]),# Div
                             
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Deaths",),
+                    children=[  dcc.Markdown(children="##### Deceased",),
                                 dcc.Markdown(children=get_death_count(df_world),
                                             style = {'color':COLOR_MAP["Red"]}
                             ),
                             ]),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Active Cases",),
+                    children=[  dcc.Markdown(children="##### Active",),
                                 dcc.Markdown(children=get_active_count(df_world),
                                             style = {'color':COLOR_MAP["Orange"]})
                             ]),# Div
@@ -257,22 +258,23 @@ app.layout = html.Div(children=[
                 children=[
                         html.Div(className="eight columns",
                         children=[
-                            dcc.Markdown(children="China vs Rest of the World trend",),
+                            html.Label(["China vs Rest of the World trend", 
 
-                            dcc.Graph(
-                            figure=relative_trend_graph_china_vs_world,
-                            config={'displayModeBar': False,
-                            "scrollZoom": False, # Hide the floating toolbar
-                            },
-                        ),
+                                dcc.Graph(
+                                    figure=relative_trend_graph_china_vs_world,
+                                    config={'displayModeBar': False,
+                                    "scrollZoom": False, # Hide the floating toolbar
+                                    },
+                                ),
+                        ]),
                         ],#style = {'height': 600,},
                         ),
 
                         html.Div(className="four columns",
                         children=[
-                            html.Label(["Select country", 
-                                    dcc.Dropdown(children="Select country",
-                                        placeholder="Select country",
+                            html.Label(["Select or type country", 
+                                    dcc.Dropdown(#children="Select country",
+                                        placeholder="Select or type country",
                                         options=[{'label':c, 'value':c} for c in all_countries],
                                         value='Italy',
                                         id='countries_dropdown',
@@ -293,14 +295,16 @@ app.layout = html.Div(children=[
                 children=[
                         
                         html.Div([
-                            dcc.Graph(
-                                figure=fig_bar_chart,
-                                config={'displayModeBar': False, # Hide the floating toolbar
-                                        "scrollZoom": False,
-                                        #"editable":True,
-                                        "edits":{"legendPosition":True,},
-                                        },
-                                    ),
+                            html.Label([f"Top {TOP} countries by active cases", 
+                                dcc.Graph(
+                                    figure=fig_bar_chart,
+                                    config={'displayModeBar': False, # Hide the floating toolbar
+                                            "scrollZoom": False,
+                                            #"editable":True,
+                                            "edits":{"legendPosition":True,},
+                                            },
+                                        ),
+                                    ]),
                         ],style={'overflowY': 'scroll', # Add scrollbar
                         'height': 600, #'border':BORDER
                         },

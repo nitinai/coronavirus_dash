@@ -79,9 +79,9 @@ def get_month_day(_date):
     return d.month_name()[:3] +" "+ str(d.day)
 
 
-def load_all_day_data():
+def load_all_day_data(TOP=20):
     print("load_all_day_data :: Hacked to load only latest day data")
-    TOP=20
+    
     dfs = []
     count = 0
     DATE = ""
@@ -263,7 +263,7 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
                                                             fixedrange = True, # Disable zoom
                                                             )
     
-    Types = ["confirmed", 'recovered', 'deceased']
+    Types = ["active", 'recovered', 'deceased']
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
 
     gActive = df_ac_inp[df_ac_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
@@ -319,7 +319,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     #df_re_inp.columns = df_co_inp.columns
     if country is None: return go.Figure()
 
-    Types = ["confirmed", 'recovered', 'deceased']
+    Types = ["active", 'recovered', 'deceased']
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
 
     gActive = df_co_inp[df_co_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
@@ -379,7 +379,7 @@ def relative_trend_graphs(df_co_inp, df_re_inp, df_de_inp, df_world, TOP=5):
                                                             fixedrange = True, # Disable zoom
                                                             )
 
-    Types = ["confirmed", 'recovered', 'deceased']
+    Types = ["active", 'recovered', 'deceased']
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
     
     for i, country in enumerate(countries):
