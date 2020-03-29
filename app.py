@@ -97,7 +97,7 @@ app.layout = html.Div(children=[
             # Header div start
             html.Div(className="row navbar", # style={'border':BORDER},
             children=[
-                dcc.Markdown(className="ten columns navbar-brand", children="# Coronavirus COVID-19 Updates",),
+                dcc.Markdown(className="navbar-brand ten columns", children="# Coronavirus COVID-19 Updates",),
                 html.Div(className="two columns last_update",
                     children=[
                             dcc.Markdown(className="nav-link",children="Last update",),
