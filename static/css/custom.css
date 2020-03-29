@@ -60,6 +60,7 @@ Navbar
 .last_update {
     float: right;
     text-align: right;
+    margin-right: 20px;
 }
 
 /*#nav-bar ul li a:hover, .navbar-brand:hover {

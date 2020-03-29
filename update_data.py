@@ -14,7 +14,7 @@ cwd = os.path.dirname(os.path.realpath(__file__))
 def last_update():
     with open("./data/LastUpdate.txt", "w") as f:
         today_dt = datetime.now()
-        f.write(f"""{today_dt.today().strftime('%d/%m/%Y, %H:%M:%S')}""")
+        f.write(f"""{today_dt.today().strftime('%d/%m/%Y, %H:%M')}""")
 
 def clean_data(df):
     now  = datetime.now()
