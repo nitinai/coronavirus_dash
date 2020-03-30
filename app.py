@@ -15,9 +15,32 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
             "Red": "rgb(255, 0, 0)", # 
             "Green": "rgb(3, 125, 50)", # 
             "Blue": "rgb(0, 0, 255)", # 
-            "Orange": "rgb(255, 165, 0)"}
+            "Orange": "rgb(255, 165, 0)",
+            "White": "rgb(255, 255, 255)"}
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+TITLE="COVID19 Updates"
+DESCRIPTION = "The Coronavirus COVID19 Updates dashboard provides latest data and map for India and the World. Stay at home, maintain healthy habits to contain the Coronavirus"
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
+                meta_tags=[
+                    {"name": "author", "content": "Nitin Patil"},
+                    {"name": "keywords", "content": "coronavirus, COVID-19, updates, dashborad, pandemic, virus, global cases, monitor"},
+                    {"name": "description", "content": DESCRIPTION},
+                    {"property": "og:title", "content": TITLE},
+                    {"property": "og:type", "content": "website"},
+                    #{"property": "og:image", "content": "path to image"},
+                    {"property": "og:url", "content": "https://covid19updates.herokuapp.com/"},
+                    {"property": "og:description", "content":DESCRIPTION},
+                    {"name": "twitter:card", "content": "summary_large_image"},
+                    {"name": "twitter:site", "content": "@_nitinp"},
+                    {"name": "twitter:title", "content": TITLE},
+                    {"name": "twitter:description","content": DESCRIPTION},
+                    #{"name": "twitter:image", "content": "path to image"},
+                    {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1.0"}
+                ])
+
+app.title = TITLE
+
 server = app.server # the Flask app to run it on web server
 
 TEST_BORDER = ''
@@ -50,7 +73,7 @@ df_India_bar = model.load_India_latest_data()
 fig_bar_chart_India = model.bar_graph_India(df_India_bar)
 
 df_India = model.load_India_latest_data_mapbox()
-scatter_mapbox_graph_India = model.graph_scatter_mapbox(df_India, isIndia=True)
+scatter_mapbox_graph_India = model.graph_scatter_mapbox_India(df_India)
 ####################################################################
 
 MD_HEADING = "#"

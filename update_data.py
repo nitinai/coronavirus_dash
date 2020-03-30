@@ -135,8 +135,11 @@ def download_India_data():
         if(os.path.exists(PREVIOUS_DATA_PATH)):
             prev_df = pd.read_csv(PREVIOUS_DATA_PATH)
 
-            columns = ['Total Confirmed cases (Indian National)',
-                        'Total Confirmed cases ( Foreign National )',
+            #columns = ['Total Confirmed cases (Indian National)',
+            #            'Total Confirmed cases ( Foreign National )',
+            #            'Cured/Discharged/Migrated', 'Death']
+
+            columns = ['Total Confirmed cases *',
                         'Cured/Discharged/Migrated', 'Death']
 
         #for c in columns:
