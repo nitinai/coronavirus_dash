@@ -110,7 +110,8 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
                     {"name": "twitter:title", "content": TITLE},
                     {"name": "twitter:description","content": DESCRIPTION},
                     #{"name": "twitter:image", "content": "path to image"},
-                    {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1.0"}
+                    {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1.0, shrink-to-fit=no"},
+                    {"name": "X-UA-Compatible", "content": "ie=edge"},
                 ])
 
 app.title = TITLE
