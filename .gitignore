@@ -4,3 +4,4 @@ README.txt
 heroku_logs.txt
 data_sources/*
 nb/*
+app_ref.py
