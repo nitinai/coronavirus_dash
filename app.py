@@ -7,8 +7,8 @@ from dash.dependencies import Input, Output
 import model
 import datetime as dt
 
-external_stylesheets = ["https://codepen.io/plotly/pen/EQZeaW.css"]
-#"./static/custom.css"]
+# Base is slight modification of "https://codepen.io/plotly/pen/EQZeaW.css"
+external_stylesheets = ["./static/Base.css"]
 
 COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
             "Black": "rgb(0, 0, 0)",
@@ -20,7 +20,7 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
 
 TEST_BORDER = ''
 
-BORDER = '1px solid black'
+BORDER = "" #'1px solid black'
 
 TOP = 20
 df_all_day = model.load_all_day_data(TOP=TOP)
@@ -129,7 +129,7 @@ app.index_string = """<!DOCTYPE html>
         
         {%metas%}
         <title>{%title%}</title>
-        {%favicon%}
+        <!-- {%favicon%} -->
         {%css%}
     </head>
     <body>
@@ -154,29 +154,29 @@ server = app.server # the Flask app to run it on web server
 app.layout = html.Div(children=[
             #html.Title(children="COVID-19 Updates"),
             # Header div start
-            html.Div(className="row navbar", # style={'border':BORDER},
+            html.Div(className="row", # style={'border':BORDER},
             children=[
-                html.H3(className="ten columns navbar-brand", children="Coronavirus COVID-19 Updates",),
-                html.Div(className="two columns last_update",
+                html.H3(className="ten columns header", children="Coronavirus COVID-19 Updates",),
+                html.Div(className="two columns",
                     children=[
-                            html.P(className="nav-link",children="Last update",),
-                            html.P(className="nav-link",children=last_update()),
+                            html.P(className="",children="Last update",),
+                            html.P(className="",children=last_update()),
                             ]),
+                
             ]),
+            html.Hr(),
     # Header div end
 
     #<!-- Page Content -->
         ########################################################################
         #### India plot start
-      html.Div(className="row",
-        children=[
-                html.Div(className="",
+                      html.Div(className="",
                 children=[
 
-                    html.Div(className="title one columns",
+                    html.Div(className="two columns",
                     children=[#html.Br(),
                              html.H2(className="headline",children="India",),
-                            ],),# Div
+                            ], style={'padding-left':20}),# Div
 
                     html.Div(className="two columns",
                     children=[  html.H5(className="headline_title",children="States and UT",),
@@ -211,7 +211,6 @@ app.layout = html.Div(children=[
                                             style = {'color':COLOR_MAP["Orange"], 'border':TEST_BORDER})
                             ]),# Div
 
-                    ]),#row
 
         ], style = { 'border':BORDER},), # stats
 
@@ -250,53 +249,51 @@ app.layout = html.Div(children=[
 
         ########################################################################
         #### World plot start
-        html.Div(className="row",
-        children=[
-                html.Div(className="stats",
+                html.Div(className="",
                 children=[
 
-                    html.Div(className="title one columns",
+                    html.Div(className="two columns",
                     children=[#html.Br(),
-                             dcc.Markdown(children="# World",),
-                            ], style={'margin-left':20}
+              		     html.H2(className="headline",children="World",)
+                            ], style={'padding-left':20}
                             ),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Countries",),
-                                dcc.Markdown(children=get_num_countries(),
+                    children=[  html.H5(className="headline_title",children="Countries",),
+                                html.H2(className="headline", children=get_num_countries(),
                                         ),
                             ]),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Total Cases",),
-                                dcc.Markdown(children=get_total_count(df_world),
+                    children=[  html.H5(className="headline_title", children="Total Cases",),
+                                html.H2(className="headline", children=get_total_count(df_world),
+                                
                                             style = {'color':COLOR_MAP["Brown"]}
                                         ),
                             ]),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Recovered",),
-                                dcc.Markdown(children=get_recovered_count(df_world),
+                    children=[  html.H5(className="headline_title",children="Recovered",),
+                                html.H2(className="headline",children=get_recovered_count(df_world),
                                             style = {'color':COLOR_MAP["Green"]}
                                         ),
                             ]),# Div
                             
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Deceased",),
-                                dcc.Markdown(children=get_death_count(df_world),
-                                            style = {'color':COLOR_MAP["Red"]}
+                    children=[  html.H5(className="headline_title", children="Deceased",),
+                                html.H2(className="headline", children=get_death_count(df_world),
+                               		style = {'color':COLOR_MAP["Red"]}
                             ),
                             ]),# Div
 
                     html.Div(className="two columns",
-                    children=[  dcc.Markdown(children="##### Active",),
-                                dcc.Markdown(children=get_active_count(df_world),
+                    children=[  html.H5(className="headline_title", children="Active",),
+                                html.H2(className="headline", children=get_active_count(df_world),
                                             style = {'color':COLOR_MAP["Orange"]})
                             ]),# Div
 
-                    ]),#row
+                    ]),
 
-        ], style = { 'border':BORDER},), # stats
 
         # World Map
         html.Div(className="row",
