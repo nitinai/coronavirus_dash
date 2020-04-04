@@ -13,6 +13,8 @@ import plotly.graph_objects as go
 import model
 import datetime as dt
 
+MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
+
 COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
             "Black": "rgb(0, 0, 0)",
             "Red": "rgb(255, 0, 0)",
@@ -94,6 +96,10 @@ def create_datatable_country(df, id="create_datatable_country"):
     COLS =          ['Province_State', 'Confirmed', 'Active', 'Recovered', 'Deaths', 'Death rate']
     PRESENT_COLS = ['Province/State', 'Total Cases', 'Active', 'Recovered', 'Deceased', 'Death rate']
 
+    # thousand formatting
+    for c in ['Confirmed', 'Active', 'Recovered', 'Deaths']:
+        df[c] = df[c].apply(lambda x : '{0:,}'.format(x)) 
+
     COL_MAP = {'Province_State':'Province/State', 'Confirmed':'Total Cases', 'Deaths':'Deceased'}
     df.rename(columns=COL_MAP, inplace=True)
 
@@ -109,7 +115,7 @@ def create_datatable_country(df, id="create_datatable_country"):
                     row_selectable=False, #"single" if countryName != 'Schengen' else False,
                     sort_action="native",
                     style_as_list_view=True,
-                    style_cell={'font_family': 'Arial',
+                    style_cell={'font_family': 'Helvetica',
                                 'font_size': '1.1rem',
                                 'padding': '.1rem',
                                 'backgroundColor': '#ffffff', },
@@ -144,6 +150,10 @@ df_world_table.reset_index(inplace=True)
 df_world_table["Death rate"] = df_world_table['Deaths']/df_world_table['Confirmed']
 df_world_table = df_world_table.sort_values(by=['Active', 'Confirmed'], ascending=False)
 
+# thousand formatting
+for c in ['Confirmed', 'Active', 'Recovered', 'Deaths']:
+    df_world_table[c] = df_world_table[c].apply(lambda x : '{0:,}'.format(x)) 
+    
 COL_MAP = {'Country_Region':'Country/Region', 'Confirmed':'Total Cases', 'Deaths':'Deceased'}
 df_world_table.rename(columns=COL_MAP, inplace=True)
 
@@ -165,7 +175,7 @@ def create_datatable_world(id):
                     row_selectable=False, #"single" if countryName != 'Schengen' else False,
                     sort_action="native",
                     style_as_list_view=True,
-                    style_cell={'font_family': 'Arial',
+                    style_cell={'font_family': 'Helvetica',
                                 'font_size': '1.1rem',
                                 'padding': '.1rem',
                                 'backgroundColor': '#ffffff', },
@@ -234,207 +244,230 @@ app.layout = html.Div([
 
     # Title bar
     html.Div([
-        html.H2(TITLE),
-        #html.P(className="",children="Last update"),
-        #html.P(className="",children=last_update()),                
-    ], className="banner"),
+        html.Div([
+            html.H2(TITLE),
+            #html.P(className="",children="Last update"),
+                           
+        ], className="banner"),
+    ]),
 
-    #### World stat start
-        html.Div(className="row", 
-        children=[html.Div(className="stats",
-        children=[
-
-            html.Div(className="box",
-            children=[#html.Br(),
-                    html.H2(children="World",)
-                    ], style={'padding-left':20}
-                    ),# Div
-
-            html.Div(className="box",
-            children=[  html.H6(children="Countries",),
-                        html.H2(children=f"""{num_countries}""",
-                                ),
-                    ]),# Div
-
-            html.Div(className="box",
-            children=[  html.H6(children="Total Cases",),
-                        html.H2(children=f"""{total_cases:,d}""",
-                                    style = {'color':COLOR_MAP["Brown"]}
-                                ),
-                    ]),# Div
-
-            html.Div(className="box",
-            children=[  html.H6(children="Recovered",),
-                        html.H2(children=f"""{recovered_cases:,d}""",
-                                    style = {'color':COLOR_MAP["Green"]}
-                                ),
-                    ]),# Div
-                    
-            html.Div(className="box",
-            children=[  html.H6(children="Deceased",),
-                        html.H2(children=f"""{death_cases:,d}""",
-                            style = {'color':COLOR_MAP["Red"]}
-                    ),
-                    ]),# Div
-
-            html.Div(className="box",
-            children=[  html.H6(children="Active",),
-                        html.H2(children=f"""{active_cases:,d}""",
-                                    style = {'color':COLOR_MAP["Orange"]})
-                    ]),# Div
-                ]),
-            ]),
-    #### World stat end
-
-    #### Country stat start
-        html.Div(className="row", 
-        children=[html.Div(className="stats",
-        children=[
-
-            html.Div(className="box",
-            children=[#html.Br(),
-                    html.H2(id="country_stat_head")
-                    ], style={'padding-left':20}
-                    ),# Div
-
-            html.Div(className="box",
-            children=[  html.H6(children="Province/State",),
-                        html.H2(id="country_stat_province_state", #children=f"""{num_countries}/195""",
-                                ),
-                    ]),# Div
-
-            html.Div(className="box",
-            children=[  html.H6(children="Total Cases",),
-                        html.H2(id="country_stat_total_cases", #children=f"""{total_cases:,d}""",
-                                    style = {'color':COLOR_MAP["Brown"]}
-                                ),
-                    ]),# Div
-
-            html.Div(className="box",
-            children=[  html.H6(children="Recovered",),
-                        html.H2(id="country_stat_recovered", #children=f"""{recovered_cases:,d}""",
-                                    style = {'color':COLOR_MAP["Green"]}
-                                ),
-                    ]),# Div
-                    
-            html.Div(className="box",
-            children=[  html.H6(children="Deceased",),
-                        html.H2(id="country_stat_deceased", #children=f"""{death_cases:,d}""",
-                            style = {'color':COLOR_MAP["Red"]}
-                    ),
-                    ]),# Div
-
-            html.Div(className="box",
-            children=[  html.H6(children="Active",),
-                        html.H2(id="country_stat_active", #children=f"""{active_cases:,d}""",
-                                    style = {'color':COLOR_MAP["Orange"]})
-                    ]),# Div
-                ]),
-            ]),
-    #### World stat end
-    # 
     html.Div([
         html.Div([
-            html.Label(["Select or type country",
-                            dcc.Dropdown(
-                                placeholder="Select or type country",
-                                options=[{'label':c, 'value':c} for c in all_countries],
-                                value='India',
-                                id='countries_dropdown',
-                                #style={'border':BORDER}
-                                ),
-                            ]),
-
-            dcc.Graph(
-                id="trend_graph",
-                #figure=trend_graph
-                config={'displayModeBar': False, # Hide the floating toolbar
-                                    "scrollZoom": False,},
-            )
-        ], className="four columns"),
+            html.P(children=last_update()), 
+        ]),
 
         html.Div([
-            
-            html.Label("World Map", id="world_map_label"),
-            
-            dcc.RadioItems(
-                        id="view_radio_option",
-                        options=[
-                            {'label': 'World view', 'value': 'World_view'},
-                            {'label': 'Country view', 'value': 'Country_view'},
-                        ],
-                        value='Country_view',
-                        labelStyle={'display': 'inline-block'}
-                    ),
+            html.Hr(),
+        ]),
 
-            dcc.Graph(
-                id="world_map",
-                #figure=world_map
-            ),
-        ], className="eight columns"),
+        #### World stat start
+            html.Div(className="row", 
+            children=[html.Div(className="stats",
+            children=[
 
-    ],className="row"),
+                html.Div(className="box",
+                children=[#html.Br(),
+                        html.H2(children="World",)
+                        ], style={'padding-left':20}
+                        ),# Div
 
-    ##
-    html.Div([
-        html.Div([
-            html.Label(id="country_table_label"),
-            
-            dcc.Tabs(
-                    id="tabs_country_table",
-                    #value='The World',
-                    parent_className='custom-tabs',
-                    className='custom-tabs-container',
-                    children=[
-                        dcc.Tab(
-                                id='tab_country_table',
-                                #label='The World',
-                                #value='The World',
-                                className='custom-tab',
-                                selected_className='custom-tab--selected',
-                                #children=[
-                                   # dash_table.DataTable( 
-                                #]
-                                ),
+                html.Div(className="box",
+                children=[  html.H6(children="Countries",),
+                            html.H2(children=f"""{num_countries}""",
+                                    ),
+                        ]),# Div
+
+                html.Div(className="box",
+                children=[  html.H6(children="Total Cases",),
+                            html.H2(children=f"""{total_cases:,d}""",
+                                        style = {'color':COLOR_MAP["Brown"]}
+                                    ),
+                        ]),# Div
+
+                html.Div(className="box",
+                children=[  html.H6(children="Recovered",),
+                            html.H2(children=f"""{recovered_cases:,d}""",
+                                        style = {'color':COLOR_MAP["Green"]}
+                                    ),
+                        ]),# Div
                         
-                    ]),
+                html.Div(className="box",
+                children=[  html.H6(children="Deceased",),
+                            html.H2(children=f"""{death_cases:,d}""",
+                                style = {'color':COLOR_MAP["Red"]}
+                        ),
+                        ]),# Div
 
-        ], className="four columns"),
-        
-        html.Div([
-            html.Label("Countries affected", 
-            id="countries_table_label"),
-            
-            dcc.Tabs(
-                    id="tabs_world_table",
-                    value='The World',
-                    parent_className='custom-tabs',
-                    className='custom-tabs-container',
-                    children=[
-                        dcc.Tab(
-                                id='tab_world_table',
-                                label='The World',
-                                value='The World',
-                                className='custom-tab',
-                                selected_className='custom-tab--selected',
-                                children=[
-                                   create_datatable_world(id="world_countries_table"), 
-                                ]
-                                ),
+                html.Div(className="box",
+                children=[  html.H6(children="Active",),
+                            html.H2(children=f"""{active_cases:,d}""",
+                                        style = {'color':COLOR_MAP["Orange"]})
+                        ]),# Div
+                    ]),
+                ]),
+        #### World stat end
+        #html.Div([
+        #    html.Hr(),
+        #]),
+        #### Country stat start
+            html.Div(className="row", 
+            children=[html.Div(className="stats",
+            children=[
+
+                html.Div(className="box",
+                children=[#html.Br(),
+                        html.H2(id="country_stat_head")
+                        ], style={'padding-left':20}
+                        ),# Div
+
+                html.Div(className="box",
+                children=[  html.H6(children="Province/State",),
+                            html.H2(id="country_stat_province_state", #children=f"""{num_countries}/195""",
+                                    ),
+                        ]),# Div
+
+                html.Div(className="box",
+                children=[  html.H6(children="Total Cases",),
+                            html.H2(id="country_stat_total_cases", #children=f"""{total_cases:,d}""",
+                                        style = {'color':COLOR_MAP["Brown"]}
+                                    ),
+                        ]),# Div
+
+                html.Div(className="box",
+                children=[  html.H6(children="Recovered",),
+                            html.H2(id="country_stat_recovered", #children=f"""{recovered_cases:,d}""",
+                                        style = {'color':COLOR_MAP["Green"]}
+                                    ),
+                        ]),# Div
                         
+                html.Div(className="box",
+                children=[  html.H6(children="Deceased",),
+                            html.H2(id="country_stat_deceased", #children=f"""{death_cases:,d}""",
+                                style = {'color':COLOR_MAP["Red"]}
+                        ),
+                        ]),# Div
+
+                html.Div(className="box",
+                children=[  html.H6(children="Active",),
+                            html.H2(id="country_stat_active", #children=f"""{active_cases:,d}""",
+                                        style = {'color':COLOR_MAP["Orange"]})
+                        ]),# Div
                     ]),
-        ], className="five columns"),
+                ]),
+        #### Country stat end
         
         html.Div([
-            html.Label("China vs Rest of the World trend", id="trend_china_world_label"),
-            
-            dcc.Graph(id="trend_china_world",
-                figure=trend_graph_china_vs_world,
-            ),
-        ], className="three columns"),
+            html.Hr(),
+        ]),
 
-        
-    ],className="row"),
+        # 
+        html.Div([
+            html.Div([
+                html.H5(["Select or type country",], className="graph_title"),
+
+                dcc.Dropdown(
+                            placeholder="Select or type country",
+                            options=[{'label':c, 'value':c} for c in all_countries],
+                            value='India',
+                            id='countries_dropdown',
+                            #style={'border':BORDER}
+                            ),
+
+                dcc.Graph(
+                    id="trend_graph",
+                    #figure=trend_graph
+                    config={'displayModeBar': False, # Hide the floating toolbar
+                                        "scrollZoom": False,},
+                )
+            ], className="four columns"),
+
+            html.Div([
+                
+                html.H5("World Map", id="world_map_label", className="graph_title"),
+                
+                dcc.RadioItems(
+                            id="view_radio_option",
+                            options=[
+                                {'label': 'World view', 'value': 'World_view'},
+                                {'label': 'Country view', 'value': 'Country_view'},
+                            ],
+                            value='Country_view',
+                            labelStyle={'display': 'inline-block'}
+                        ),
+
+                dcc.Graph(
+                    id="world_map",
+                    #figure=world_map
+                ),
+            ], className="eight columns"),
+
+        ],className="row"),
+
+        html.Div([
+            html.Hr(),
+        ]),
+
+        ##
+        html.Div([
+            html.Div([
+                #html.Label(id="country_table_label"),
+                
+                dcc.Tabs(
+                        id="tabs_country_table",
+                        #value='The World',
+                        parent_className='custom-tabs',
+                        className='custom-tabs-container',
+                        children=[
+                            dcc.Tab(
+                                    id='tab_country_table',
+                                    #label='The World',
+                                    #value='The World',
+                                    className='custom-tab',
+                                    selected_className='custom-tab--selected',
+                                    #children=[
+                                    # dash_table.DataTable( 
+                                    #]
+                                    ),
+                            
+                        ]),
+
+            ], className="four columns"),
+            
+            html.Div([
+                #html.Label("Countries affected", id="countries_table_label"),
+                
+                dcc.Tabs(
+                        id="tabs_world_table",
+                        value='The World',
+                        parent_className='custom-tabs',
+                        className='custom-tabs-container',
+                        children=[
+                            dcc.Tab(
+                                    id='tab_world_table',
+                                    label='The World',
+                                    value='The World',
+                                    className='custom-tab',
+                                    selected_className='custom-tab--selected',
+                                    children=[
+                                    create_datatable_world(id="world_countries_table"), 
+                                    ]
+                                    ),
+                            
+                        ]),
+            ], className="five columns"),
+            
+            html.Div([
+                #html.Label("China vs Rest of the World trend", id="trend_china_world_label"),
+                html.H5(["China vs Rest of the World trend",], className="graph_title"),
+                dcc.Graph(id="trend_china_world",
+                    figure=trend_graph_china_vs_world,
+                ),
+            ], className="three columns"),
+
+            
+        ],className="row"),
+
+    ],className="all_content"), # excluding the title bar
 
 ])
 
@@ -450,7 +483,7 @@ app.layout = html.Div([
     Output('country_stat_recovered', 'children'),
     Output('country_stat_deceased', 'children'),
     Output('country_stat_active', 'children'),
-    Output('country_table_label', 'children'),
+    #Output('country_table_label', 'children'),
     Output('tab_country_table', 'children'),
     Output('tabs_country_table', 'value'),
     Output('tab_country_table', 'label'),
@@ -514,7 +547,7 @@ def update_country_trend(selected_country, view_option
         zoom=3.5
         
     mapbox=go.layout.Mapbox(
-                accesstoken=model.MAPBOX_TOKEN,
+                accesstoken=MAPBOX_TOKEN,
                 style="light",
                 # The direction you're facing, measured clockwise as an angle from true north on a compass
                 bearing=0,
@@ -536,15 +569,15 @@ def update_country_trend(selected_country, view_option
 
     country_stat_province_state = df_country["Province_State"].nunique()
 
-    country_stat_total_cases = df_country["Confirmed"].sum()
-    country_stat_recovered = df_country["Recovered"].sum()
-    country_stat_deceased = df_country["Deaths"].sum()
-    country_stat_active = df_country["Active"].sum()
+    country_stat_total_cases = f"""{df_country["Confirmed"].sum():,d}"""
+    country_stat_recovered = f"""{df_country["Recovered"].sum():,d}"""
+    country_stat_deceased = f"""{df_country["Deaths"].sum():,d}"""
+    country_stat_active = f"""{df_country["Active"].sum():,d}"""
     
     ###############
     # Country datatable
     ###############
-    country_table_label = selected_country
+    #country_table_label = selected_country
     tab_country_table = create_datatable_country(df_country)
     tabs_country_table_value = selected_country
     tabs_country_table_label = selected_country
@@ -552,7 +585,8 @@ def update_country_trend(selected_country, view_option
 
     return (trend_graph, world_map, country_stat_head, country_stat_province_state,
     country_stat_total_cases, country_stat_recovered, country_stat_deceased, country_stat_active, 
-    country_table_label, tab_country_table, tabs_country_table_value, tabs_country_table_label, 
+    #country_table_label, 
+    tab_country_table, tabs_country_table_value, tabs_country_table_label, 
     tab_country_table_value)
 
 

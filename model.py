@@ -387,11 +387,11 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     
     df_ac_inp = df_co_inp.copy(deep=True)
 
-    countries=["China","Rest of the World"]
+    #countries=["China trend","Rest of the World trend"]
     
     fig = make_subplots(rows=1, cols=2, shared_yaxes='all', shared_xaxes=True, 
-                        horizontal_spacing=0.01, vertical_spacing=0.05,
-                       subplot_titles=countries).update_xaxes(
+                        horizontal_spacing=0.01, vertical_spacing=0.05,#subplot_titles=countries
+                       ).update_xaxes(
                                                             fixedrange = True, # Disable zoom
                                                             tickangle=-45,
                                                             showgrid=False,

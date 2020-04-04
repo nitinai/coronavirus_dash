@@ -13,6 +13,8 @@ import plotly.graph_objects as go
 import model_sandbox
 import datetime as dt
 
+MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
+
 COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
             "Black": "rgb(0, 0, 0)",
             "Red": "rgb(255, 0, 0)",
@@ -24,7 +26,7 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
 def last_update():
     with open("./data/LastUpdate.txt", "r") as f:
         update_date = f.read()
-        return (f"""{update_date} IST""")
+        return (f"""Last update at {update_date} IST""")
 
 def get_num_countries(df):
     count = df["Country_Region"].nunique() 
@@ -512,7 +514,7 @@ def update_country_trend(selected_country, view_option,
         zoom=3.5
         
     mapbox=go.layout.Mapbox(
-                accesstoken=model_sandbox.MAPBOX_TOKEN,
+                accesstoken=MAPBOX_TOKEN,
                 style="light",
                 # The direction you're facing, measured clockwise as an angle from true north on a compass
                 bearing=0,

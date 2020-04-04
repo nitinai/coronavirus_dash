@@ -1,4 +1,5 @@
 git add -A
 git status
-git commit -m "version 3 first cut"
+git commit -m "data update"
 git push heroku master
+

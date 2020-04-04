@@ -35,10 +35,12 @@
 /* Grid
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 .container {
+  border-radius: 5px;
+  box-shadow: 2px 2px 2px lightgrey;
   position: relative;
   width: 100%;
   max-width: 960px;
-  margin: 0 auto;
+  margin: 0 1em;
   padding: 0 20px;
   box-sizing: border-box; }
 .column,
@@ -48,22 +50,32 @@
   box-sizing: border-box; }
 
 /* For devices larger than 400px */
-@media (min-width: 400px) {
-  .container {
-    width: 85%;
-    padding: 0; }
+@media (min-width: 400px) and (max-width: 549px) {
+    .container {
+        width: 100%;
+        padding: 0;
+        border-radius: 5px;
+        box-shadow: 2px 2px 2px lightgrey;
+    }
 }
 
 /* For devices larger than 550px */
 @media (min-width: 550px) {
-  .container {
-    width: 80%; }
-  .column,
-  .columns {
-    margin-left: 4%; }
-  .column:first-child,
-  .columns:first-child {
-    margin-left: 0; }
+    .container {
+        width: 80%;
+        border-radius: 5px;
+        box-shadow: 2px 2px 2px lightgrey;
+    }
+
+    .column,
+    .columns {
+        margin-left: 4%;
+    }
+
+    .column:first-child,
+    .columns:first-child {
+        margin-left: 0;
+    }
 
   .one.column,
   .one.columns                    { width: 4.66666666667%; }
@@ -130,7 +142,7 @@ body {
   font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
   line-height: 1.6;
   font-weight: 400;
-  font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: Helvetica  ; /*"Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;*/
   color: rgb(50, 50, 50); }
 
 
@@ -370,8 +382,8 @@ ol {
 /* Misc
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 hr {
-  margin-top: 3rem;
-  margin-bottom: 3.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
   border-width: 0;
   border-top: 1px solid #E1E1E1; }
 
@@ -435,48 +447,53 @@ div, svg {
   margin-left: 2%;
 }
 
-.banner p{
+/*.banner p{
   color: red;
-  /*position: relative;*/
+  position: relative;
   float: right;
-  /*right: 10px;*/
-}
+}*/
 
 
 /*stats*/
 .stats {
-  position: relative;
+  /*position: relative;
+  width:100%;*/
   /*margin: auto;
   padding: auto;*/
-  box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 
 .stats .box{
 
-  /*box-shadow: 0em 1em 1em 0em #ededee;*/
-  box-shadow: 0em 1em 1em 0em gray;
+  box-shadow: 0em 1em 1em 0em #ededee;
+  /*box-shadow: 0em 1em 1em 0em gray;*/
   border: 1px solid white;
-  position: relative;
-  margin: 0 auto;
-  padding: 0 auto;
-  box-sizing: border-box;
+  /*position: relative;*/
+  margin: 0 1em;
+  padding: 0 1em;
+  /*width:20%;*/
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .stats .box h6{
   text-align: center;
   font-weight: lighter;
-  margin: auto;
-  padding: auto;
+  /*margin: auto;
+  padding: auto;*/
 }
 
 .stats .box h2{
   text-align: center;
   font-weight: bold;
-  margin: auto;
-  padding: auto;
+  /*margin: auto;
+  padding: auto;*/
 }
 
 /*graphs*/
@@ -490,11 +507,52 @@ div, svg {
 }
 
 #trend_graph{
-  margin-left: 1em;
+  /*margin-left: 1em;*/
+  
 }
 
 /*graphs*/
 #world_map{
-  margin-right: 1em;
 }
 
+.all_content{
+  margin: 0 1em;
+}
+
+.graph_title{
+  font-size: 2.2rem; 
+  line-height: 1.5;  
+  letter-spacing: -.05rem; 
+  margin-bottom: 0.6rem; 
+  margin-top: 0.6rem;
+  text-align: center;
+  box-shadow: 0em 1em 1em 0em #ededee;
+  /*box-shadow: 0em 1em 1em 0em gray;*/
+  border: 1px solid white;
+  background-color: #f9f9f9;
+}
+
+.custom-tab {
+  /*color:#586069;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  
+  border-left: 0px !important;
+  border-right: 0px !important;
+  border-bottom: 0px !important;
+  background-color: #fafbfc;
+  padding: 12px !important;
+  font-family: "system-ui";
+  display: flex !important;
+  align-items: center;
+  justify-content: center;*/
+  font-size: 2.2rem; 
+  line-height: 1.5;  
+  letter-spacing: -.05rem; 
+  margin-bottom: 0.6rem; 
+  margin-top: 0.6rem;
+  text-align: center;
+  border-top: 1px solid transparent !important;
+  padding: 2px !important;
+  background-color: #f9f9f9;
+}
