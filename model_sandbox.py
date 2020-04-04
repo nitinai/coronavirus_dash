@@ -16,10 +16,11 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
             "Red": "rgb(255, 0, 0)", # 
             "Green": "rgb(3, 125, 50)", # 
             "Blue": "rgb(0, 0, 255)", # 
-            "Orange": "rgb(255, 165, 0)",
+            "Orange": "rgb(255, 115, 0)",
             "White": "rgb(255, 255, 255)"}
 
-PATH = "./data"
+#PATH = "./data"
+PATH = "D:/workdir/ML/ml_units/kaggle/Vis/coronavirus/Dashboard/coronavirus_dash/data_sources/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports"
 #PATH = "D:/workdir/ML/ml_units/kaggle/Vis/coronavirus/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports"
 
 def gen_filename(current):
@@ -199,7 +200,7 @@ def graph_scatter_mapbox_India(df_India):
     longitude=81
     zoom=4
     """
-    fig = px.scatter_mapbox(df_India, lat="Latitude", lon= "Longitude",
+    fig = px.scatter_mapbox(df_India, lat="Lat", lon= "Long_",
                     size="Confirmed",
                     hover_name="hover_name",
                     hover_data=["Confirmed","Deaths","Recovered", "Active"],
@@ -221,8 +222,8 @@ def graph_scatter_mapbox_India(df_India):
     """
 
     fig = go.Figure(go.Scattermapbox(
-                    lat=df_India['Latitude'],
-                    lon=df_India['Longitude'],
+                    lat=df_India['Lat'],
+                    lon=df_India['Long_'],
                     mode='markers',
 
                     marker=go.scattermapbox.Marker(
@@ -238,11 +239,11 @@ def graph_scatter_mapbox_India(df_India):
                     ),
 
                     text=df_India["hover_name"],
-                    hovertext=['Confirmed: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Deceased rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_India['Confirmed'],
+                    hovertext=['Confirmed: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_India['Confirmed'],
                                                                                                                                                         df_India['Recovered'],
                                                                                                                                                         df_India['Deaths'],
                                                                                                                                                         df_India["Active"],
-                                                                                                                                                        df_India['Deaths']/df_India['Confirmed'])],
+                                                                                                                                                        df_India['Death rate'])],
                     hoverlabel = dict(
                         bgcolor =[f"{COLOR_MAP['White']}" for i in df_India['Confirmed']],
                         ),
@@ -317,11 +318,11 @@ def graph_scatter_mapbox(df_world):
                         for i in df_world['Confirmed']])/(100.**2),
     ),
     text=df_world["hover_name"],
-    hovertext=['Confirmed: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Deceased rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_world['Confirmed'],
+    hovertext=['Confirmed: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_world['Confirmed'],
                                                                                                                                         df_world['Recovered'],
                                                                                                                                         df_world['Deaths'],
                                                                                                                                         df_world["Active"],
-                                                                                                                                        df_world['Deaths']/df_world['Confirmed'])],
+                                                                                                                                        df_world['Death rate'])],
     hoverlabel = dict(
         bgcolor =[f"{COLOR_MAP['White']}" for i in df_world['Confirmed']],
         ),
@@ -392,9 +393,18 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
                         horizontal_spacing=0.01, vertical_spacing=0.05,
                        subplot_titles=countries).update_xaxes(
                                                             fixedrange = True, # Disable zoom
-                                                            tickangle=-45
+                                                            tickangle=-45,
+                                                            showgrid=False,
+                                                            showline=False, linecolor='#272e3e',
+                                                            gridcolor='rgba(203, 210, 211,.3)',
+                                                            gridwidth=.1,
+                                                            zeroline=False
                                                         ).update_yaxes(
                                                             fixedrange = True, # Disable zoom
+                                                            showline=False, linecolor='#272e3e',
+                                                            zeroline=False,
+                                                            gridcolor='rgba(203, 210, 211,.3)',
+                                                            gridwidth=.1,
                                                             )
     
     Types = ["active", 'recovered', 'deceased']
@@ -490,10 +500,20 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         showlegend=False,
         hovermode='x',
         #title=country,
-        xaxis= {"fixedrange" : True, # Disable zoom
-                    "tickangle":-45},
-        yaxis= {"fixedrange" : True, # Disable zoom
-                    },
+        xaxis= dict(fixedrange = True, # Disable zoom
+                    tickangle=-45,
+                    showgrid=False,
+                    showline=False, linecolor='#272e3e',
+                    gridcolor='rgba(203, 210, 211,.3)',
+                    gridwidth=.1,
+                    zeroline=False
+                    ),
+        yaxis= dict(fixedrange = True, # Disable zoom
+                    showline=False, linecolor='#272e3e',
+                    gridcolor='rgba(203, 210, 211,.3)',
+                    gridwidth=.1,
+                    zeroline=False
+                    ),
     )  
 
     return fig
@@ -560,23 +580,12 @@ def load_time_series_data():
     time_series_19-covid-Deaths.csv
     time_series_19-covid-Recovered.csv
     """
-    #DATA_PATH = os.path.join(PATH,"time_series_19-covid-Confirmed.csv")
-    DATA_PATH = os.path.join(PATH,"time_series_covid19_confirmed_global.csv")
-    df_confirmed = pd.read_csv(DATA_PATH)
-    
-    DATA_PATH = os.path.join(PATH,"time_series_covid19_recovered_global.csv")
-    df_recovered = pd.read_csv(DATA_PATH)
-    
-    DATA_PATH = os.path.join(PATH,"time_series_covid19_deaths_global.csv")
-    df_deaths = pd.read_csv(DATA_PATH)
-    
-    df_confirmed.drop(["Lat","Long"], axis=1, inplace=True)
-    df_recovered.drop(["Lat","Long"], axis=1, inplace=True)
-    df_deaths.drop(["Lat","Long"], axis=1, inplace=True)
+    # This is the post processed time series data
+    PATH = "./data"
+    df_confirmed = pd.read_csv(f"{PATH}/confirmed_global.csv")
+    df_recovered = pd.read_csv(f"{PATH}/recovered_global.csv")
+    df_deaths = pd.read_csv(f"{PATH}/deaths_global.csv")
 
-    # Mismatch in Date column formating
-    df_recovered.columns = df_confirmed.columns
-    
     return df_confirmed, df_recovered, df_deaths
 
 ####################################################################

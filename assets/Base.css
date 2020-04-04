@@ -435,50 +435,60 @@ div, svg {
   margin-left: 2%;
 }
 
-.banner Img{
-  position: relative;
-  float: right;
-  right: 10px;
-}
-
 .banner p{
-  color: white;
-  position: relative;
+  color: red;
+  /*position: relative;*/
   float: right;
-  right: 10px;
+  /*right: 10px;*/
 }
 
 
 /*stats*/
 .stats {
   position: relative;
-  margin: auto;
-  padding: auto;
+  /*margin: auto;
+  padding: auto;*/
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
 }
 
+
 .stats .box{
-  box-sizing: border-box;
-  box-shadow: firebrick;
+
+  /*box-shadow: 0em 1em 1em 0em #ededee;*/
+  box-shadow: 0em 1em 1em 0em gray;
+  border: 1px solid white;
   position: relative;
-  /*background-color: gold;
-  display: contents;*/
-  width: 13%;
-  display: inline-block;
+  margin: 0 auto;
+  padding: 0 auto;
+  box-sizing: border-box;
 }
 
 .stats .box h6{
   text-align: center;
   font-weight: lighter;
-  margin-bottom: 0em;
+  margin: auto;
+  padding: auto;
 }
 
 .stats .box h2{
   text-align: center;
   font-weight: bold;
-  margin-top: 0em;
+  margin: auto;
+  padding: auto;
 }
 
 /*graphs*/
+.graph_box{
+  box-shadow: 0em 1em 1em 0em gray;
+  border: 1px solid white;
+  position: relative;
+  margin: 0 auto;
+  padding: 0 auto;
+  box-sizing: border-box;
+}
+
 #trend_graph{
   margin-left: 1em;
 }

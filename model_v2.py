@@ -3,7 +3,7 @@ __author__ = "Nitin Patil"
 import pandas as pd
 import os
 import datetime as dt
-import math
+
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -16,11 +16,9 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
             "Red": "rgb(255, 0, 0)", # 
             "Green": "rgb(3, 125, 50)", # 
             "Blue": "rgb(0, 0, 255)", # 
-            "Orange": "rgb(255, 115, 0)",
-            "White": "rgb(255, 255, 255)"}
+            "Orange": "rgb(255, 165, 0)"}
 
-#PATH = "./data"
-PATH = "D:/workdir/ML/ml_units/kaggle/Vis/coronavirus/Dashboard/coronavirus_dash/data_sources/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports"
+PATH = "./data"
 #PATH = "D:/workdir/ML/ml_units/kaggle/Vis/coronavirus/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports"
 
 def gen_filename(current):
@@ -152,7 +150,7 @@ def all_day_bar_plot(df_all, speed=500, plain_bg=True):
                   #animation_frame="date", animation_group="Country_Region",
                   text='hover',
                   orientation='h',
-                  #height=30*count, 
+                  height=30*count, 
                   #log_x=True,
                   color_discrete_sequence=["orange", "green", "red"],
                   labels={"Type": "Cases"},)
@@ -186,7 +184,6 @@ def load_latest_data():
     df_world["Country_Region"].replace({"Mainland China": "China","Korea, South": "South Korea"},inplace=True)
     df_world["Province_State"] = df_world["Province_State"].map(lambda x : x+", " if x else x)
     df_world["hover_name"] = df_world["Province_State"] + df_world["Country_Region"]
-    df_world.drop(df_world[df_world["Confirmed"]==0].index,inplace=True)
     df_world["Active"]= df_world["Confirmed"]-df_world["Recovered"]-df_world["Deaths"]
 
     cols = list(df_world.columns)
@@ -195,176 +192,44 @@ def load_latest_data():
 
     return df_world
 
-def graph_scatter_mapbox_India(df_India):
-    latitude=23
-    longitude=81
-    zoom=4
-    """
-    fig = px.scatter_mapbox(df_India, lat="Lat", lon= "Long_",
-                    size="Confirmed",
-                    hover_name="hover_name",
-                    hover_data=["Confirmed","Deaths","Recovered", "Active"],
-                    #labels={"Confirmed":"Confirmed","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
-                    color_discrete_sequence=["red"],
-                    #center={'lat':20.5937,'lon':78.9629}, # India
-                    center={'lat':23,'lon':81},
-                    #mapbox_style='dark',
-                    #range_color=[0,1],
-                    zoom=4,
-                    size_max=60,
-                    width=800,
-                    height=800
-                )
 
-    fig.update_layout(
-    margin=dict(l=5, r=5, t=5, b=5), # Set graph margin
-    )
-    """
-
-    fig = go.Figure(go.Scattermapbox(
-                    lat=df_India['Lat'],
-                    lon=df_India['Long_'],
-                    mode='markers',
-
-                    marker=go.scattermapbox.Marker(
-                        color=[COLOR_MAP["Red"] if (a > 0 or d == c) else COLOR_MAP["Green"] for a, d, c in zip(df_India["Active"],
-                                                                                                    df_India['Deaths'],
-                                                                                                    df_India['Confirmed'])],
-
-                        size=[i**(1/3) for i in df_India['Confirmed']],
-                        sizemin=1,
-                        sizemode='area',
-                        sizeref=2.*max([math.sqrt(i)
-                                        for i in df_India['Confirmed']])/(100.**2),
-                    ),
-
-                    text=df_India["hover_name"],
-                    hovertext=['Confirmed: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_India['Confirmed'],
-                                                                                                                                                        df_India['Recovered'],
-                                                                                                                                                        df_India['Deaths'],
-                                                                                                                                                        df_India["Active"],
-                                                                                                                                                        df_India['Death rate'])],
-                    hoverlabel = dict(
-                        bgcolor =[f"{COLOR_MAP['White']}" for i in df_India['Confirmed']],
-                        ),
-                    
-                    hovertemplate="<b>%{text}</b><br><br>" +
-                                    "%{hovertext}<br>" +
-                                    "<extra></extra>")
-                )
-
-    fig.update_layout(
-        #plot_bgcolor='#151920',
-        #paper_bgcolor='#cbd2d3',
-        margin=go.layout.Margin(l=10, r=10, b=10, t=0, pad=40),
-        hovermode='closest',
-        transition={'duration': 50},
-        #width=800,
-        #height=800,
-        
-        mapbox=go.layout.Mapbox(
-            accesstoken=MAPBOX_TOKEN,
-            style="light",
-            # The direction you're facing, measured clockwise as an angle from true north on a compass
-            bearing=0,
-            center=go.layout.mapbox.Center(
-                lat=latitude,
-                lon=longitude
-            ),
-            pitch=0,
-            zoom=zoom
-        )
-    )
-
-    return fig
-
-
-def graph_scatter_mapbox(df_world):
-    latitude=34
-    longitude=38
-    zoom=1
-    
-    """
-    fig = px.scatter_mapbox(df_world, lat="Lat", lon= "Long_",
+def graph_scatter_mapbox(df_world, isIndia=False):
+    fig = None
+    if isIndia:
+        fig = px.scatter_mapbox(df_world, lat="Latitude", lon= "Longitude",
                         size="Confirmed",
                         hover_name="hover_name",
                         hover_data=["Confirmed","Deaths","Recovered", "Active"],
                         #labels={"Confirmed":"Confirmed","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
                         color_discrete_sequence=["red"],
-                        center={'lat':34,'lon':38},
+                        #center={'lat':20.5937,'lon':78.9629}, # India
+                        center={'lat':23,'lon':81},
                         #mapbox_style='dark',
                         #range_color=[0,1],
-                        zoom=1,
+                        zoom=4,
                         size_max=60,
-                        width=1100,
-                        height=600
-                )
-
-    """
-
-    fig = go.Figure(go.Scattermapbox(
-    lat=df_world['Lat'],
-    lon=df_world['Long_'],
-    mode='markers',
-    marker=go.scattermapbox.Marker(
-        color=[COLOR_MAP["Red"] if (a > 0 or d == c) else COLOR_MAP["Green"] for a, d, c in zip(df_world["Active"],
-                                                                                    df_world['Deaths'],
-                                                                                    df_world['Confirmed'])],
-
-        size=[i**(1/3) for i in df_world['Confirmed']],
-        sizemin=1,
-        sizemode='area',
-        sizeref=2.*max([math.sqrt(i)
-                        for i in df_world['Confirmed']])/(100.**2),
-    ),
-    text=df_world["hover_name"],
-    hovertext=['Confirmed: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_world['Confirmed'],
-                                                                                                                                        df_world['Recovered'],
-                                                                                                                                        df_world['Deaths'],
-                                                                                                                                        df_world["Active"],
-                                                                                                                                        df_world['Death rate'])],
-    hoverlabel = dict(
-        bgcolor =[f"{COLOR_MAP['White']}" for i in df_world['Confirmed']],
-        ),
-    
-    hovertemplate="<b>%{text}</b><br><br>" +
-                    "%{hovertext}<br>" +
-                    "<extra></extra>")
-    )
+                        width=800,
+                        height=800
+                  )
+    else:
+        fig = px.scatter_mapbox(df_world, lat="Lat", lon= "Long_",
+                            size="Confirmed",
+                            hover_name="hover_name",
+                            hover_data=["Confirmed","Deaths","Recovered", "Active"],
+                            #labels={"Confirmed":"Confirmed","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
+                            color_discrete_sequence=["red"],
+                            center={'lat':34,'lon':38},
+                            #mapbox_style='dark',
+                            #range_color=[0,1],
+                            zoom=1,
+                            size_max=60,
+                            width=1100,
+                            height=600
+                    )
 
     fig.update_layout(
-        plot_bgcolor='#151920',
-        paper_bgcolor='#cbd2d3',
-        margin=go.layout.Margin(l=5, r=5, b=5, t=5, pad=40),
-        hovermode='closest',
-        transition={'duration': 50},
-        #width=1100,
-        #height=600,
-        #annotations=[
-        #dict(
-        #    x=.5,
-        #    y=-.01,
-        #    align='center',
-        #    showarrow=False,
-        #    text="Points are placed based on data geolocation levels.<br>Province/State level - Australia, China, Canada, and United States; Country level- other countries.",
-        #    xref="paper",
-        #    yref="paper",
-        #    font=dict(size=10, color='#292929'),
-        #)],
-        mapbox=go.layout.Mapbox(
-            accesstoken=MAPBOX_TOKEN,
-            style="light",
-            # The direction you're facing, measured clockwise as an angle from true north on a compass
-            bearing=0,
-            center=go.layout.mapbox.Center(
-                lat=latitude,
-                lon=longitude
-            ),
-            pitch=0,
-            zoom=zoom
-        )
+        margin=dict(l=5, r=5, t=5, b=5), # Set graph margin
     )
-    
     return fig
 
 ### TREND
@@ -393,18 +258,9 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
                         horizontal_spacing=0.01, vertical_spacing=0.05,
                        subplot_titles=countries).update_xaxes(
                                                             fixedrange = True, # Disable zoom
-                                                            tickangle=-45,
-                                                            showgrid=False,
-                                                            showline=False, linecolor='#272e3e',
-                                                            gridcolor='rgba(203, 210, 211,.3)',
-                                                            gridwidth=.1,
-                                                            zeroline=False
+                                                            tickangle=-45
                                                         ).update_yaxes(
                                                             fixedrange = True, # Disable zoom
-                                                            showline=False, linecolor='#272e3e',
-                                                            zeroline=False,
-                                                            gridcolor='rgba(203, 210, 211,.3)',
-                                                            gridwidth=.1,
                                                             )
     
     Types = ["active", 'recovered', 'deceased']
@@ -461,59 +317,34 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
 
     # Mismatch in Date column formating
     #df_re_inp.columns = df_co_inp.columns
-    fig = go.Figure()
-    if country is None: return fig
+    if country is None: return go.Figure()
 
     Types = ["active", 'recovered', 'deceased']
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
 
-    if country == "World" or country == "world":
+    gActive = df_co_inp[df_co_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+    gRecovered = df_re_inp[df_re_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+    gDeaths = df_de_inp[df_de_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
 
-        gActive = df_co_inp.groupby(["Country/Region"]).sum()
-        gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
-        gDeaths = df_de_inp.groupby(["Country/Region"]).sum()
-
-        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
-        active = gActive.sum() - gRecovered.sum() - gDeaths.sum()
-        
-        trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
-        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
-        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
-
-    else:
+    x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
     
-        gActive = df_co_inp[df_co_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
-        gRecovered = df_re_inp[df_re_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
-        gDeaths = df_de_inp[df_de_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
-
-        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
-        
-        gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
-        
-        trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
-        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
-        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
-        
+    gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
+    
+    trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
+    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
+    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+    
     fig = go.Figure(data=[trace1,trace2,trace3])
     fig.update_layout(
         margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
         showlegend=False,
         hovermode='x',
         #title=country,
-        xaxis= dict(fixedrange = True, # Disable zoom
-                    tickangle=-45,
-                    showgrid=False,
-                    showline=False, linecolor='#272e3e',
-                    gridcolor='rgba(203, 210, 211,.3)',
-                    gridwidth=.1,
-                    zeroline=False
-                    ),
-        yaxis= dict(fixedrange = True, # Disable zoom
-                    showline=False, linecolor='#272e3e',
-                    gridcolor='rgba(203, 210, 211,.3)',
-                    gridwidth=.1,
-                    zeroline=False
-                    ),
+        xaxis= {"fixedrange" : True, # Disable zoom
+                    "tickangle":-45},
+        yaxis= {"fixedrange" : True, # Disable zoom
+                    },
+                                                      
     )  
 
     return fig
@@ -580,12 +411,23 @@ def load_time_series_data():
     time_series_19-covid-Deaths.csv
     time_series_19-covid-Recovered.csv
     """
-    # This is the post processed time series data
-    PATH = "./data"
-    df_confirmed = pd.read_csv(f"{PATH}/confirmed_global.csv")
-    df_recovered = pd.read_csv(f"{PATH}/recovered_global.csv")
-    df_deaths = pd.read_csv(f"{PATH}/deaths_global.csv")
+    #DATA_PATH = os.path.join(PATH,"time_series_19-covid-Confirmed.csv")
+    DATA_PATH = os.path.join(PATH,"time_series_covid19_confirmed_global.csv")
+    df_confirmed = pd.read_csv(DATA_PATH)
+    
+    DATA_PATH = os.path.join(PATH,"time_series_covid19_recovered_global.csv")
+    df_recovered = pd.read_csv(DATA_PATH)
+    
+    DATA_PATH = os.path.join(PATH,"time_series_covid19_deaths_global.csv")
+    df_deaths = pd.read_csv(DATA_PATH)
+    
+    df_confirmed.drop(["Lat","Long"], axis=1, inplace=True)
+    df_recovered.drop(["Lat","Long"], axis=1, inplace=True)
+    df_deaths.drop(["Lat","Long"], axis=1, inplace=True)
 
+    # Mismatch in Date column formating
+    df_recovered.columns = df_confirmed.columns
+    
     return df_confirmed, df_recovered, df_deaths
 
 ####################################################################
@@ -594,10 +436,11 @@ def load_India_latest_data():
     df_India = pd.read_csv(get_latest_file_name_India()).fillna(0)
 
     #df_India['Confirmed'] = df_India ["Total Confirmed cases (Indian National)"] + df_India["Total Confirmed cases ( Foreign National )"]
-    df_India['Confirmed'] = df_India ['Total Confirmed cases *']
-    df_India["Recovered"] = df_India["Cured/Discharged/Migrated"]
-    df_India["State/UT"] = df_India["Name of State / UT"]
-    df_India['Deaths'] = df_India['Death']
+    #df_India['Confirmed'] = df_India ['Total Confirmed cases *']
+    #df_India["Recovered"] = df_India["Cured/Discharged/Migrated"]
+    #df_India["State/UT"] = df_India["Name of State / UT"]
+    #df_India['Deaths'] = df_India['Death']
+    df_India["State/UT"] = df_India["Province_State"]
 
     df_India['Active'] = df_India['Confirmed'] - df_India['Deaths'] - df_India['Recovered']
 
@@ -651,7 +494,7 @@ def bar_graph_India(df_all, speed=500, plain_bg=True):
                   #animation_frame="date", animation_group="State/UT",
                   text='hover',
                   orientation='h',
-                  #height=30*count, 
+                  height=30*count, 
                   #log_x=True,
                   color_discrete_sequence=["orange", "green", "red"],
                   labels={"Type": "Cases"},)
@@ -677,13 +520,14 @@ def bar_graph_India(df_all, speed=500, plain_bg=True):
 def load_India_latest_data_mapbox():
 
     df_India = pd.read_csv(get_latest_file_name_India()).fillna(0)
-    
+
     #df_India['Confirmed'] = df_India ["Total Confirmed cases (Indian National)"] + df_India["Total Confirmed cases ( Foreign National )"]
-    df_India['Confirmed'] = df_India ['Total Confirmed cases *']
-    df_India["Recovered"] = df_India["Cured/Discharged/Migrated"].astype(int)
-    df_India["State/UT"] = df_India["Name of State / UT"]
-    df_India['Deaths'] = df_India['Death'].astype(int)
-    df_India['hover_name'] = df_India['State/UT']
+    #df_India['Confirmed'] = df_India ['Total Confirmed cases *']
+    #df_India["Recovered"] = df_India["Cured/Discharged/Migrated"].astype(int)
+    #df_India["State/UT"] = df_India["Name of State / UT"]
+    #df_India['Deaths'] = df_India['Death'].astype(int)
+    #df_India['hover_name'] = df_India['State/UT']
+    df_India["State/UT"] = df_India["Province_State"]
 
     df_India['Active'] = df_India['Confirmed'] - df_India['Deaths'] - df_India['Recovered']
 
