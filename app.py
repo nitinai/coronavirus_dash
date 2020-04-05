@@ -127,16 +127,16 @@ def create_datatable_country(df, id="create_datatable_country"):
                                  },
                     style_header={'backgroundColor': '#ffffff',
                                   'fontWeight': 'bold'},
-                    style_cell_conditional=[{'if': {'column_id': 'Province/State'}, 'width': '36%'},
+                    style_cell_conditional=[{'if': {'column_id': 'Province/State'}, 'width': '20%'},
                                             #{'if': {'column_id': 'Country/Region'}, 'width': '36%'},
-                                            {'if': {'column_id': 'Active'}, 'width': '15.6%'},
-                                            {'if': {'column_id': 'Confirmed'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Recovered'}, 'width': '15.6%'},
-                                            {'if': {'column_id': 'Deceased'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Death rate'}, 'width': '15%'},
+                                            {'if': {'column_id': 'Active'}, 'width': '16%'},
+                                            {'if': {'column_id': 'Total Cases'}, 'width': '16%'},
+                                            {'if': {'column_id': 'Recovered'}, 'width': '16%'},
+                                            {'if': {'column_id': 'Deceased'}, 'width': '16%'},
+                                            {'if': {'column_id': 'Death rate'}, 'width': '16%'},
                                             #{'if': {'column_id': 'Confirmed/100k'}, 'width': '19%'},
                                             {'if': {'column_id': 'Active'}, 'color':COLOR_MAP["Orange"]},
-                                            {'if': {'column_id': 'Confirmed'}, 'color': COLOR_MAP["Brown"]},
+                                            {'if': {'column_id': 'Total Cases'}, 'color': COLOR_MAP["Brown"]},
                                             {'if': {'column_id': 'Recovered'}, 'color': COLOR_MAP["Green"]},
                                             {'if': {'column_id': 'Deceased'}, 'color': COLOR_MAP["Red"]},
                                             {'if': {'column_id': 'Death rate'}, 'color': COLOR_MAP["Red"]},
@@ -188,15 +188,15 @@ def create_datatable_world(id):
                     style_header={'backgroundColor': '#ffffff',
                                   'fontWeight': 'bold'},
                     style_cell_conditional=[#{'if': {'column_id': 'Province/State'}, 'width': '36%'},
-                                            {'if': {'column_id': 'Country/Region'}, 'width': '36%'},
-                                            {'if': {'column_id': 'Active'}, 'width': '15.6%'},
-                                            {'if': {'column_id': 'Confirmed'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Recovered'}, 'width': '15.6%'},
+                                            {'if': {'column_id': 'Country/Region'}, 'width': '25%'},
+                                            {'if': {'column_id': 'Active'}, 'width': '15%'},
+                                            {'if': {'column_id': 'Total Cases'}, 'width': '15%'},
+                                            {'if': {'column_id': 'Recovered'}, 'width': '15%'},
                                             {'if': {'column_id': 'Deceased'}, 'width': '15%'},
                                             {'if': {'column_id': 'Death rate'}, 'width': '15%'},
                                             #{'if': {'column_id': 'Confirmed/100k'}, 'width': '19%'},
                                             {'if': {'column_id': 'Active'}, 'color':COLOR_MAP["Orange"]},
-                                            {'if': {'column_id': 'Confirmed'}, 'color': COLOR_MAP["Brown"]},
+                                            {'if': {'column_id': 'Total Cases'}, 'color': COLOR_MAP["Brown"]},
                                             {'if': {'column_id': 'Recovered'}, 'color': COLOR_MAP["Green"]},
                                             {'if': {'column_id': 'Deceased'}, 'color': COLOR_MAP["Red"]},
                                             {'if': {'column_id': 'Death rate'}, 'color': COLOR_MAP["Red"]},
@@ -563,6 +563,19 @@ def update_country_trend(selected_country, view_option
         longitude=8
         zoom=1
 
+    elif selected_country == "United Kingdom":
+        latitude=55.3781
+        longitude=-3.436
+        zoom=3.2
+    elif selected_country == "Netherlands":
+        latitude=52.1326
+        longitude=5.2913
+        zoom=4
+    elif selected_country == "France":
+        latitude=46.2276
+        longitude=2.2137
+        zoom=4
+        
     else:
         # get these values for country
         latitude=country_loc['Lat'].values[0]
