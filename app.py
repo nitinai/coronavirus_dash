@@ -544,7 +544,7 @@ def update_country_trend(selected_country, view_option
         # get these values for country
         latitude=country_loc['Lat'].values[0]
         longitude=country_loc['Long_'].values[0]
-        zoom=3.5
+        zoom=3.2
         
     mapbox=go.layout.Mapbox(
                 accesstoken=MAPBOX_TOKEN,

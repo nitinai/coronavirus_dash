@@ -162,11 +162,11 @@ def download_India_data():
     DATA_PATH = os.path.join(cwd, "data_sources\covid-19-india-data", file_name).replace('\\', '/')
 
     try:
-        PREVIOUS_DATA_PATH = os.path.join(cwd, "data", file_name).replace('\\', '/')
+        PREVIOUS_DATA_PATH = os.path.join(cwd, "data_sources\covid-19-india-data", file_name).replace('\\', '/')
         if(not os.path.exists(PREVIOUS_DATA_PATH)):
             prev = now - dt.timedelta(days=1)
             prev_file_name = prev.strftime("%m-%d-%Y")+'_India.csv'
-            PREVIOUS_DATA_PATH = os.path.join(cwd, "data", prev_file_name).replace('\\', '/')
+            PREVIOUS_DATA_PATH = os.path.join(cwd, "data_sources\covid-19-india-data", prev_file_name).replace('\\', '/')
             
         if(os.path.exists(PREVIOUS_DATA_PATH)):
             prev_df = pd.read_csv(PREVIOUS_DATA_PATH)
@@ -241,7 +241,7 @@ def load_time_series_data():
     time_series_19-covid-Deaths.csv
     time_series_19-covid-Recovered.csv
     """
-    PATH = "D:/workdir/ML/ml_units/kaggle/Vis/coronavirus/Dashboard/coronavirus_dash/data_sources/COVID-19/csse_covid_19_data/csse_covid_19_time_series"
+    PATH = "./data_sources/COVID-19/csse_covid_19_data/csse_covid_19_time_series"
     #DATA_PATH = os.path.join(PATH,"time_series_19-covid-Confirmed.csv")
     DATA_PATH = os.path.join(PATH,"time_series_covid19_confirmed_global.csv")
     df_confirmed = pd.read_csv(DATA_PATH)
@@ -270,8 +270,9 @@ def process_data():
     ###############################
     now  = datetime.now()
     file_name = now.strftime("%m-%d-%Y")+'_India.csv'
-    INDIA_DATA = os.path.join(cwd, "data_sources\covid-19-india-data", file_name).replace('\\', '/')
+    INDIA_DATA = os.path.join("./data_sources/covid-19-india-data", file_name)
     df_India = pd.read_csv(INDIA_DATA)
+    print("India data : ", INDIA_DATA)
 
     ###############################
     # Read world data and infuse India data in it

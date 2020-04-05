@@ -470,7 +470,7 @@ div, svg {
 
 .stats .box{
 
-  box-shadow: 0em 1em 1em 0em #ededee;
+  box-shadow: 0.05em 0.05em 0em 0em #c3c3c9;
   /*box-shadow: 0em 1em 1em 0em gray;*/
   border: 1px solid white;
   /*position: relative;*/
@@ -526,11 +526,12 @@ div, svg {
   margin-bottom: 0.6rem; 
   margin-top: 0.6rem;
   text-align: center;
-  box-shadow: 0em 1em 1em 0em #ededee;
+  box-shadow: 0.05em 0.05em 0em 0em #ededee;
   /*box-shadow: 0em 1em 1em 0em gray;*/
   border: 1px solid white;
   background-color: #f9f9f9;
 }
+
 
 .custom-tab {
   /*color:#586069;
@@ -554,5 +555,7 @@ div, svg {
   text-align: center;
   border-top: 1px solid transparent !important;
   padding: 2px !important;
-  background-color: #f9f9f9;
+  /*background-color: #f9f9f9;*/
 }
+
+

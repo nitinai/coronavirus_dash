@@ -280,8 +280,8 @@ def graph_scatter_mapbox_India(df_India):
 
 
 def graph_scatter_mapbox(df_world):
-    latitude=34
-    longitude=38
+    latitude=14
+    longitude=8
     zoom=1
     
     """
