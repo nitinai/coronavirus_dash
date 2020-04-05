@@ -265,10 +265,10 @@ app.layout = html.Div([
             children=[html.Div(className="stats",
             children=[
 
-                html.Div(className="box",
+                html.Div(className="location",
                 children=[#html.Br(),
                         html.H5(children="World",)
-                        ], style={'padding-left':20}
+                        ],# style={'padding-left':20}
                         ),# Div
 
                 html.Div(className="box",
@@ -314,10 +314,10 @@ app.layout = html.Div([
             children=[html.Div(className="stats",
             children=[
 
-                html.Div(className="box",
+                html.Div(className="location",
                 children=[#html.Br(),
                         html.H5(id="country_stat_head")
-                        ], style={'padding-left':20}
+                        ], # style={'padding-left':20}
                         ),# Div
 
                 html.Div(className="box",

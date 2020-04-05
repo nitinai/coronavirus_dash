@@ -484,6 +484,7 @@ div, svg {
   margin: 0 1em;
   padding: 0 1em;
   text-align: center;
+  
   /*vertical-align: center;*/
   
   /*width:20%;*/
@@ -500,10 +501,22 @@ div, svg {
 }
 
 .stats .box h5{
-  
   font-weight: bold;
   /*margin: auto;
   padding: auto;*/
+}
+
+.location{
+  font-weight: normal;
+  box-shadow: 0.05em 0.05em 0em 0em gray !important;
+  border-bottom: 1px solid gray;
+  background-color: white !important;
+  margin: 0 1em;
+  padding: 0 1em;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 /*graphs*/
@@ -621,4 +634,7 @@ div, svg {
   text-align: center;
 }
 
+*, ::after, ::before {
+  box-sizing: border-box;
+}
 
