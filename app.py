@@ -26,7 +26,7 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
 def last_update():
     with open("./data/LastUpdate.txt", "r") as f:
         update_date = f.read()
-        return (f"""Last update at {update_date} IST""")
+        return (f"""Last updated on {update_date} IST""")
 
 def get_num_countries(df):
     count = df["Country_Region"].nunique() 
@@ -211,7 +211,7 @@ external_stylesheets = [#"https://codepen.io/plotly/pen/EQZeaW.css",
 
 
 
-TITLE="COVID19 Updates"
+TITLE="Coronavirus disease (COVID-19) Pandemic Dashboard"
 DESCRIPTION = "The Coronavirus COVID19 Updates dashboard provides latest data and map for India and the World. Stay at home, maintain healthy habits to contain the Coronavirus"
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
@@ -230,7 +230,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
                     {"name": "twitter:title", "content": TITLE},
                     {"name": "twitter:description","content": DESCRIPTION},
                     #{"name": "twitter:image", "content": "path to image"},
-                    {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1.0, shrink-to-fit=no"},
+                    {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1.0"}, #, shrink-to-fit=no
                     {"name": "X-UA-Compatible", "content": "ie=edge"},
                 ])
 
@@ -245,16 +245,47 @@ app.layout = html.Div([
     # Title bar
     html.Div([
         html.Div([
+            
+            html.Div([
+                html.P(children=last_update()), 
+            ], className="last_update"),
+
             html.H4(TITLE),
-            #html.P(className="",children="Last update"),
-                           
+
         ], className="banner"),
     ]),
 
     html.Div([
+        
+        
+
+        
+
         html.Div([
-            html.P(children=last_update()), 
-        ]),
+            html.Div([
+                    html.P([
+                            html.Span("Coronavirus disease (COVID-19) is an infectious disease caused by a new virus. It spreads primarily through contact with an infected person when they cough or sneeze. It also spreads when a person touches a surface or object that has the virus on it, then touches their eyes, nose, or mouth."),
+                    ]),
+            ], className="info_column"),
+
+            html.Div([
+                    html.P([
+                            html.Span("The disease causes respiratory illness (like the flu) with symptoms such as a cough, fever, and in more severe cases, difficulty breathing. You can protect yourself by washing your hands frequently, avoiding touching your face, and avoiding close contact (1 meter or 3 feet) with people who are unwell."),
+                    ]),
+            ], className="info_column"),
+
+            html.Div([
+                    html.P([
+                            html.A(html.Img(src=app.get_asset_url('PMcares.png')),
+                            href='https://www.pmindia.gov.in/hi/', target='_blank'),
+                            html.Span("HELP Government to fight against Coronavirus, Donate to PM CARES"),
+                    ]),
+            ], className="info_column"),
+
+
+            
+
+        ], className="row"),
 
         html.Div([
             html.Hr(),

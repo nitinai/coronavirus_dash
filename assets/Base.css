@@ -436,23 +436,62 @@ div, svg {
 /* My Small changes 
 --------------------------------*/
 .banner {
-  margin: 0 -1rem 0.05rem;
+  margin: 0 0 0.05rem;
   background-image: linear-gradient(to right, rgba(200,200,200), rgba(210,210,210)) !important;
-  border-radius: 2px;
+  /*border-radius: 2px;*/
+  clear: both;
 }
 
 .banner h4{
   /*color: white;*/
   position: relative;
-  margin-left: 2%;
+  margin-right: 2rem;
 }
 
+.banner .last_update{
+  float: right;
+  margin-top: 0.5rem;
+  margin-left: 2rem;
+}
 /*.banner p{
   color: red;
   position: relative;
   float: right;
 }*/
 
+/* Create three equal columns that floats next to each other */
+.info_column {
+  float: left;
+  width: 33.33%;
+  padding: 0 1em 0 1em;
+  text-align: justify;
+  column-rule: 1px solid lightblue;
+  overflow: auto;
+}
+
+.info_column img {
+  float: right;
+  margin: 0 0 1em 1em;
+  height: 30%;
+  width: 20%;
+}
+
+.three-column {
+  padding: 1em;
+  text-align: justify;
+  -moz-column-count: 3;
+  -moz-column-gap: 1em;
+  -webkit-column-count: 3;
+  -webkit-column-gap: 1em;
+  column-count: 3;
+  column-gap: 2em;
+  column-rule: 1px solid lightblue;
+}
+
+p span 
+{
+    display: block;
+}
 
 /*stats*/
 .stats {
@@ -518,6 +557,10 @@ div, svg {
      -moz-box-sizing: border-box;
           box-sizing: border-box;
 }
+
+
+
+
 
 /*graphs*/
 
@@ -595,6 +638,7 @@ div, svg {
 
 .all_content{
   margin: 0 1em;
+  clear: both;
 }
 
 .graph_title{
