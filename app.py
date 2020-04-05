@@ -246,10 +246,6 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             
-            html.Div([
-                html.P(children=last_update()), 
-            ], className="last_update"),
-
             html.H4(TITLE),
 
         ], className="banner"),
@@ -257,39 +253,35 @@ app.layout = html.Div([
 
     html.Div([
         
-        
-
-        
-
         html.Div([
+            
             html.Div([
                     html.P([
                             html.Span("Coronavirus disease (COVID-19) is an infectious disease caused by a new virus. It spreads primarily through contact with an infected person when they cough or sneeze. It also spreads when a person touches a surface or object that has the virus on it, then touches their eyes, nose, or mouth."),
-                    ]),
-            ], className="info_column"),
-
-            html.Div([
-                    html.P([
                             html.Span("The disease causes respiratory illness (like the flu) with symptoms such as a cough, fever, and in more severe cases, difficulty breathing. You can protect yourself by washing your hands frequently, avoiding touching your face, and avoiding close contact (1 meter or 3 feet) with people who are unwell."),
                     ]),
             ], className="info_column"),
 
+        
             html.Div([
                     html.P([
                             html.A(html.Img(src=app.get_asset_url('PMcares.png')),
                             href='https://www.pmindia.gov.in/hi/', target='_blank'),
                             html.Span("HELP Government to fight against Coronavirus, Donate to PM CARES"),
                     ]),
-            ], className="info_column"),
-
-
+            ], className="help_column"),
             
-
         ], className="row"),
 
+        
         html.Div([
+
+            html.Div([
+                html.P(children=last_update()), 
+            ], className="last_update"),
+
             html.Hr(),
-        ]),
+        ], className="row"),
 
         #### World stat start
             html.Div(className="row", 

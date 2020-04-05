@@ -439,19 +439,18 @@ div, svg {
   margin: 0 0 0.05rem;
   background-image: linear-gradient(to right, rgba(200,200,200), rgba(210,210,210)) !important;
   /*border-radius: 2px;*/
-  clear: both;
 }
 
 .banner h4{
   /*color: white;*/
   position: relative;
-  margin-right: 2rem;
+  margin-left: 2rem;
 }
 
-.banner .last_update{
-  float: right;
-  margin-top: 0.5rem;
-  margin-left: 2rem;
+.last_update{
+  clear: both;
+  margin-left: 1rem;
+  font-size: 1.2rem;
 }
 /*.banner p{
   color: red;
@@ -462,18 +461,27 @@ div, svg {
 /* Create three equal columns that floats next to each other */
 .info_column {
   float: left;
-  width: 33.33%;
+  font-size: 1.2rem;
+  width: 66%;
   padding: 0 1em 0 1em;
   text-align: justify;
-  column-rule: 1px solid lightblue;
   overflow: auto;
 }
 
-.info_column img {
+.help_column {
+  float: right;
+  font-size: 1.2rem;
+  width: 34%;
+  padding: 0 1em 0 1em;
+  overflow: auto;
+}
+
+.help_column img {
   float: right;
   margin: 0 0 1em 1em;
-  height: 30%;
-  width: 20%;
+  height: 100%;
+  max-height: 100px;
+  max-width: 100px;
 }
 
 .three-column {
@@ -488,10 +496,7 @@ div, svg {
   column-rule: 1px solid lightblue;
 }
 
-p span 
-{
-    display: block;
-}
+
 
 /*stats*/
 .stats {
@@ -676,6 +681,7 @@ p span
 
 #my-footer p {
   text-align: center;
+  font-size: 1.3rem;
 }
 
 *, ::after, ::before {
