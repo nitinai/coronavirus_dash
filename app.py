@@ -66,7 +66,7 @@ trend_graph_china_vs_world = model.relative_trend_graph_china_vs_world(df_co, df
 
 #df_co[df_co["Country/Region"]=="US"].iloc[:,-1].sum()
 
-all_countries = list(df_world["Country_Region"].unique())
+all_countries = sorted(list(df_world["Country_Region"].unique()))
 num_countries = len(all_countries) 
 total_cases = df_co.iloc[:,-1].sum()
 recovered_cases = df_re.iloc[:,-1].sum()
@@ -245,7 +245,7 @@ app.layout = html.Div([
     # Title bar
     html.Div([
         html.Div([
-            html.H2(TITLE),
+            html.H4(TITLE),
             #html.P(className="",children="Last update"),
                            
         ], className="banner"),
@@ -267,40 +267,40 @@ app.layout = html.Div([
 
                 html.Div(className="box",
                 children=[#html.Br(),
-                        html.H2(children="World",)
+                        html.H5(children="World",)
                         ], style={'padding-left':20}
                         ),# Div
 
                 html.Div(className="box",
-                children=[  html.H6(children="Countries",),
-                            html.H2(children=f"""{num_countries}""",
+                children=[  html.P(children="Countries",),
+                            html.H5(children=f"""{num_countries}""",
                                     ),
                         ]),# Div
 
                 html.Div(className="box",
-                children=[  html.H6(children="Total Cases",),
-                            html.H2(children=f"""{total_cases:,d}""",
+                children=[  html.P(children="Total Cases",),
+                            html.H5(children=f"""{total_cases:,d}""",
                                         style = {'color':COLOR_MAP["Brown"]}
                                     ),
                         ]),# Div
 
                 html.Div(className="box",
-                children=[  html.H6(children="Recovered",),
-                            html.H2(children=f"""{recovered_cases:,d}""",
+                children=[  html.P(children="Recovered",),
+                            html.H5(children=f"""{recovered_cases:,d}""",
                                         style = {'color':COLOR_MAP["Green"]}
                                     ),
                         ]),# Div
                         
                 html.Div(className="box",
-                children=[  html.H6(children="Deceased",),
-                            html.H2(children=f"""{death_cases:,d}""",
+                children=[  html.P(children="Deceased",),
+                            html.H5(children=f"""{death_cases:,d}""",
                                 style = {'color':COLOR_MAP["Red"]}
                         ),
                         ]),# Div
 
                 html.Div(className="box",
-                children=[  html.H6(children="Active",),
-                            html.H2(children=f"""{active_cases:,d}""",
+                children=[  html.P(children="Active",),
+                            html.H5(children=f"""{active_cases:,d}""",
                                         style = {'color':COLOR_MAP["Orange"]})
                         ]),# Div
                     ]),
@@ -316,40 +316,40 @@ app.layout = html.Div([
 
                 html.Div(className="box",
                 children=[#html.Br(),
-                        html.H2(id="country_stat_head")
+                        html.H5(id="country_stat_head")
                         ], style={'padding-left':20}
                         ),# Div
 
                 html.Div(className="box",
-                children=[  html.H6(children="Province/State",),
-                            html.H2(id="country_stat_province_state", #children=f"""{num_countries}/195""",
+                children=[  html.P(children="Province/State",),
+                            html.H5(id="country_stat_province_state", #children=f"""{num_countries}/195""",
                                     ),
                         ]),# Div
 
                 html.Div(className="box",
-                children=[  html.H6(children="Total Cases",),
-                            html.H2(id="country_stat_total_cases", #children=f"""{total_cases:,d}""",
+                children=[  html.P(children="Total Cases",),
+                            html.H5(id="country_stat_total_cases", #children=f"""{total_cases:,d}""",
                                         style = {'color':COLOR_MAP["Brown"]}
                                     ),
                         ]),# Div
 
                 html.Div(className="box",
-                children=[  html.H6(children="Recovered",),
-                            html.H2(id="country_stat_recovered", #children=f"""{recovered_cases:,d}""",
+                children=[  html.P(children="Recovered",),
+                            html.H5(id="country_stat_recovered", #children=f"""{recovered_cases:,d}""",
                                         style = {'color':COLOR_MAP["Green"]}
                                     ),
                         ]),# Div
                         
                 html.Div(className="box",
-                children=[  html.H6(children="Deceased",),
-                            html.H2(id="country_stat_deceased", #children=f"""{death_cases:,d}""",
+                children=[  html.P(children="Deceased",),
+                            html.H5(id="country_stat_deceased", #children=f"""{death_cases:,d}""",
                                 style = {'color':COLOR_MAP["Red"]}
                         ),
                         ]),# Div
 
                 html.Div(className="box",
-                children=[  html.H6(children="Active",),
-                            html.H2(id="country_stat_active", #children=f"""{active_cases:,d}""",
+                children=[  html.P(children="Active",),
+                            html.H5(id="country_stat_active", #children=f"""{active_cases:,d}""",
                                         style = {'color':COLOR_MAP["Orange"]})
                         ]),# Div
                     ]),
@@ -363,7 +363,7 @@ app.layout = html.Div([
         # 
         html.Div([
             html.Div([
-                html.H5(["Select or type country",], className="graph_title"),
+                html.H6(["Select or type country",], className="graph_title"),
 
                 dcc.Dropdown(
                             placeholder="Select or type country",
@@ -379,11 +379,11 @@ app.layout = html.Div([
                     config={'displayModeBar': False, # Hide the floating toolbar
                                         "scrollZoom": False,},
                 )
-            ], className="four columns"),
+            ], id="trend_graph_box", className="four columns"),
 
             html.Div([
                 
-                html.H5("World Map", id="world_map_label", className="graph_title"),
+                html.H6("World Map", id="world_map_label", className="graph_title"),
                 
                 dcc.RadioItems(
                             id="view_radio_option",
@@ -399,7 +399,7 @@ app.layout = html.Div([
                     id="world_map",
                     #figure=world_map
                 ),
-            ], className="eight columns"),
+            ], id="world_map_box", className="eight columns"),
 
         ],className="row"),
 
@@ -431,7 +431,7 @@ app.layout = html.Div([
                             
                         ]),
 
-            ], className="four columns"),
+            ],id="country_table_div_box", className="four columns"),
             
             html.Div([
                 #html.Label("Countries affected", id="countries_table_label"),
@@ -454,18 +454,41 @@ app.layout = html.Div([
                                     ),
                             
                         ]),
-            ], className="five columns"),
+            ], id="world_table_div_box", className="five columns"),
             
             html.Div([
                 #html.Label("China vs Rest of the World trend", id="trend_china_world_label"),
-                html.H5(["China vs Rest of the World trend",], className="graph_title"),
+                html.H6(["China vs Rest of the World trend",], className="graph_title"),
                 dcc.Graph(id="trend_china_world",
                     figure=trend_graph_china_vs_world,
                 ),
-            ], className="three columns"),
+            ], id="trend_china_world_box",  className="three columns"),
 
             
         ],className="row"),
+
+        html.Div([
+            html.Hr(),
+        ]),
+
+        # Footer
+        html.Div([
+            html.P(
+            children=['STAY Home | KEEP a safe distance | WASH hands often | COVER your cough']),
+    
+            html.P(
+            children=["Developed by NITIN PATIL | If you have any feedback on this dashboard, please let him know on ", html.A('Twitter', href='https://twitter.com/intent/tweet?source=webclient&text=%40_nitinp', target='_blank'), ' or ',
+                        html.A('LinkedIn', href='https://www.linkedin.com/in/nitinai', target='_blank'), " !",
+                    ]),
+
+            html.P(
+            children=["Data source: ", html.A('MoHFW GoI', href='https://www.mohfw.gov.in', target='_blank'), ' | ',
+                        html.A('JHU CSSE', href='https://github.com/CSSEGISandData/COVID-19', target='_blank'), " | ",
+                        html.A('WHO', href='https://www.who.int', target='_blank'),
+                    ]),
+
+
+            ], id='my-footer',),
 
     ],className="all_content"), # excluding the title bar
 

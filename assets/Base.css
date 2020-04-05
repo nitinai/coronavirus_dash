@@ -436,13 +436,13 @@ div, svg {
 /* My Small changes 
 --------------------------------*/
 .banner {
-  margin: 0px -10px 10px;
-  background-image: linear-gradient(to right, rgba(10,10,10), rgba(100,100,100)) !important;
+  margin: 0 -1rem 0.05rem;
+  background-image: linear-gradient(to right, rgba(200,200,200), rgba(210,210,210)) !important;
   border-radius: 2px;
 }
 
-.banner h2{
-  color: white;
+.banner h4{
+  /*color: white;*/
   position: relative;
   margin-left: 2%;
 }
@@ -470,12 +470,22 @@ div, svg {
 
 .stats .box{
 
-  box-shadow: 0.05em 0.05em 0em 0em #c3c3c9;
+  /*box-shadow: 0.05em 0.05em 0em 0em #c3c3c9;
+  box-shadow: 0em 1em 1em 0em gray;
+  border: 1px solid white;*/
+
+  box-shadow: 0.05em 0.05em 0em 0em gray !important;
   /*box-shadow: 0em 1em 1em 0em gray;*/
-  border: 1px solid white;
+  /*border-right: 1px solid gray;*/
+  border-bottom: 1px solid gray;
+  background-color: white !important;
+
   /*position: relative;*/
   margin: 0 1em;
   padding: 0 1em;
+  text-align: center;
+  /*vertical-align: center;*/
+  
   /*width:20%;*/
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
@@ -483,79 +493,132 @@ div, svg {
 }
 
 .stats .box h6{
-  text-align: center;
+  
   font-weight: lighter;
   /*margin: auto;
   padding: auto;*/
 }
 
-.stats .box h2{
-  text-align: center;
+.stats .box h5{
+  
   font-weight: bold;
   /*margin: auto;
   padding: auto;*/
 }
 
 /*graphs*/
-.graph_box{
-  box-shadow: 0em 1em 1em 0em gray;
-  border: 1px solid white;
-  position: relative;
-  margin: 0 auto;
-  padding: 0 auto;
-  box-sizing: border-box;
-}
 
 #trend_graph{
   /*margin-left: 1em;*/
-  
 }
+/*
+#trend_graph_box{
+  box-shadow: 0.05em 0.05em 0em 0em gray !important;
+  background-color: white !important;
+  margin: 0;
+  padding: 0 1rem 1rem;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}*/
+
 
 /*graphs*/
 #world_map{
+
 }
+
+#view_radio_option{
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/*
+#world_map_box{
+  box-shadow: 0.05em 0.05em 0em 0em gray !important;
+  background-color: white !important;
+  margin-left: 1rem;
+  padding: 0 1rem 1rem;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+
+
+#country_table_div_box{
+  box-shadow: 0.05em 0.05em 0em 0em gray !important;
+  background-color: white !important;
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+#world_table_div_box{
+  box-shadow: 0.05em 0.05em 0em 0em gray !important;
+  background-color: white !important;
+  margin-left: 1rem;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+#trend_china_world_box{
+  box-shadow: 0.05em 0.05em 0em 0em gray !important;
+  background-color: white !important;
+  margin-left: 1rem;
+  padding: 0 1rem 1rem;
+  text-align: center;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+*/
 
 .all_content{
   margin: 0 1em;
 }
 
 .graph_title{
-  font-size: 2.2rem; 
-  line-height: 1.5;  
-  letter-spacing: -.05rem; 
-  margin-bottom: 0.6rem; 
-  margin-top: 0.6rem;
   text-align: center;
-  box-shadow: 0.05em 0.05em 0em 0em #ededee;
-  /*box-shadow: 0em 1em 1em 0em gray;*/
-  border: 1px solid white;
-  background-color: #f9f9f9;
+  font-size: 2.0rem; 
+  line-height: 1.6;  
+  letter-spacing: 0; 
+  /*margin-bottom: 0.75rem; 
+  margin-top: 0.75rem;*/
+  box-shadow: 0em 0.05em 0em 0em gray !important;
+  background-color: white !important;
+}
+
+.graph_title h5{
+  margin-bottom: 0rem; 
+  margin-top: 0rem;
 }
 
 
 .custom-tab {
-  /*color:#586069;
-  border-top-left-radius: 3px;
-  border-top-right-radius: 3px;
-  
-  border-left: 0px !important;
-  border-right: 0px !important;
-  border-bottom: 0px !important;
-  background-color: #fafbfc;
-  padding: 12px !important;
-  font-family: "system-ui";
-  display: flex !important;
-  align-items: center;
-  justify-content: center;*/
-  font-size: 2.2rem; 
-  line-height: 1.5;  
-  letter-spacing: -.05rem; 
-  margin-bottom: 0.6rem; 
-  margin-top: 0.6rem;
+
   text-align: center;
-  border-top: 1px solid transparent !important;
-  padding: 2px !important;
-  /*background-color: #f9f9f9;*/
+  font-size: 2.0rem; 
+  line-height: 1.6;  
+  letter-spacing: 0; 
+  margin-bottom: 0.75rem; 
+  margin-top: 0.75rem;
+  border-top: 0px solid transparent !important;
+  border-bottom: 0px solid transparent !important;
+  box-shadow: 0em 0.05em 0em 0em gray !important;
+  /*box-shadow: 0em 1em 1em 0em gray;*/
+  background-color: white !important;
+  padding: 0px !important;
+}
+
+#my-footer p {
+  text-align: center;
 }
 
 
