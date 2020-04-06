@@ -294,11 +294,14 @@ app.layout = html.Div([
 
         
             html.Div([
-                    html.P([
-                            html.A(html.Img(src=app.get_asset_url('PMcares.png')),
+                    html.A(html.Img(src=app.get_asset_url('PMcares.png')),
                             href='https://www.pmindia.gov.in/hi/', target='_blank'),
-                            html.Span("HELP Government to fight against Coronavirus, STAY Home Stay Safe, DONATE to PM CARES"),
+                    html.A(html.Img(src=app.get_asset_url('cmrfmahacovid19.png')),
+                            href='https://cmrf.maharashtra.gov.in/CMRFCitizen/index.action', target='_blank'),
+                    html.P([
+                            html.Span("HELP Government to fight against Coronavirus, STAY Home Stay Safe, DONATE to Chief Ministers Relief Fund, PM CARES 👉"),
                     ]),
+
             ], className="help_column"),
             
         ], className="row"),
