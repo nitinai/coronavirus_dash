@@ -97,8 +97,8 @@ def create_datatable_country(df, id="create_datatable_country"):
     PRESENT_COLS = ['Province/State', 'Total Cases', 'Active', 'Recovered', 'Deceased', 'Death rate']
 
     # thousand formatting
-    for c in ['Confirmed', 'Active', 'Recovered', 'Deaths']:
-        df[c] = df[c].apply(lambda x : '{0:,}'.format(x)) 
+    #for c in ['Confirmed', 'Active', 'Recovered', 'Deaths']:
+    #    df[c] = df[c].apply(lambda x : '{0:,}'.format(x)) 
 
     COL_MAP = {'Province_State':'Province/State', 'Confirmed':'Total Cases', 'Deaths':'Deceased'}
     df.rename(columns=COL_MAP, inplace=True)
@@ -151,8 +151,8 @@ df_world_table["Death rate"] = df_world_table['Deaths']/df_world_table['Confirme
 df_world_table = df_world_table.sort_values(by=['Active', 'Confirmed'], ascending=False)
 
 # thousand formatting
-for c in ['Confirmed', 'Active', 'Recovered', 'Deaths']:
-    df_world_table[c] = df_world_table[c].apply(lambda x : '{0:,}'.format(x)) 
+#for c in ['Confirmed', 'Active', 'Recovered', 'Deaths']:
+#    df_world_table[c] = df_world_table[c].apply(lambda x : '{0:,}'.format(x)) 
     
 COL_MAP = {'Country_Region':'Country/Region', 'Confirmed':'Total Cases', 'Deaths':'Deceased'}
 df_world_table.rename(columns=COL_MAP, inplace=True)
