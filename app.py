@@ -624,7 +624,10 @@ def update_country_trend(selected_country, view_option
         latitude=46.2276
         longitude=2.2137
         zoom=4
-        
+    elif selected_country == "Denmark":
+        latitude=56.2639
+        longitude=9.5018
+        zoom=4
     else:
         # get these values for country
         latitude=country_loc['Lat'].values[0]
