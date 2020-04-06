@@ -26,7 +26,7 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
 def last_update():
     with open("./data/LastUpdate.txt", "r") as f:
         update_date = f.read()
-        return (f"""Last updated on {update_date} IST""")
+        return (f"""Last updated on {update_date} GMT+5:30""")
 
 def get_num_countries(df):
     count = df["Country_Region"].nunique() 
