@@ -297,7 +297,7 @@ app.layout = html.Div([
                     html.P([
                             html.A(html.Img(src=app.get_asset_url('PMcares.png')),
                             href='https://www.pmindia.gov.in/hi/', target='_blank'),
-                            html.Span("HELP Government to fight against Coronavirus, Donate to PM CARES"),
+                            html.Span("HELP Government to fight against Coronavirus, STAY Home Stay Safe, DONATE to PM CARES"),
                     ]),
             ], className="help_column"),
             
