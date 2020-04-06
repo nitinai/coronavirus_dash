@@ -209,10 +209,8 @@ def create_datatable_world(id):
 external_stylesheets = [#"https://codepen.io/plotly/pen/EQZeaW.css",
                         "./assets/Base.css"]
 
-
-
 TITLE="Coronavirus disease (COVID-19) Pandemic Dashboard"
-DESCRIPTION = "The Coronavirus COVID19 Updates dashboard provides latest data and map for India and the World. Stay at home, maintain healthy habits to contain the Coronavirus"
+DESCRIPTION = "The Coronavirus disease (COVID-19) Pandemic dashboard provides latest information about this outbreak across the World. Stay at home, maintain healthy habits to contain the Coronavirus"
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
                 assets_folder='./assets/',
@@ -229,7 +227,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
                     {"name": "twitter:site", "content": "@_nitinp"},
                     {"name": "twitter:title", "content": TITLE},
                     {"name": "twitter:description","content": DESCRIPTION},
-                    {"name": "twitter:image", "content": 'share_img.png'},
+                    {"name": "twitter:image", "content": 'https://github.com/nitinai/coronavirus_dash/blob/master/assets/share_img.png'},
                     {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1.0"}, #, shrink-to-fit=no
                     {"name": "X-UA-Compatible", "content": "ie=edge"},
                 ])
@@ -361,9 +359,7 @@ app.layout = html.Div([
                     ]),
                 ]),
         #### World stat end
-        #html.Div([
-        #    html.Hr(),
-        #]),
+       
         #### Country stat start
             html.Div(className="row", 
             children=[html.Div(className="stats",
@@ -550,8 +546,6 @@ app.layout = html.Div([
 ])
 
 
-
-
 @app.callback(
     [Output('trend_graph', 'figure'),
     Output('world_map', 'figure'),
@@ -563,9 +557,9 @@ app.layout = html.Div([
     Output('country_stat_active', 'children'),
     #Output('country_table_label', 'children'),
     Output('tab_country_table', 'children'),
-    Output('tabs_country_table', 'value'),
+    #Output('tabs_country_table', 'value'),
     Output('tab_country_table', 'label'),
-    Output('tab_country_table', 'value'),
+    #Output('tab_country_table', 'value'),
 
     ],
     [Input('countries_dropdown', 'value'),
@@ -656,10 +650,7 @@ def update_country_trend(selected_country, view_option
     # Country statistics
     ###############
     country_stat_head = selected_country
-    
-
     country_stat_province_state = df_country["Province_State"].nunique()
-
     country_stat_total_cases = f"""{df_country["Confirmed"].sum():,d}"""
     country_stat_recovered = f"""{df_country["Recovered"].sum():,d}"""
     country_stat_deceased = f"""{df_country["Deaths"].sum():,d}"""
@@ -670,15 +661,17 @@ def update_country_trend(selected_country, view_option
     ###############
     #country_table_label = selected_country
     tab_country_table = create_datatable_country(df_country)
-    tabs_country_table_value = selected_country
+    #tabs_country_table_value = selected_country
     tabs_country_table_label = selected_country
-    tab_country_table_value = selected_country
+    #tab_country_table_value = selected_country
 
     return (trend_graph, world_map, country_stat_head, country_stat_province_state,
     country_stat_total_cases, country_stat_recovered, country_stat_deceased, country_stat_active, 
     #country_table_label, 
-    tab_country_table, tabs_country_table_value, tabs_country_table_label, 
-    tab_country_table_value)
+    tab_country_table, #tabs_country_table_value, 
+    tabs_country_table_label, 
+    #tab_country_table_value
+    )
 
 
 if __name__ == '__main__':
