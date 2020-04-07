@@ -198,9 +198,10 @@ def create_datatable_world(id):
                     tooltip_data= [{c:
                                     {
                                         'type': 'markdown',
-                                        'value': f'{country}: {df.loc[df[df["Country/Region"] == country].index[0], c]} {c}'
+                                        'value': f'{country} : {round(df.loc[df[df["Country/Region"] == country].index[0], c]*100,1)}% {c}' if c == 'Death rate' else
+                                                    f'{country} : {df.loc[df[df["Country/Region"] == country].index[0], c]:,d} {c}'
                                     } for c in df.columns[1:]
-                            } for country in df[df.columns[0]].values],
+                            } for country in df[df.columns[0]].values ],
                     style_cell_conditional=[#{'if': {'column_id': 'Province/State'}, 'width': '36%'},
                                             {'if': {'column_id': 'Country/Region'}, 'width': '15%'},
                                             {'if': {'column_id': 'Active'}, 'width': '15%'},
