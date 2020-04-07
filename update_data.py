@@ -215,7 +215,7 @@ def save(df, filename):
     PATH = "./data"
     DATA_PATH = f"{PATH}/{filename}.csv"
     if(os.path.exists(DATA_PATH)):
-        DST = f"{PATH}/{filename}_backup.csv"
+        DST = f"./archieve/{filename}_backup.csv"
         shutil.copy2(DATA_PATH, DST)
     df.to_csv(DATA_PATH, index=False)
     print("Data saved to: ", DATA_PATH)

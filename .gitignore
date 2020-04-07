@@ -2,6 +2,7 @@
 __pycache__/*
 README.txt
 heroku_logs.txt
+data_sources/*/*
 data_sources/*
+archieve/*
 nb/*
-app_ref.py
