@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 __author__ = "Nitin Patil"
 
 import pandas as pd
@@ -7,6 +8,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from dash_table import DataTable
+from dash_table.Format import Sign
 import dash_table.FormatTemplate as FormatTemplate
 
 import plotly.graph_objects as go
@@ -32,7 +34,7 @@ def last_update():
         return (f"""Last updated on {update_date} GMT+5:30""")
 
 def get_num_countries(df):
-    count = df["Country_Region"].nunique() 
+    count = df["Country/Region"].nunique() 
     return f"""{count}/195"""
 
 # To print number with commna separator 10,000,000
@@ -40,7 +42,7 @@ def get_num_countries(df):
 #print(f"{num:,d}")
 
 def get_total_count(df):
-    total_cases = df["Confirmed"].sum()
+    total_cases = df['Total Cases'].sum()
     return f"""{total_cases:,d}"""
 
 def get_active_count(df):
@@ -67,12 +69,28 @@ df_co, df_re, df_de = load_time_series_data()
 trend_graph_china_vs_world = relative_trend_graph_china_vs_world(df_co, df_re, df_de)
 
 
-all_countries = sorted(list(df_world["Country_Region"].unique()))
+all_countries = sorted(list(df_world["Country/Region"].unique()))
 num_countries = len(all_countries) 
 total_cases = df_co.iloc[:,-1].sum()
 recovered_cases = df_re.iloc[:,-1].sum()
 death_cases = df_de.iloc[:,-1].sum()
 active_cases = total_cases - recovered_cases - death_cases
+
+def get_change_string(num):
+    sign = "+" if num > 0 else ""
+    change = f"""{sign}{num:,d}"""
+    return change
+
+new_cases_num = df_world['New Cases'].sum()
+new_recovered_num = df_world['New Recovered'].sum()
+new_deaths_num = df_world['New Deaths'].sum()
+
+new_cases = get_change_string(new_cases_num)
+new_recovered = get_change_string(new_recovered_num)
+new_deaths = get_change_string(new_deaths_num)
+
+new_active_num = new_cases_num - new_recovered_num - new_deaths_num
+new_active = get_change_string(new_active_num)
 
 # Offline: Ideally read the India data and infuse it in all timelines and df_world
 
@@ -85,26 +103,23 @@ active_cases = total_cases - recovered_cases - death_cases
 
 @memory.cache
 def create_country_df(country):
-    df = df_world[df_world["Country_Region"] == country]
-    loc = df.groupby('Country_Region')[['Lat', 'Long_']].mean()
-    df = df.groupby('Province_State')[['Confirmed', 'Recovered', 'Active', 'Deaths']].sum()
+    df = df_world[df_world["Country/Region"] == country]
+    loc = df.groupby('Country/Region')[['Lat', 'Long_']].mean()
+    df = df.groupby('Province/State')[['Total Cases', 'Recovered', 'Active', 'Deaths', 'New Cases','New Recovered', 'New Deaths' ]].sum()
     df.reset_index(inplace=True)
-    df["Death rate"] = df['Deaths']/df['Confirmed']
-    df = df.sort_values(by=['Active', 'Confirmed'], ascending=False)
+    df["Death rate"] = df['Deaths']/df['Total Cases']
+    df = df.sort_values(by=['Active', 'Total Cases'], ascending=False)
     return df, loc
+
 
 @memory.cache
 def create_datatable_country(df, id="create_datatable_country"):
     
-    COLS =          ['Province_State', 'Confirmed', 'Active', 'Recovered', 'Deaths', 'Death rate']
-    PRESENT_COLS = ['Province/State', 'Total Cases', 'Active', 'Recovered', 'Deceased', 'Death rate']
+    PRESENT_COLS = ['Province/State', 'Total Cases', 'Active', 'Recovered', 'Deaths', 'Death rate']
 
     # thousand formatting
-    #for c in ['Confirmed', 'Active', 'Recovered', 'Deaths']:
+    #for c in ['Total Cases', 'Active', 'Recovered', 'Deaths']:
     #    df[c] = df[c].apply(lambda x : '{0:,}'.format(x)) 
-
-    COL_MAP = {'Province_State':'Province/State', 'Confirmed':'Total Cases', 'Deaths':'Deceased'}
-    df.rename(columns=COL_MAP, inplace=True)
 
     return DataTable(#id=id,
                     
@@ -135,46 +150,35 @@ def create_datatable_country(df, id="create_datatable_country"):
                                             {'if': {'column_id': 'Active'}, 'width': '16%'},
                                             {'if': {'column_id': 'Total Cases'}, 'width': '16%'},
                                             {'if': {'column_id': 'Recovered'}, 'width': '16%'},
-                                            {'if': {'column_id': 'Deceased'}, 'width': '16%'},
+                                            {'if': {'column_id': 'Deaths'}, 'width': '16%'},
                                             {'if': {'column_id': 'Death rate'}, 'width': '16%'},
-                                            #{'if': {'column_id': 'Confirmed/100k'}, 'width': '19%'},
+                                            #{'if': {'column_id': 'Total Cases/100k'}, 'width': '19%'},
                                             {'if': {'column_id': 'Active'}, 'color':COLOR_MAP["Orange"]},
                                             {'if': {'column_id': 'Total Cases'}, 'color': COLOR_MAP["Brown"]},
                                             {'if': {'column_id': 'Recovered'}, 'color': COLOR_MAP["Green"]},
-                                            {'if': {'column_id': 'Deceased'}, 'color': COLOR_MAP["Red"]},
+                                            {'if': {'column_id': 'Deaths'}, 'color': COLOR_MAP["Red"]},
                                             {'if': {'column_id': 'Death rate'}, 'color': COLOR_MAP["Red"]},
                                             {'textAlign': 'center'}],
                         )
 
 
-df_world_table = df_world.copy()
-df_world_table = df_world_table.groupby('Country_Region')[['Confirmed', 'Recovered', 'Active', 'Deaths']].sum()
-df_world_table.reset_index(inplace=True)
-df_world_table["Death rate"] = df_world_table['Deaths']/df_world_table['Confirmed']
-df_world_table = df_world_table.sort_values(by=['Active', 'Confirmed'], ascending=False)
-
-# thousand formatting
-#for c in ['Confirmed', 'Active', 'Recovered', 'Deaths']:
-#    df_world_table[c] = df_world_table[c].apply(lambda x : '{0:,}'.format(x)) 
-    
-COL_MAP = {'Country_Region':'Country/Region', 'Confirmed':'Total Cases', 'Deaths':'Deceased'}
-df_world_table.rename(columns=COL_MAP, inplace=True)
-
-
 def create_datatable_world(id):
 
-    COLS =          ['Country_Region', 'Confirmed', 'Active', 'Recovered', 'Deaths', 'Death rate']
-    PRESENT_COLS = ['Country/Region', 'Total Cases', 'Active', 'Recovered', 'Deceased', 'Death rate']
+    GRPBY = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
+    PRESENT_COLS = ['Country/Region'] + GRPBY + ['Death rate']
+
+    df = df_world.groupby('Country/Region')[GRPBY].sum()
+    df.reset_index(inplace=True)
+    df["Death rate"] = df['Deaths']/df['Total Cases']
+    df = df.sort_values(by=['Active', 'Total Cases'], ascending=False)
 
     return DataTable(id=id,
                     
-                    # Don't show coordinates
-                    columns=[{"name": i, "id": i, "type": "numeric","format": FormatTemplate.percentage(2)}
+                    columns=[{"name": i, "id": i, "type": "numeric", "format": FormatTemplate.percentage(1)}
                              if i == 'Death rate' else {"name": i, "id": i}
                              for i in PRESENT_COLS],
                     
-    # But still store coordinates in the table for interactivity
-                    data=df_world_table[PRESENT_COLS].to_dict("rows"),
+                    data=df[PRESENT_COLS].to_dict("rows"),
                     row_selectable=False, #"single" if countryName != 'Schengen' else False,
                     sort_action="native",
                     style_as_list_view=True,
@@ -190,18 +194,31 @@ def create_datatable_world(id):
                                  },
                     style_header={'backgroundColor': '#ffffff',
                                   'fontWeight': 'bold'},
+
+                    tooltip_data= [{c:
+                                    {
+                                        'type': 'markdown',
+                                        'value': f'{country}: {df.loc[df[df["Country/Region"] == country].index[0], c]} {c}'
+                                    } for c in df.columns[1:]
+                            } for country in df[df.columns[0]].values],
                     style_cell_conditional=[#{'if': {'column_id': 'Province/State'}, 'width': '36%'},
-                                            {'if': {'column_id': 'Country/Region'}, 'width': '25%'},
+                                            {'if': {'column_id': 'Country/Region'}, 'width': '15%'},
                                             {'if': {'column_id': 'Active'}, 'width': '15%'},
                                             {'if': {'column_id': 'Total Cases'}, 'width': '15%'},
+                                            {'if': {'column_id': 'New Cases'}, 'width': '15%'},
                                             {'if': {'column_id': 'Recovered'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Deceased'}, 'width': '15%'},
+                                            {'if': {'column_id': 'New Recovered'}, 'width': '15%'},
+                                            {'if': {'column_id': 'Deaths'}, 'width': '15%'},
+                                            {'if': {'column_id': 'New Deaths'}, 'width': '15%'},
                                             {'if': {'column_id': 'Death rate'}, 'width': '15%'},
-                                            #{'if': {'column_id': 'Confirmed/100k'}, 'width': '19%'},
+                                            #{'if': {'column_id': 'Total Cases/100k'}, 'width': '19%'},
                                             {'if': {'column_id': 'Active'}, 'color':COLOR_MAP["Orange"]},
                                             {'if': {'column_id': 'Total Cases'}, 'color': COLOR_MAP["Brown"]},
+                                            {'if': {'column_id': 'New Cases'}, 'color': COLOR_MAP["Brown"]},
                                             {'if': {'column_id': 'Recovered'}, 'color': COLOR_MAP["Green"]},
-                                            {'if': {'column_id': 'Deceased'}, 'color': COLOR_MAP["Red"]},
+                                            {'if': {'column_id': 'New Recovered'}, 'color': COLOR_MAP["Green"]},
+                                            {'if': {'column_id': 'Deaths'}, 'color': COLOR_MAP["Red"]},
+                                            {'if': {'column_id': 'New Deaths'}, 'color': COLOR_MAP["Red"]},
                                             {'if': {'column_id': 'Death rate'}, 'color': COLOR_MAP["Red"]},
                                             {'textAlign': 'center'}],
                         )
@@ -231,6 +248,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
                     {"name": "twitter:title", "content": TITLE},
                     {"name": "twitter:description","content": DESCRIPTION},
                     {"name": "twitter:image", "content": 'https://github.com/nitinai/coronavirus_dash/blob/master/assets/share_img.png'},
+                    {"charset":"UTF-8"},
                     {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1.0"}, #, shrink-to-fit=no
                     {"name": "X-UA-Compatible", "content": "ie=edge"},
                 ])
@@ -341,6 +359,9 @@ app.layout = html.Div([
                             html.H5(children=f"""{total_cases:,d}""",
                                         style = {'color':COLOR_MAP["Brown"]}
                                     ),
+                            html.P(children=new_cases,
+                                        style = {'color':COLOR_MAP["Brown"]}
+                                    ),
                         ]),# Div
 
                 html.Div(className="box",
@@ -348,19 +369,28 @@ app.layout = html.Div([
                             html.H5(children=f"""{recovered_cases:,d}""",
                                         style = {'color':COLOR_MAP["Green"]}
                                     ),
+                            html.P(children=new_recovered,
+                                        style = {'color':COLOR_MAP["Green"]}
+                                    ),
                         ]),# Div
                         
                 html.Div(className="box",
-                children=[  html.P(children="Deceased",),
+                children=[  html.P(children="Deaths",),
                             html.H5(children=f"""{death_cases:,d}""",
                                 style = {'color':COLOR_MAP["Red"]}
-                        ),
+                                ),
+                            html.P(children=new_deaths,
+                                        style = {'color':COLOR_MAP["Red"]}
+                                    ),
                         ]),# Div
 
                 html.Div(className="box",
                 children=[  html.P(children="Active",),
                             html.H5(children=f"""{active_cases:,d}""",
-                                        style = {'color':COLOR_MAP["Orange"]})
+                                        style = {'color':COLOR_MAP["Orange"]}),
+                            html.P(children=new_active,
+                                        style = {'color':COLOR_MAP["Orange"]}
+                                    ),
                         ]),# Div
                     ]),
                 ]),
@@ -379,38 +409,53 @@ app.layout = html.Div([
 
                 html.Div(className="box",
                 children=[  html.P(children="Province/State",),
-                            html.H5(id="country_stat_province_state", #children=f"""{num_countries}/195""",
+                            html.H5(id="country_stat_province_state",
                                     ),
                         ]),# Div
 
                 html.Div(className="box",
                 children=[  html.P(children="Total Cases",),
-                            html.H5(id="country_stat_total_cases", #children=f"""{total_cases:,d}""",
+                            html.H5(id="country_stat_total_cases",
+                                        style = {'color':COLOR_MAP["Brown"]}
+                                    ),
+                            html.P(id="country_stat_new_cases",
                                         style = {'color':COLOR_MAP["Brown"]}
                                     ),
                         ]),# Div
 
                 html.Div(className="box",
                 children=[  html.P(children="Recovered",),
-                            html.H5(id="country_stat_recovered", #children=f"""{recovered_cases:,d}""",
+                            html.H5(id="country_stat_recovered",
+                                        style = {'color':COLOR_MAP["Green"]}
+                                    ),
+                            html.P(id="country_stat_new_recovered",
                                         style = {'color':COLOR_MAP["Green"]}
                                     ),
                         ]),# Div
                         
                 html.Div(className="box",
-                children=[  html.P(children="Deceased",),
-                            html.H5(id="country_stat_deceased", #children=f"""{death_cases:,d}""",
+                children=[  html.P(children="Deaths",),
+                            html.H5(id="country_stat_deceased",
                                 style = {'color':COLOR_MAP["Red"]}
-                        ),
+                                ),
+                            html.P(id="country_stat_new_deceased",
+                                style = {'color':COLOR_MAP["Red"]}
+                                ),
                         ]),# Div
 
                 html.Div(className="box",
-                children=[  html.P(children="Active",),
-                            html.H5(id="country_stat_active", #children=f"""{active_cases:,d}""",
-                                        style = {'color':COLOR_MAP["Orange"]})
-                        ]),# Div
-                    ]),
+                    children=[  html.P(children="Active",),
+                                html.H5(id="country_stat_active",
+                                            style = {'color':COLOR_MAP["Orange"]}
+                                            ),
+                                html.P(id="country_stat_new_active",
+                                style = {'color':COLOR_MAP["Orange"]}
+                                ),
+                            ]),# Div
+                            
+                    #]),# Div
                 ]),
+            ]),
         #### Country stat end
         
         html.Div([
@@ -612,11 +657,23 @@ def update_country_specific(selected_country, view_option):
     # Country statistics
     ###############
     country_stat_head = selected_country
-    country_stat_province_state = df_country["Province_State"].nunique()
-    country_stat_total_cases = f"""{df_country["Confirmed"].sum():,d}"""
+    country_stat_province_state = df_country["Province/State"].nunique()
+    country_stat_total_cases = f"""{df_country['Total Cases'].sum():,d}"""
     country_stat_recovered = f"""{df_country["Recovered"].sum():,d}"""
     country_stat_deceased = f"""{df_country["Deaths"].sum():,d}"""
     country_stat_active = f"""{df_country["Active"].sum():,d}"""
+
+
+    new_cases_num = df_country['New Cases'].sum()
+    new_recovered_num = df_country['New Recovered'].sum()
+    new_deaths_num = df_country['New Deaths'].sum()
+
+    country_new_cases = get_change_string(new_cases_num)
+    country_new_recovered = get_change_string(new_recovered_num)
+    country_new_deaths = get_change_string(new_deaths_num)
+
+    new_active_num = new_cases_num - new_recovered_num - new_deaths_num
+    country_new_active = get_change_string(new_active_num)
     
     ###############
     # Country datatable
@@ -625,7 +682,8 @@ def update_country_specific(selected_country, view_option):
     tabs_country_table_label = selected_country
 
     return (trend_graph, world_map, country_stat_head, country_stat_province_state,
-    country_stat_total_cases, country_stat_recovered, country_stat_deceased, country_stat_active, 
+    country_stat_total_cases, country_stat_recovered, country_stat_deceased, country_stat_active,
+    country_new_cases,  country_new_recovered, country_new_deaths, country_new_active,
     tab_country_table, tabs_country_table_label)
 
 
@@ -638,6 +696,10 @@ def update_country_specific(selected_country, view_option):
     Output('country_stat_recovered', 'children'),
     Output('country_stat_deceased', 'children'),
     Output('country_stat_active', 'children'),
+    Output('country_stat_new_cases', 'children'),
+    Output('country_stat_new_recovered', 'children'),
+    Output('country_stat_new_deceased', 'children'),
+    Output('country_stat_new_active', 'children'),
     Output('tab_country_table', 'children'),
     Output('tab_country_table', 'label'),
 

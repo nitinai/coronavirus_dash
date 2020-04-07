@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
 import shutil
-import model_sandbox
+import model
 
 cwd = os.path.dirname(os.path.realpath(__file__))
 
@@ -228,7 +228,7 @@ def replace_country_names(df, countryCol):
 def load_world_latest_data():
 
     print("load latest world data")
-    df_world = pd.read_csv(model_sandbox.get_latest_day_data_file())
+    df_world = pd.read_csv(model.get_latest_day_data_file())
 
     df_world["Province_State"].fillna("", inplace=True)
     #df_world["Country_Region"].replace({"Mainland China": "China","Taiwan*":"Taiwan", "Korea, South": "South Korea", "US":"United States"},inplace=True)
@@ -295,6 +295,7 @@ def process_data():
 
     df_world["Active"]= df_world["Confirmed"]-df_world["Recovered"]-df_world["Deaths"]
     df_world["Active"] = df_world["Active"].astype(int)
+    df_world["Active"].clip(lower=0, inplace=True)
 
 
     df_world["Death rate"] = df_world['Deaths']/df_world['Confirmed']
@@ -313,7 +314,14 @@ def process_data():
         if not df_world.at[i,'Province_State']:
             df_world.at[i,'Province_State'] = df_world.at[i,'Country_Region']
 
-    save(df_world, "world_latest")
+    COL_MAP = {'Province_State':'Province/State', "Country_Region":"Country/Region", 'Confirmed':'Total Cases'}
+    df_world.rename(columns=COL_MAP, inplace=True)
+
+    # All columns ['FIPS', 'Admin2', 'Province/State', 'Country/Region', 'Last_Update', 'Lat', 'Long_', 'Confirmed', 'Deaths', 'Recovered', 'Active','Combined_Key', 'Death rate', 'hover_name']
+    # Delete columns we are not using
+    df_world.drop(['FIPS', 'Admin2','Last_Update','Combined_Key'], axis=1, inplace=True)
+
+    
 
     ###############################
     # Time series data
@@ -333,10 +341,61 @@ def process_data():
     df_re = replace_country_names(df_re, "Country/Region")
     df_de = replace_country_names(df_de, "Country/Region")
 
+
+    ###############################
+    # Update df_world with Change information 
+    ###############################
+    grp_df_world = df_world.groupby(['Country/Region'])[['Total Cases', 'Recovered', 'Deaths']].sum()
+
+    grp_co = get_new_cases(df_co, "Total Cases", "New Cases")
+    check_data_discrepancy(grp_df_world, grp_co, "Total Cases")
+    
+    grp_re = get_new_cases(df_re, "Recovered", "New Recovered")
+    check_data_discrepancy(grp_df_world, grp_re, "Recovered")
+
+    grp_de = get_new_cases(df_de, "Deaths", "New Deaths")
+    check_data_discrepancy(grp_df_world, grp_de, "Deaths")
+
+    df_new = grp_co.join([grp_re, grp_de])
+
+    # As of now we are showing the change only for contry level 
+    # and not at province level, maybe will do later starting with India 
+    df_world["New Cases"] = 0
+    df_world["New Recovered"] = 0
+    df_world["New Deaths"] = 0
+    for country in df_new.index:
+        idx = df_world[df_world["Country/Region"] == country].index[0]
+        df_world.loc[idx, "New Cases"] = df_new.loc[country, "New Cases"]
+        df_world.loc[idx, "New Recovered"] = df_new.loc[country, "New Recovered"]
+        df_world.loc[idx, "New Deaths"] = df_new.loc[country, "New Deaths"]
+
+    df_world["New Cases"].clip(lower=0, inplace=True)
+    df_world["New Recovered"].clip(lower=0, inplace=True)
+    df_world["New Deaths"].clip(lower=0, inplace=True)
+        
+    ###############################
+    # save
+    ###############################
+    save(df_world, "world_latest")
     save(df_co, "confirmed_global")
     save(df_re, "recovered_global")
     save(df_de, "deaths_global")
 
+
+def check_data_discrepancy(df_w, grp, col):
+    simialr = (df_w[col] == grp[col])
+    if(simialr.sum() != len(df_w)):
+        print(f"*** Data discrepancy for {col}")
+        print(df_w[~simialr.values])
+        print(grp[~simialr.values])
+
+def get_new_cases(df, latest_col, diff_col):
+    COLS = df.columns
+    grp = df.groupby("Country/Region")[list(COLS[-2:])].sum()
+    grp[diff_col] = grp.diff(axis=1).iloc[:,-1].astype(int)
+    grp.rename(columns={COLS[-1]:latest_col}, inplace = True)
+    grp.drop(COLS[-2], axis=1, inplace=True)
+    return grp
 
 if __name__ == '__main__':
 

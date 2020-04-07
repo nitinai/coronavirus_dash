@@ -92,11 +92,11 @@ def load_all_day_data(TOP=20):
         DATA_PATH = f"{PATH}/{date}.csv"
         if(not os.path.exists(DATA_PATH)): continue
         df_world = pd.read_csv(DATA_PATH).fillna(0)
-        df_world['Active'] = df_world['Confirmed'] - df_world['Deaths'] - df_world['Recovered']
+        df_world['Active'] = df_world['Total Cases'] - df_world['Deaths'] - df_world['Recovered']
 
-        gActive = df_world.groupby(["Country_Region"])["Active"].sum().sort_values(ascending=True)[-TOP:]
-        gDeaths = df_world[df_world["Country_Region"].isin(gActive.index.values)].groupby(["Country_Region"])["Deaths"].sum()
-        gRecovered = df_world[df_world["Country_Region"].isin(gActive.index.values)].groupby(["Country_Region"])["Recovered"].sum()
+        gActive = df_world.groupby(["Country/Region"])["Active"].sum().sort_values(ascending=True)[-TOP:]
+        gDeaths = df_world[df_world["Country/Region"].isin(gActive.index.values)].groupby(["Country/Region"])["Deaths"].sum()
+        gRecovered = df_world[df_world["Country/Region"].isin(gActive.index.values)].groupby(["Country/Region"])["Recovered"].sum()
 
         deaths = gDeaths.reset_index(name='Count')
         recovered = gRecovered.reset_index(name='Count')
@@ -119,7 +119,7 @@ def load_all_day_data(TOP=20):
 
     df_all = pd.concat(dfs, sort=False)
     df_all.dropna(inplace=True)
-    df_all["Country_Region"].replace({"Mainland China": "China","Korea, South": "South Korea"},inplace=True)
+    df_all["Country/Region"].replace({"Mainland China": "China","Korea, South": "South Korea"},inplace=True)
     df_all['Count'] = df_all['Count'].astype(int)
     df_all['hover'] = ""
 
@@ -127,7 +127,7 @@ def load_all_day_data(TOP=20):
 
     for i in range(len(df_all)):
         if df_all.at[i, 'Type'] == 'Active':
-            df_all.at[i,'hover'] = df_all.at[i,'Country_Region'] + ", " + str(df_all.at[i,'Count'])
+            df_all.at[i,'hover'] = df_all.at[i,'Country/Region'] + ", " + str(df_all.at[i,'Count'])
         else:
             df_all.at[i,'hover'] = str(df_all.at[i,'Count'])
     
@@ -149,7 +149,7 @@ def all_day_bar_plot(df_all, speed=500, plain_bg=True):
     
     count = df_all["Country"].nunique()
     fig = px.bar(df_all, x="Count", y="Country", color="Type",
-                  #animation_frame="date", animation_group="Country_Region",
+                  #animation_frame="date", animation_group="Country/Region",
                   text='hover',
                   orientation='h',
                   #height=30*count, 
@@ -182,12 +182,12 @@ def load_latest_data():
     print("load_latest_data")
     df_world = pd.read_csv(get_latest_day_data_file())
 
-    df_world["Province_State"].fillna("", inplace=True)
-    df_world["Country_Region"].replace({"Mainland China": "China","Korea, South": "South Korea"},inplace=True)
-    df_world["Province_State"] = df_world["Province_State"].map(lambda x : x+", " if x else x)
-    df_world["hover_name"] = df_world["Province_State"] + df_world["Country_Region"]
-    df_world.drop(df_world[df_world["Confirmed"]==0].index,inplace=True)
-    df_world["Active"]= df_world["Confirmed"]-df_world["Recovered"]-df_world["Deaths"]
+    df_world["Province/State"].fillna("", inplace=True)
+    df_world["Country/Region"].replace({"Mainland China": "China","Korea, South": "South Korea"},inplace=True)
+    df_world["Province/State"] = df_world["Province/State"].map(lambda x : x+", " if x else x)
+    df_world["hover_name"] = df_world["Province/State"] + df_world["Country/Region"]
+    df_world.drop(df_world[df_world["Total Cases"]==0].index,inplace=True)
+    df_world["Active"]= df_world["Total Cases"]-df_world["Recovered"]-df_world["Deaths"]
 
     cols = list(df_world.columns)
     cols[1] = "Country"
@@ -201,10 +201,10 @@ def graph_scatter_mapbox_India(df_India):
     zoom=4
     """
     fig = px.scatter_mapbox(df_India, lat="Lat", lon= "Long_",
-                    size="Confirmed",
+                    size="Total Cases",
                     hover_name="hover_name",
-                    hover_data=["Confirmed","Deaths","Recovered", "Active"],
-                    #labels={"Confirmed":"Confirmed","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
+                    hover_data=["Total Cases","Deaths","Recovered", "Active"],
+                    #labels={"Total Cases":"Total Cases","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
                     color_discrete_sequence=["red"],
                     #center={'lat':20.5937,'lon':78.9629}, # India
                     center={'lat':23,'lon':81},
@@ -229,23 +229,23 @@ def graph_scatter_mapbox_India(df_India):
                     marker=go.scattermapbox.Marker(
                         color=[COLOR_MAP["Red"] if (a > 0 or d == c) else COLOR_MAP["Green"] for a, d, c in zip(df_India["Active"],
                                                                                                     df_India['Deaths'],
-                                                                                                    df_India['Confirmed'])],
+                                                                                                    df_India['Total Cases'])],
 
-                        size=[i**(1/3) for i in df_India['Confirmed']],
+                        size=[i**(1/3) for i in df_India['Total Cases']],
                         sizemin=1,
                         sizemode='area',
                         sizeref=2.*max([math.sqrt(i)
-                                        for i in df_India['Confirmed']])/(100.**2),
+                                        for i in df_India['Total Cases']])/(100.**2),
                     ),
 
                     text=df_India["hover_name"],
-                    hovertext=['Confirmed: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_India['Confirmed'],
+                    hovertext=['Total Cases: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_India['Total Cases'],
                                                                                                                                                         df_India['Recovered'],
                                                                                                                                                         df_India['Deaths'],
                                                                                                                                                         df_India["Active"],
                                                                                                                                                         df_India['Death rate'])],
                     hoverlabel = dict(
-                        bgcolor =[f"{COLOR_MAP['White']}" for i in df_India['Confirmed']],
+                        bgcolor =[f"{COLOR_MAP['White']}" for i in df_India['Total Cases']],
                         ),
                     
                     hovertemplate="<b>%{text}</b><br><br>" +
@@ -286,10 +286,10 @@ def graph_scatter_mapbox(df_world):
     
     """
     fig = px.scatter_mapbox(df_world, lat="Lat", lon= "Long_",
-                        size="Confirmed",
+                        size="Total Cases",
                         hover_name="hover_name",
-                        hover_data=["Confirmed","Deaths","Recovered", "Active"],
-                        #labels={"Confirmed":"Confirmed","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
+                        hover_data=["Total Cases","Deaths","Recovered", "Active"],
+                        #labels={"Total Cases":"Total Cases","Deaths":"Deaths","Recovered":"Recovered", "Existing":"Existing"},
                         color_discrete_sequence=["red"],
                         center={'lat':34,'lon':38},
                         #mapbox_style='dark',
@@ -309,22 +309,22 @@ def graph_scatter_mapbox(df_world):
     marker=go.scattermapbox.Marker(
         color=[COLOR_MAP["Red"] if (a > 0 or d == c) else COLOR_MAP["Green"] for a, d, c in zip(df_world["Active"],
                                                                                     df_world['Deaths'],
-                                                                                    df_world['Confirmed'])],
+                                                                                    df_world['Total Cases'])],
 
-        size=[i**(1/3) for i in df_world['Confirmed']],
+        size=[i**(1/3) for i in df_world['Total Cases']],
         sizemin=1,
         sizemode='area',
         sizeref=2.*max([math.sqrt(i)
-                        for i in df_world['Confirmed']])/(100.**2),
+                        for i in df_world['Total Cases']])/(100.**2),
     ),
     text=df_world["hover_name"],
-    hovertext=['Confirmed: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_world['Confirmed'],
+    hovertext=['Total Cases: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_world['Total Cases'],
                                                                                                                                         df_world['Recovered'],
                                                                                                                                         df_world['Deaths'],
                                                                                                                                         df_world["Active"],
                                                                                                                                         df_world['Death rate'])],
     hoverlabel = dict(
-        bgcolor =[f"{COLOR_MAP['White']}" for i in df_world['Confirmed']],
+        bgcolor =[f"{COLOR_MAP['White']}" for i in df_world['Total Cases']],
         ),
     
     hovertemplate="<b>%{text}</b><br><br>" +
@@ -522,9 +522,9 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
 # Combined relative subplot for multiple countries
 def relative_trend_graphs(df_co_inp, df_re_inp, df_de_inp, df_world, TOP=5):
     
-    gActive = df_world.groupby(["Country_Region"])["Active"].sum().sort_values(ascending=False)#[-TOP:]
+    gActive = df_world.groupby(["Country/Region"])["Active"].sum().sort_values(ascending=False)#[-TOP:]
     active = gActive.reset_index(name='Count') 
-    countries = ["China"]+list(active.Country_Region[:TOP-1].values)
+    countries = ["China"]+list(active.Country/Region[:TOP-1].values)
 
     df_ac = df_co_inp.copy(deep=True)
 
@@ -576,7 +576,7 @@ def relative_trend_graphs(df_co_inp, df_re_inp, df_de_inp, df_world, TOP=5):
 def load_time_series_data():
     """
     These files were deprecated from 24 Mar 2020
-    time_series_19-covid-Confirmed.csv
+    time_series_19-covid-Total Cases.csv
     time_series_19-covid-Deaths.csv
     time_series_19-covid-Recovered.csv
     """
@@ -593,13 +593,13 @@ def load_time_series_data():
 def load_India_latest_data():
     df_India = pd.read_csv(get_latest_file_name_India()).fillna(0)
 
-    #df_India['Confirmed'] = df_India ["Total Confirmed cases (Indian National)"] + df_India["Total Confirmed cases ( Foreign National )"]
-    df_India['Confirmed'] = df_India ['Total Confirmed cases *']
+    #df_India['Total Cases'] = df_India ["Total Total Cases cases (Indian National)"] + df_India["Total Total Cases cases ( Foreign National )"]
+    df_India['Total Cases'] = df_India ['Total Total Cases cases *']
     df_India["Recovered"] = df_India["Cured/Discharged/Migrated"]
     df_India["State/UT"] = df_India["Name of State / UT"]
     df_India['Deaths'] = df_India['Death']
 
-    df_India['Active'] = df_India['Confirmed'] - df_India['Deaths'] - df_India['Recovered']
+    df_India['Active'] = df_India['Total Cases'] - df_India['Deaths'] - df_India['Recovered']
 
     gActive = df_India.groupby(["State/UT"])["Active"].sum().sort_values(ascending=True)#[-TOP:]
     gDeaths = df_India[df_India["State/UT"].isin(gActive.index.values)].groupby(["State/UT"])["Deaths"].sum()
@@ -678,16 +678,16 @@ def load_India_latest_data_mapbox():
 
     df_India = pd.read_csv(get_latest_file_name_India()).fillna(0)
     
-    #df_India['Confirmed'] = df_India ["Total Confirmed cases (Indian National)"] + df_India["Total Confirmed cases ( Foreign National )"]
-    df_India['Confirmed'] = df_India ['Total Confirmed cases *']
+    #df_India['Total Cases'] = df_India ["Total Total Cases cases (Indian National)"] + df_India["Total Total Cases cases ( Foreign National )"]
+    df_India['Total Cases'] = df_India ['Total Total Cases cases *']
     df_India["Recovered"] = df_India["Cured/Discharged/Migrated"].astype(int)
     df_India["State/UT"] = df_India["Name of State / UT"]
     df_India['Deaths'] = df_India['Death'].astype(int)
     df_India['hover_name'] = df_India['State/UT']
 
-    df_India['Active'] = df_India['Confirmed'] - df_India['Deaths'] - df_India['Recovered']
+    df_India['Active'] = df_India['Total Cases'] - df_India['Deaths'] - df_India['Recovered']
 
-    df_India['Confirmed'] = df_India['Confirmed'].astype(int)
+    df_India['Total Cases'] = df_India['Total Cases'].astype(int)
     df_India['Active'] = df_India['Active'].astype(int)
 
     return df_India
