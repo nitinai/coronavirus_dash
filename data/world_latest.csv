@@ -2684,7 +2684,7 @@ Estonia,Estonia,58.5953,25.0136,1108,19,62,1027,0.017148014440433214,Estonia,11,
 Eswatini,Eswatini,-26.5225,31.4659,10,0,4,6,0.0,Eswatini,1,4,0
 Ethiopia,Ethiopia,9.145,40.4897,44,2,4,38,0.045454545454545456,Ethiopia,1,0,0
 Fiji,Fiji,-17.7134,178.065,14,0,0,14,0.0,Fiji,2,0,0
-Finland,Finland,61.92411,25.748151,2176,27,300,1849,0.012408088235294117,Finland,249,0,-1
+Finland,Finland,61.92411,25.748151,2176,27,300,1849,0.012408088235294117,Finland,249,0,0
 France,France,46.2276,2.2137,98010,8911,17250,71849,0.09091929394959698,France,0,0,0
 Gabon,Gabon,-0.8037,11.6094,24,1,1,22,0.041666666666666664,Gabon,3,0,0
 Gambia,Gambia,13.4432,-15.3101,4,1,2,1,0.25,Gambia,0,0,0
@@ -2697,7 +2697,7 @@ Guatemala,Guatemala,15.7835,-90.2308,70,3,15,52,0.04285714285714286,Guatemala,9,
 Guinea,Guinea,9.9456,-9.6966,128,0,5,123,0.0,Guinea,7,0,0
 Guinea-Bissau,Guinea-Bissau,11.8037,-15.1804,18,0,0,18,0.0,Guinea-Bissau,0,0,0
 Guyana,Guyana,4.860416000000002,-58.93018000000001,31,4,8,19,0.12903225806451613,Guyana,7,8,0
-Haiti,Haiti,18.9712,-72.2852,24,1,0,23,0.041666666666666664,Haiti,3,-1,0
+Haiti,Haiti,18.9712,-72.2852,24,1,0,23,0.041666666666666664,Haiti,3,0,0
 Holy See,Holy See,41.9029,12.4534,7,0,0,7,0.0,Holy See,0,0,0
 Honduras,Honduras,15.2,-86.2419,298,22,6,270,0.0738255033557047,Honduras,30,0,0
 Hungary,Hungary,47.1625,19.5033,744,38,67,639,0.051075268817204304,Hungary,11,1,4
@@ -2774,7 +2774,7 @@ Serbia,Serbia,44.0165,21.0059,2200,58,0,2142,0.026363636363636363,Serbia,292,0,7
 Seychelles,Seychelles,-4.6796,55.492,11,0,0,11,0.0,Seychelles,1,0,0
 Sierra Leone,Sierra Leone,8.460555000000001,-11.779889,6,0,0,6,0.0,Sierra Leone,0,0,0
 Singapore,Singapore,1.2833,103.8333,1375,6,344,1025,0.004363636363636364,Singapore,66,24,0
-Slovakia,Slovakia,48.669,19.699,534,2,8,524,0.003745318352059925,Slovakia,49,-2,1
+Slovakia,Slovakia,48.669,19.699,534,2,8,524,0.003745318352059925,Slovakia,49,0,1
 Slovenia,Slovenia,46.1512,14.9955,1021,30,102,889,0.029382957884427033,Slovenia,24,23,2
 Somalia,Somalia,5.152149,46.199616,7,0,1,6,0.0,Somalia,0,0,0
 South Africa,South Africa,-30.5595,22.9375,1686,12,95,1579,0.0071174377224199285,South Africa,31,0,1
@@ -2802,38 +2802,38 @@ Uruguay,Uruguay,-32.5228,-55.7658,406,6,104,296,0.014778325123152709,Uruguay,6,1
 Uzbekistan,Uzbekistan,41.377491,64.585262,457,2,30,425,0.00437636761487965,Uzbekistan,115,0,0
 Venezuela,Venezuela,6.4238,-66.5897,165,7,65,93,0.04242424242424243,Venezuela,6,13,0
 Vietnam,Vietnam,14.058324,108.277199,245,0,95,150,0.0,Vietnam,4,5,0
-West Bank and Gaza,West Bank and Gaza,31.9522,35.2332,254,1,24,229,0.003937007874015748,West Bank and Gaza,17,-1,0
+West Bank and Gaza,West Bank and Gaza,31.9522,35.2332,254,1,24,229,0.003937007874015748,West Bank and Gaza,17,0,0
 Western Sahara,Western Sahara,24.2155,-12.8858,4,0,0,4,0.0,Western Sahara,0,0,0
 Zambia,Zambia,-13.133897,27.849332,39,1,5,33,0.02564102564102564,Zambia,0,2,0
 Zimbabwe,Zimbabwe,-19.015438,29.154857,10,1,0,9,0.1,Zimbabwe,1,0,0
 Wyoming,United States,,,0,0,0,0,,"Wyoming, United States",0,0,0
-Andhra Pradesh,India,15.9129,79.74,266,3,1,262,0.011278195488721804,"Andhra Pradesh, India",833,97,15
+Andhra Pradesh,India,15.9129,79.74,266,3,1,262,0.011278195488721804,"Andhra Pradesh, India",1201,124,25
 Andaman and Nicobar Islands,India,11.7401,92.6586,10,0,0,10,0.0,"Andaman and Nicobar Islands, India",0,0,0
 Arunachal Pradesh,India,28.218000000000004,94.7278,1,0,0,1,0.0,"Arunachal Pradesh, India",0,0,0
 Assam,India,26.2006,92.9376,26,0,0,26,0.0,"Assam, India",0,0,0
 Bihar,India,25.0961,85.3131,32,1,0,31,0.03125,"Bihar, India",0,0,0
-Chandigarh,India,30.7333,76.7794,18,0,0,18,0.0,"Chandigarh, India",0,0,0
-Chhattisgarh,India,21.2787,81.8661,10,0,8,2,0.0,"Chhattisgarh, India",0,0,0
-Delhi,India,28.7041,77.1025,523,7,19,497,0.01338432122370937,"Delhi, India",0,0,0
+Chandigarh,India,30.7333,76.7794,18,0,7,11,0.0,"Chandigarh, India",0,0,0
+Chhattisgarh,India,21.2787,81.8661,10,0,9,1,0.0,"Chhattisgarh, India",0,0,0
+Delhi,India,28.7041,77.1025,576,7,21,548,0.012152777777777778,"Delhi, India",0,0,0
 Goa,India,15.2993,74.124,7,0,0,7,0.0,"Goa, India",0,0,0
-Gujarat,India,22.2587,71.1924,144,12,22,110,0.08333333333333333,"Gujarat, India",0,0,0
+Gujarat,India,22.2587,71.1924,165,13,25,127,0.07878787878787878,"Gujarat, India",0,0,0
 Haryana,India,29.0588,76.0856,90,1,25,64,0.011111111111111112,"Haryana, India",0,0,0
 Himachal Pradesh,India,31.1048,77.1734,13,1,2,10,0.07692307692307693,"Himachal Pradesh, India",0,0,0
-Jammu and Kashmir,India,33.7782,76.5762,109,2,4,103,0.01834862385321101,"Jammu and Kashmir, India",0,0,0
+Jammu and Kashmir,India,33.7782,76.5762,116,2,4,110,0.017241379310344827,"Jammu and Kashmir, India",0,0,0
 Jharkhand,India,23.6102,85.2799,4,0,0,4,0.0,"Jharkhand, India",0,0,0
-Karnataka,India,15.3173,75.7139,151,4,12,135,0.026490066225165563,"Karnataka, India",0,0,0
+Karnataka,India,15.3173,75.7139,175,4,25,146,0.022857142857142857,"Karnataka, India",0,0,0
 Kerala,India,10.8505,76.2711,327,2,58,267,0.0061162079510703364,"Kerala, India",0,0,0
 Ladakh,India,34.2996,78.2932,14,0,10,4,0.0,"Ladakh, India",0,0,0
-Madhya Pradesh,India,22.9734,78.6569,165,9,0,156,0.05454545454545454,"Madhya Pradesh, India",0,0,0
-Maharashtra,India,19.7515,75.7139,748,45,56,647,0.06016042780748663,"Maharashtra, India",0,0,0
+Madhya Pradesh,India,22.9734,78.6569,229,13,0,216,0.056768558951965066,"Madhya Pradesh, India",0,0,0
+Maharashtra,India,19.7515,75.7139,868,48,56,764,0.055299539170506916,"Maharashtra, India",0,0,0
 Manipur,India,24.6637,93.9063,2,0,0,2,0.0,"Manipur, India",0,0,0
 Mizoram,India,23.1645,92.9376,1,0,0,1,0.0,"Mizoram, India",0,0,0
-Odisha,India,20.9517,85.0985,21,0,2,19,0.0,"Odisha, India",0,0,0
+Odisha,India,20.9517,85.0985,42,1,2,39,0.023809523809523808,"Odisha, India",0,0,0
 Puducherry,India,11.9416,79.8083,5,0,1,4,0.0,"Puducherry, India",0,0,0
-Punjab,India,31.1471,75.3412,76,6,4,66,0.07894736842105263,"Punjab, India",0,0,0
+Punjab,India,31.1471,75.3412,91,7,4,80,0.07692307692307693,"Punjab, India",0,0,0
 Rajasthan,India,27.0238,74.2179,288,3,21,264,0.010416666666666666,"Rajasthan, India",0,0,0
 Tamil Nadu,India,11.1271,78.6569,621,5,8,608,0.008051529790660225,"Tamil Nadu, India",0,0,0
-Telengana,India,18.1124,79.0193,321,7,34,280,0.021806853582554516,"Telengana, India",0,0,0
+Telengana,India,18.1124,79.0193,364,7,35,322,0.019230769230769232,"Telengana, India",0,0,0
 Tripura,India,23.9408,91.9882,1,0,0,1,0.0,"Tripura, India",0,0,0
 Uttarakhand,India,30.0668,79.0193,31,0,5,26,0.0,"Uttarakhand, India",0,0,0
 Uttar Pradesh,India,26.8467,80.9462,305,3,21,281,0.009836065573770493,"Uttar Pradesh, India",0,0,0
