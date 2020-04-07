@@ -6,12 +6,15 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-import dash_table
+from dash_table import DataTable
 import dash_table.FormatTemplate as FormatTemplate
 
 import plotly.graph_objects as go
-import model
+from model import graph_scatter_mapbox, load_time_series_data, relative_trend_graph_china_vs_world, get_country_trend
 import datetime as dt
+from joblib import Memory
+
+memory = Memory("./cache/", verbose=0)
 
 MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
 
@@ -36,7 +39,6 @@ def get_num_countries(df):
 #num = 10000000
 #print(f"{num:,d}")
 
-
 def get_total_count(df):
     total_cases = df["Confirmed"].sum()
     return f"""{total_cases:,d}"""
@@ -55,16 +57,15 @@ def get_death_count(df):
 
 ##########################################################################
 
-#df_world = model.load_latest_data()
 PATH = "./data"
 df_world = pd.read_csv(f"{PATH}/world_latest.csv")
-world_map = model.graph_scatter_mapbox(df_world)
 
-df_co, df_re, df_de = model.load_time_series_data()
+world_map = graph_scatter_mapbox(df_world)
 
-trend_graph_china_vs_world = model.relative_trend_graph_china_vs_world(df_co, df_re, df_de)
+df_co, df_re, df_de = load_time_series_data()
 
-#df_co[df_co["Country/Region"]=="US"].iloc[:,-1].sum()
+trend_graph_china_vs_world = relative_trend_graph_china_vs_world(df_co, df_re, df_de)
+
 
 all_countries = sorted(list(df_world["Country_Region"].unique()))
 num_countries = len(all_countries) 
@@ -82,7 +83,8 @@ active_cases = total_cases - recovered_cases - death_cases
 # THINK: Read all other stats data from timeline (Ideally,
 # this is also possible offline )
 
-def create_country_df(df_world, country):
+@memory.cache
+def create_country_df(country):
     df = df_world[df_world["Country_Region"] == country]
     loc = df.groupby('Country_Region')[['Lat', 'Long_']].mean()
     df = df.groupby('Province_State')[['Confirmed', 'Recovered', 'Active', 'Deaths']].sum()
@@ -91,6 +93,7 @@ def create_country_df(df_world, country):
     df = df.sort_values(by=['Active', 'Confirmed'], ascending=False)
     return df, loc
 
+@memory.cache
 def create_datatable_country(df, id="create_datatable_country"):
     
     COLS =          ['Province_State', 'Confirmed', 'Active', 'Recovered', 'Deaths', 'Death rate']
@@ -103,7 +106,7 @@ def create_datatable_country(df, id="create_datatable_country"):
     COL_MAP = {'Province_State':'Province/State', 'Confirmed':'Total Cases', 'Deaths':'Deceased'}
     df.rename(columns=COL_MAP, inplace=True)
 
-    return dash_table.DataTable(#id=id,
+    return DataTable(#id=id,
                     
                     # Don't show coordinates
                     columns=[{"name": i, "id": i, "type": "numeric","format": FormatTemplate.percentage(2)}
@@ -163,7 +166,7 @@ def create_datatable_world(id):
     COLS =          ['Country_Region', 'Confirmed', 'Active', 'Recovered', 'Deaths', 'Death rate']
     PRESENT_COLS = ['Country/Region', 'Total Cases', 'Active', 'Recovered', 'Deceased', 'Death rate']
 
-    return dash_table.DataTable(id=id,
+    return DataTable(id=id,
                     
                     # Don't show coordinates
                     columns=[{"name": i, "id": i, "type": "numeric","format": FormatTemplate.percentage(2)}
@@ -549,68 +552,21 @@ app.layout = html.Div([
 ])
 
 
-@app.callback(
-    [Output('trend_graph', 'figure'),
-    Output('world_map', 'figure'),
-    Output('country_stat_head', 'children'),
-    Output('country_stat_province_state', 'children'),
-    Output('country_stat_total_cases', 'children'),
-    Output('country_stat_recovered', 'children'),
-    Output('country_stat_deceased', 'children'),
-    Output('country_stat_active', 'children'),
-    #Output('country_table_label', 'children'),
-    Output('tab_country_table', 'children'),
-    #Output('tabs_country_table', 'value'),
-    Output('tab_country_table', 'label'),
-    #Output('tab_country_table', 'value'),
-
-    ],
-    [Input('countries_dropdown', 'value'),
-    Input('view_radio_option', 'value'),
-    #Input('tabs_world_table', 'value'),
-    #Input("world_countries_table", "derived_virtual_selected_rows"),
-    #Input("world_countries_table", "selected_row_ids"),
-    
-    ]
-    )
-def update_country_trend(selected_country, view_option 
-    #tabs_world_table_value, derived_virtual_selected_rows, selected_row_ids
-    ):
-    
-    print("Dropdown Selected country : ",selected_country)
-    print("view_option : ",view_option)
-    
-    #if tabs_world_table_value == 'The World':
-    #  if derived_virtual_selected_rows is None:
-    #    derived_virtual_selected_rows = []
-#
-    #    latitude=26
-    #    longitude=17
-    #    zoom=1
-#
-    #if len(derived_virtual_selected_rows) == 0:
-    #    print("World table derived_virtual_selected_rows is empty: ")
-    #    print("selected_row_ids : ",selected_row_ids)
-#
-    #else:
-    #    print("World table derived_virtual_selected_rows : ",derived_virtual_selected_rows)
-    #    print("selected_row_ids : ",selected_row_ids)
-    #    #CN = df_world_table["Country/Region"][selected_row_ids[0]]
-    #    #print("World table Selected country : ", CN)
-
-    df_country, country_loc = create_country_df(df_world, selected_country)
+# to make use of joblib memory decorator
+@memory.cache
+def update_country_specific(selected_country, view_option):
+    df_country, country_loc = create_country_df(selected_country)
     
     ###############
     #trend_graph
     ###############
-    trend_graph = model.get_country_trend(df_co, df_re, df_de, selected_country)
-
+    trend_graph = get_country_trend(df_co, df_re, df_de, selected_country)
+    
     ###############
     # update center of world_map
     ###############
     
     if view_option == "World_view":
-        
         latitude=14
         longitude=8
         zoom=1
@@ -665,19 +621,38 @@ def update_country_trend(selected_country, view_option
     ###############
     # Country datatable
     ###############
-    #country_table_label = selected_country
     tab_country_table = create_datatable_country(df_country)
-    #tabs_country_table_value = selected_country
     tabs_country_table_label = selected_country
-    #tab_country_table_value = selected_country
 
     return (trend_graph, world_map, country_stat_head, country_stat_province_state,
     country_stat_total_cases, country_stat_recovered, country_stat_deceased, country_stat_active, 
-    #country_table_label, 
-    tab_country_table, #tabs_country_table_value, 
-    tabs_country_table_label, 
-    #tab_country_table_value
+    tab_country_table, tabs_country_table_label)
+
+
+@app.callback(
+    [Output('trend_graph', 'figure'),
+    Output('world_map', 'figure'),
+    Output('country_stat_head', 'children'),
+    Output('country_stat_province_state', 'children'),
+    Output('country_stat_total_cases', 'children'),
+    Output('country_stat_recovered', 'children'),
+    Output('country_stat_deceased', 'children'),
+    Output('country_stat_active', 'children'),
+    Output('tab_country_table', 'children'),
+    Output('tab_country_table', 'label'),
+
+    ],
+    [Input('countries_dropdown', 'value'),
+    Input('view_radio_option', 'value'),
+    
+    ]
     )
+def update_country_trend(selected_country, view_option):
+    
+    print("Dropdown Selected country : ",selected_country)
+    print("view_option : ",view_option)
+    
+    return update_country_specific(selected_country, view_option)
 
 
 if __name__ == '__main__':

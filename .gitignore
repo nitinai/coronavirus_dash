@@ -6,3 +6,4 @@ data_sources/*/*
 data_sources/*
 archieve/*
 nb/*
+cache/*
