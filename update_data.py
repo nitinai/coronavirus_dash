@@ -59,7 +59,8 @@ def clean_data(df):
         "Andaman and Nicobar Islands":11.7401,
         "Assam": 26.2006,
         "Jharkhand":23.6102,
-        "Arunachal Pradesh":28.2180}
+        "Arunachal Pradesh":28.2180,
+        "Tripura":23.9408}
 
     long = {'Delhi':77.1025,
             'Haryana':76.0856,
@@ -90,7 +91,8 @@ def clean_data(df):
         "Andaman and Nicobar Islands":92.6586,
         "Assam": 92.9376,
         "Jharkhand":85.2799,
-        "Arunachal Pradesh":94.7278}
+        "Arunachal Pradesh":94.7278,
+        "Tripura":91.9882}
 
     df['Lat'] = df['Province_State'].map(lat)
     df['Long_'] = df['Province_State'].map(long)

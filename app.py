@@ -299,7 +299,7 @@ app.layout = html.Div([
                     html.A(html.Img(src=app.get_asset_url('cmrfmahacovid19.png')),
                             href='https://cmrf.maharashtra.gov.in/CMRFCitizen/index.action', target='_blank'),
                     html.P([
-                            html.Span("HELP Government to fight against Coronavirus, STAY Home Stay Safe, DONATE to Chief Ministers Relief Fund, PM CARES 👉"),
+                            html.Span("HELP Government to fight against Coronavirus, STAY Home Stay Safe, DONATE to Chief Minister's Relief Fund, PM CARES"),
                     ]),
 
             ], className="help_column"),
