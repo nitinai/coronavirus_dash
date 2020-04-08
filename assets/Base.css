@@ -519,6 +519,21 @@ div, svg {
   font-weight: bold;
 }
 
+.increse_arw {
+  display: inline-block;
+  border-bottom: 10px solid #c00;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+}
+
+.decrese_arw{
+  display:inline-block;
+  /*vertical-align:middle;*/
+  border-top:10px solid #070;
+  border-left:6px solid transparent;
+  border-right:6px solid transparent
+}
+
 .location{
   font-weight: normal;
   box-shadow: 0.05em 0.05em 0em 0em gray !important;

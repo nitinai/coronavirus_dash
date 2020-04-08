@@ -28,6 +28,14 @@ COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
             "Orange": "rgb(255, 115, 0)",
             "White": "rgb(255, 255, 255)"}
 
+TYPE_TO_COLOR={
+    "Total":"Brown",
+    "Recovered":"Green",
+    "Deaths":"Red",
+    "Active":"Orange",
+    "Default":"Red"
+}
+
 def last_update():
     with open("./data/LastUpdate.txt", "r") as f:
         update_date = f.read()
@@ -76,21 +84,28 @@ recovered_cases = df_re.iloc[:,-1].sum()
 death_cases = df_de.iloc[:,-1].sum()
 active_cases = total_cases - recovered_cases - death_cases
 
-def get_change_string(num):
-    sign = "+" if num > 0 else ""
-    change = f"""{sign}{num:,d}"""
-    return change
+def get_change_string(current, change, type="Default"):
+    sign = "increse_arw" if change > 0 else "decrese_arw" if change < 0 else ""
+    change_string = f""" {change:,d} """
+    percent = f"({round((change / (current-change))*100, 2)}%)"
+
+    color = COLOR_MAP[TYPE_TO_COLOR[type]]
+    if type == "Active" and sign == "decrese_arw":
+        color = COLOR_MAP["Green"] 
+
+    return [html.Span(className=sign, style={"border-bottom-color":color}), 
+            html.Strong(change_string),percent]
 
 new_cases_num = df_world['New Cases'].sum()
 new_recovered_num = df_world['New Recovered'].sum()
 new_deaths_num = df_world['New Deaths'].sum()
 
-new_cases = get_change_string(new_cases_num)
-new_recovered = get_change_string(new_recovered_num)
-new_deaths = get_change_string(new_deaths_num)
+new_cases = get_change_string(total_cases, new_cases_num)
+new_recovered = get_change_string(recovered_cases, new_recovered_num, "Recovered")
+new_deaths = get_change_string(death_cases, new_deaths_num)
 
 new_active_num = new_cases_num - new_recovered_num - new_deaths_num
-new_active = get_change_string(new_active_num)
+new_active = get_change_string(active_cases, new_active_num, "Active")
 
 # Offline: Ideally read the India data and infuse it in all timelines and df_world
 
@@ -659,22 +674,27 @@ def update_country_specific(selected_country, view_option):
     ###############
     country_stat_head = selected_country
     country_stat_province_state = df_country["Province/State"].nunique()
-    country_stat_total_cases = f"""{df_country['Total Cases'].sum():,d}"""
-    country_stat_recovered = f"""{df_country["Recovered"].sum():,d}"""
-    country_stat_deceased = f"""{df_country["Deaths"].sum():,d}"""
-    country_stat_active = f"""{df_country["Active"].sum():,d}"""
 
+    total_cases = df_country['Total Cases'].sum()
+    recovered = df_country["Recovered"].sum()
+    deceased = df_country["Deaths"].sum()
+    active_cases = df_country["Active"].sum()
+
+    country_stat_total_cases = f"""{total_cases:,d}"""
+    country_stat_recovered = f"""{recovered:,d}"""
+    country_stat_deceased = f"""{deceased:,d}"""
+    country_stat_active = f"""{active_cases:,d}"""
 
     new_cases_num = df_country['New Cases'].sum()
     new_recovered_num = df_country['New Recovered'].sum()
     new_deaths_num = df_country['New Deaths'].sum()
 
-    country_new_cases = get_change_string(new_cases_num)
-    country_new_recovered = get_change_string(new_recovered_num)
-    country_new_deaths = get_change_string(new_deaths_num)
+    country_new_cases = get_change_string(total_cases, new_cases_num)
+    country_new_recovered = get_change_string(recovered, new_recovered_num, "Recovered")
+    country_new_deaths = get_change_string(deceased, new_deaths_num)
 
     new_active_num = new_cases_num - new_recovered_num - new_deaths_num
-    country_new_active = get_change_string(new_active_num)
+    country_new_active = get_change_string(active_cases, new_active_num, "Active")
     
     ###############
     # Country datatable
