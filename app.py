@@ -89,9 +89,11 @@ def get_change_string(current, change, type="Default"):
     change_string = f""" {change:,d} """
     percent = f"({round((change / (current-change))*100, 2)}%)"
 
-    color = COLOR_MAP[TYPE_TO_COLOR[type]]
-    if type == "Active" and sign == "decrese_arw":
-        color = COLOR_MAP["Green"] 
+    #color = COLOR_MAP[TYPE_TO_COLOR[type]]
+    if sign == "decrese_arw" or type == "Recovered":
+        color = COLOR_MAP["Green"]
+    else:
+        color = COLOR_MAP["Red"]
 
     return [html.Span(className=sign, style={"border-bottom-color":color}), 
             html.Strong(change_string),percent]
