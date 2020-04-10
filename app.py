@@ -334,7 +334,7 @@ app.layout = html.Div([
         
             html.Div([
                     html.A(html.Img(src=app.get_asset_url('PMcares.png')),
-                            href='https://www.pmindia.gov.in/hi/', target='_blank'),
+                            href='https://www.pmindia.gov.in/en/', target='_blank'),
                     html.A(html.Img(src=app.get_asset_url('cmrfmahacovid19.png')),
                             href='https://cmrf.maharashtra.gov.in/CMRFCitizen/index.action', target='_blank'),
                     html.P([
