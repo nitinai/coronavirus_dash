@@ -321,21 +321,39 @@ def process_data():
     # Delete columns we are not using
     df_world.drop(['FIPS', 'Admin2','Last_Update','Combined_Key'], axis=1, inplace=True)
 
-    
-
     ###############################
     # Time series data
     ###############################
     df_co, df_re, df_de = load_time_series_data()
+    
+    conf_val = df_India["Confirmed"].sum()
+    rec_val = df_India["Recovered"].sum()
+    death_val = df_India["Deaths"].sum()
 
-    idx = df_co[df_co["Country/Region"]=="India"].index[0]
-    df_co.iloc[idx,-1] = df_India["Confirmed"].sum()
+    cidx = df_co[df_co["Country/Region"]=="India"].index[0]
+    ridx = df_re[df_re["Country/Region"]=="India"].index[0]
+    didx = df_de[df_de["Country/Region"]=="India"].index[0]
 
-    idx = df_re[df_re["Country/Region"]=="India"].index[0]
-    df_re.iloc[idx,-1] = df_India["Recovered"].sum()
+    df_co.iloc[cidx,-1] = conf_val
+    df_re.iloc[ridx,-1] = rec_val
+    df_de.iloc[didx,-1] = death_val
 
-    idx = df_de[df_de["Country/Region"]=="India"].index[0]
-    df_de.iloc[idx,-1] = df_India["Deaths"].sum()
+    #isConfLess, isRecLess, isDeathLess = (False, False, False)
+    #if df_co.iloc[cidx,-1] <= conf_val:
+    #    df_co.iloc[cidx,-1] = conf_val
+    #else:
+    #    isConfLess = True
+#
+    #if df_re.iloc[ridx,-1] <= rec_val:
+    #    df_re.iloc[ridx,-1] = rec_val
+    #else:
+    #    isRecLess = True
+#
+    #if df_de.iloc[didx,-1] <= death_val:
+    #    df_de.iloc[didx,-1] = death_val
+    #else:
+    #    isDeathLess = True
+
 
     df_co = replace_country_names(df_co, "Country/Region")
     df_re = replace_country_names(df_re, "Country/Region")
@@ -386,7 +404,9 @@ def check_data_discrepancy(df_w, grp, col):
     simialr = (df_w[col] == grp[col])
     if(simialr.sum() != len(df_w)):
         print(f"*** Data discrepancy for {col}")
+        print("df_world")
         print(df_w[~simialr.values])
+        print("Timeline data")
         print(grp[~simialr.values])
 
 def get_new_cases(df, latest_col, diff_col):

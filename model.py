@@ -514,6 +514,19 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                     gridwidth=.1,
                     zeroline=False
                     ),
+        annotations=[
+            dict(
+                x=.5,
+                y=.4,
+                xref="paper",
+                yref="paper",
+                text=country,
+                opacity=0.5,
+                font=dict(family='Arial, sans-serif', #'Helvetica',
+                          size=60 if len(country) < 15 else 60 -len(country),
+                          color="grey"),
+            )
+        ],
     )  
 
     return fig
