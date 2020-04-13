@@ -407,7 +407,7 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
                                                             gridwidth=.1,
                                                             )
     
-    Types = ["active", 'recovered', 'deceased']
+    Types = ["Active", 'Recovered', 'Deaths']
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
 
     gActive = df_ac_inp[df_ac_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
@@ -464,7 +464,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     fig = go.Figure()
     if country is None: return fig
 
-    Types = ["active", 'recovered', 'deceased']
+    Types = ["Active", 'Recovered', 'Deaths']
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
 
     if country == "World" or country == "world":
