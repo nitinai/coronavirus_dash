@@ -247,6 +247,13 @@ def load_world_latest_data():
 
     return df_world
 
+def load_US_data():
+    print("load latest world data")
+    df_us = pd.read_csv(model.get_latest_day_data_file("./data_sources/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports_us"))
+
+    df_us["Province_State"].fillna("", inplace=True)
+    df_us = replace_country_names(df_us, "Country_Region")
+
 
 def load_time_series_data():
     """
@@ -287,6 +294,8 @@ def process_data():
     INDIA_DATA = os.path.join("./data_sources/covid-19-india-data", file_name)
     df_India = pd.read_csv(INDIA_DATA)
     print("India data : ", INDIA_DATA)
+
+    
 
     ###############################
     # Read world data and infuse India data in it

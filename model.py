@@ -65,10 +65,14 @@ def get_latest_file_name_India():
     return DATA_PATH
 
 
-def get_latest_day_data_file():
+def get_latest_day_data_file(search_path = ""):
+    if not search_path:
+        search_path = PATH
+
     DATA_PATH = ""
     for date in get_files_descending():
-        DATA_PATH = f"{PATH}/{date}.csv"
+        filename= f"{date}.csv"
+        DATA_PATH = os.path.join(search_path, filename)
         if(os.path.exists(DATA_PATH)):
             break
     print(DATA_PATH)
