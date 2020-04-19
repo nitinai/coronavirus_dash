@@ -597,7 +597,7 @@ app.layout = html.Div([
     
             html.P(
             children=["Developed by NITIN PATIL | If you have any feedback on this dashboard, please let him know on ", html.A('Twitter', href='https://twitter.com/intent/tweet?source=webclient&text=%40_nitinp', target='_blank'), ' or ',
-                        html.A('LinkedIn', href='https://www.linkedin.com/in/nitinai', target='_blank'), " !",
+                        html.A('LinkedIn', href='https://www.linkedin.com/in/nitinai', target='_blank'),
                     ]),
 
             html.P(
