@@ -295,8 +295,6 @@ def process_data():
     df_India = pd.read_csv(INDIA_DATA)
     print("India data : ", INDIA_DATA)
 
-    
-
     ###############################
     # Read world data and infuse India data in it
     ###############################
