@@ -453,6 +453,7 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     fig.update_layout(
         margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
         showlegend=False,
+        #legend_orientation="h",
         hovermode='x',
     )  
 
@@ -501,7 +502,8 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     fig = go.Figure(data=[trace1,trace2,trace3])
     fig.update_layout(
         margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
-        showlegend=False,
+        #showlegend=False,
+        legend_orientation="h",
         hovermode='x',
         #title=country,
         xaxis= dict(fixedrange = True, # Disable zoom
