@@ -183,6 +183,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
         #showlegend=False,
         legend_orientation="h",
+        legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
         hovermode='x',
         #title=country,
         xaxis= dict(fixedrange = True, # Disable zoom
@@ -283,7 +284,23 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
         margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
         #showlegend=False,
         legend_orientation="h",
+        legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
         hovermode='x',
+
+        xaxis= dict(fixedrange = True, # Disable zoom
+                    tickangle=-45,
+                    showgrid=False,
+                    showline=False, linecolor='#272e3e',
+                    gridcolor='rgba(203, 210, 211,.3)',
+                    gridwidth=.1,
+                    zeroline=False
+                    ),
+        yaxis= dict(fixedrange = True, # Disable zoom
+                    showline=False, linecolor='#272e3e',
+                    gridcolor='rgba(203, 210, 211,.3)',
+                    gridwidth=.1,
+                    zeroline=False
+                    ),
     )  
 
     return fig
@@ -719,7 +736,7 @@ app.layout = html.Div([
                     id="trend_graph",
                     #figure=trend_graph
                     config={'displayModeBar': False, # Hide the floating toolbar
-                                        "scrollZoom": False,},
+                            "scrollZoom": False,},
                 )
             ], id="trend_graph_box", className="four columns"),
 
@@ -803,6 +820,8 @@ app.layout = html.Div([
                 html.H6(["China vs Rest of the World trend",], className="graph_title"),
                 dcc.Graph(id="trend_china_world",
                     figure=trend_graph_china_vs_world,
+                    config={'displayModeBar': False, # Hide the floating toolbar
+                            "scrollZoom": False,},
                 ),
             ], id="trend_china_world_box",  className="three columns"),
 
