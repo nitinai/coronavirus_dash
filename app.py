@@ -1,20 +1,23 @@
 # -*- coding: utf-8 -*-
 __author__ = "Nitin Patil"
 
+import math
 import pandas as pd
+from joblib import Memory
 
-import dash
+from dash import Dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from dash_table import DataTable
-from dash_table.Format import Sign
+#from dash_table.Format import Sign
 import dash_table.FormatTemplate as FormatTemplate
 
+#import plotly.express as px
 import plotly.graph_objects as go
-from model import graph_scatter_mapbox, load_time_series_data, relative_trend_graph_china_vs_world, get_country_trend
-import datetime as dt
-from joblib import Memory
+from plotly.subplots import make_subplots
+#from model import graph_scatter_mapbox, load_time_series_data, relative_trend_graph_china_vs_world, get_country_trend
+#import datetime as dt
 
 memory = Memory("./cache/", verbose=0)
 
@@ -66,8 +69,228 @@ def get_death_count(df):
     return f"""{count:,d}"""
 
 ##########################################################################
-
 PATH = "./data"
+
+def load_time_series_data():
+    """
+    These files were deprecated from 24 Mar 2020
+    time_series_19-covid-Total Cases.csv
+    time_series_19-covid-Deaths.csv
+    time_series_19-covid-Recovered.csv
+    """
+    # This is the post processed time series data
+    df_confirmed = pd.read_csv(f"{PATH}/confirmed_global.csv")
+    df_recovered = pd.read_csv(f"{PATH}/recovered_global.csv")
+    df_deaths = pd.read_csv(f"{PATH}/deaths_global.csv")
+
+    return df_confirmed, df_recovered, df_deaths
+
+def graph_scatter_mapbox(df_world):
+    latitude=14
+    longitude=8
+    zoom=1
+    
+    fig = go.Figure(go.Scattermapbox(
+    lat=df_world['Lat'],
+    lon=df_world['Long_'],
+    mode='markers',
+    marker=go.scattermapbox.Marker(
+        color=[COLOR_MAP["Red"] if (a > 0 or d == c) else COLOR_MAP["Green"] for a, d, c in zip(df_world["Active"],
+                                                                                    df_world['Deaths'],
+                                                                                    df_world['Total Cases'])],
+
+        size=[i**(1/3) for i in df_world['Total Cases']],
+        sizemin=1,
+        sizemode='area',
+        sizeref=2.*max([math.sqrt(i)
+                        for i in df_world['Total Cases']])/(100.**2),
+    ),
+    text=df_world["hover_name"],
+    hovertext=['Total Cases: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_world['Total Cases'],
+                                                                                                                                        df_world['Recovered'],
+                                                                                                                                        df_world['Deaths'],
+                                                                                                                                        df_world["Active"],
+                                                                                                                                        df_world['Death rate'])],
+    hoverlabel = dict(
+        bgcolor =[f"{COLOR_MAP['White']}" for i in df_world['Total Cases']],
+        ),
+    
+    hovertemplate="<b>%{text}</b><br><br>" +
+                    "%{hovertext}<br>" +
+                    "<extra></extra>")
+    )
+
+    fig.update_layout(
+        plot_bgcolor='#151920',
+        paper_bgcolor='#cbd2d3',
+        margin=go.layout.Margin(l=5, r=5, b=5, t=5, pad=40),
+        hovermode='closest',
+        transition={'duration': 50},
+        mapbox=go.layout.Mapbox(
+            accesstoken=MAPBOX_TOKEN,
+            style="light",
+            # The direction you're facing, measured clockwise as an angle from true north on a compass
+            bearing=0,
+            center=go.layout.mapbox.Center(
+                lat=latitude,
+                lon=longitude
+            ),
+            pitch=0,
+            zoom=zoom
+        )
+    )
+    
+    return fig
+
+# trend graph for said country
+def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
+    
+    fig = go.Figure()
+    if country is None: return fig
+
+    Types = ["Active", 'Recovered', 'Deaths']
+    Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
+
+    if country == "World" or country == "world":
+
+        gActive = df_co_inp.groupby(["Country/Region"]).sum()
+        gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
+        gDeaths = df_de_inp.groupby(["Country/Region"]).sum()
+
+        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
+        active = gActive.sum() - gRecovered.sum() - gDeaths.sum()
+        
+        trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
+        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
+        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+
+    else:
+    
+        gActive = df_co_inp[df_co_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+        gRecovered = df_re_inp[df_re_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+        gDeaths = df_de_inp[df_de_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+
+        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
+        
+        gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
+        
+        trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
+        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
+        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+        
+    fig = go.Figure(data=[trace1,trace2,trace3])
+    fig.update_layout(
+        margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
+        #showlegend=False,
+        legend_orientation="h",
+        hovermode='x',
+        #title=country,
+        xaxis= dict(fixedrange = True, # Disable zoom
+                    tickangle=-45,
+                    showgrid=False,
+                    showline=False, linecolor='#272e3e',
+                    gridcolor='rgba(203, 210, 211,.3)',
+                    gridwidth=.1,
+                    zeroline=False
+                    ),
+        yaxis= dict(fixedrange = True, # Disable zoom
+                    showline=False, linecolor='#272e3e',
+                    gridcolor='rgba(203, 210, 211,.3)',
+                    gridwidth=.1,
+                    zeroline=False
+                    ),
+        annotations=[
+            dict(
+                x=.5,
+                y=.4,
+                xref="paper",
+                yref="paper",
+                text=country,
+                opacity=0.5,
+                font=dict(family='Helvetica',
+                          size=60 if len(country) < 15 else 60 -len(country),
+                          color="grey"),
+            )
+        ],
+    )  
+
+    return fig
+
+def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
+    
+    df_ac_inp = df_co_inp.copy(deep=True)
+
+    #countries=["China trend","Rest of the World trend"]
+    
+    fig = make_subplots(rows=1, cols=2, shared_yaxes='all', shared_xaxes=True, 
+                        horizontal_spacing=0.01, vertical_spacing=0.05,#subplot_titles=countries
+                       ).update_xaxes(
+                                                            fixedrange = True, # Disable zoom
+                                                            tickangle=-45,
+                                                            showgrid=False,
+                                                            showline=False, linecolor='#272e3e',
+                                                            gridcolor='rgba(203, 210, 211,.3)',
+                                                            gridwidth=.1,
+                                                            zeroline=False
+                                                        ).update_yaxes(
+                                                            fixedrange = True, # Disable zoom
+                                                            showline=False, linecolor='#272e3e',
+                                                            zeroline=False,
+                                                            gridcolor='rgba(203, 210, 211,.3)',
+                                                            gridwidth=.1,
+                                                            )
+    
+    Types = ["Active", 'Recovered', 'Deaths']
+    Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
+
+    gActive = df_ac_inp[df_ac_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+    gRecovered = df_re_inp[df_re_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+    gDeaths = df_de_inp[df_de_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+
+    x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
+    
+    country = "China"
+    gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
+    
+    trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0])
+    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1])
+    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2])
+
+    
+    fig.add_trace(trace1, row=1, col=1)
+    fig.add_trace(trace2, row=1, col=1)
+    fig.add_trace(trace3, row=1, col=1)
+
+    gActive = df_ac_inp[df_ac_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+    gRecovered = df_re_inp[df_re_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+    gDeaths = df_de_inp[df_de_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+
+    active = gActive.sum() - gRecovered.sum() - gDeaths.sum()
+    
+    
+    trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0],showlegend = False)
+    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1],showlegend = False)
+    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2],showlegend = False)
+
+    
+    fig.add_trace(trace1, row=1, col=2)
+    fig.add_trace(trace2, row=1, col=2)
+    fig.add_trace(trace3, row=1, col=2)
+
+    
+    #fig.layout.yaxis.title='Total coronavirus cases'
+    fig.update_layout(
+        margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
+        #showlegend=False,
+        legend_orientation="h",
+        hovermode='x',
+    )  
+
+    return fig
+
+##########################################################################
+
+
 df_world = pd.read_csv(f"{PATH}/world_latest.csv")
 
 world_map = graph_scatter_mapbox(df_world)
@@ -250,7 +473,7 @@ external_stylesheets = [#"https://codepen.io/plotly/pen/EQZeaW.css",
 TITLE="Coronavirus disease (COVID-19) Pandemic Dashboard"
 DESCRIPTION = "The Coronavirus disease (COVID-19) Pandemic dashboard provides latest information about this outbreak across the World. Stay at home, maintain healthy habits to contain the Coronavirus"
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets,
+app = Dash(__name__, external_stylesheets=external_stylesheets,
                 assets_folder='./assets/',
                 meta_tags=[
                     {"name": "author", "content": "Nitin Patil"},
