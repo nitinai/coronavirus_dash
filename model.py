@@ -423,9 +423,9 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     country = "China"
     gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
     
-    trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
-    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
-    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+    trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0])
+    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1])
+    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2])
 
     
     fig.add_trace(trace1, row=1, col=1)
@@ -439,9 +439,9 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     active = gActive.sum() - gRecovered.sum() - gDeaths.sum()
     
     
-    trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
-    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
-    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+    trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0],showlegend = False)
+    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1],showlegend = False)
+    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2],showlegend = False)
 
     
     fig.add_trace(trace1, row=1, col=2)
@@ -452,8 +452,8 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     #fig.layout.yaxis.title='Total coronavirus cases'
     fig.update_layout(
         margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
-        showlegend=False,
-        #legend_orientation="h",
+        #showlegend=False,
+        legend_orientation="h",
         hovermode='x',
     )  
 
