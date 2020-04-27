@@ -3140,11 +3140,11 @@ South Australia,Australia,-34.9285,138.6007,438,4,411,23,0.0091324200913242,"Sou
 Tasmania,Australia,-42.8821,147.3272,212,11,123,78,0.05188679245283019,"Tasmania, Australia",0,0,0
 Victoria,Australia,-37.8136,144.9631,1349,17,1265,67,0.012601927353595256,"Victoria, Australia",0,0,0
 Western Australia,Australia,-31.9505,115.8605,549,8,486,55,0.014571948998178506,"Western Australia, Australia",0,0,0
-Andaman and Nicobar Islands,India,11.7401,92.6586,33,0,11,22,0.0,"Andaman and Nicobar Islands, India",1609,246,47
-Andhra Pradesh,India,15.9129,79.74,1097,31,231,835,0.028258887876025523,"Andhra Pradesh, India",0,0,0
+Andaman and Nicobar Islands,India,11.7401,92.6586,33,0,11,22,0.0,"Andaman and Nicobar Islands, India",1877,423,61
+Andhra Pradesh,India,15.9129,79.74,1177,31,235,911,0.026338147833474938,"Andhra Pradesh, India",0,0,0
 Arunachal Pradesh,India,28.218000000000004,94.7278,1,0,1,0,0.0,"Arunachal Pradesh, India",0,0,0
 Assam,India,26.2006,92.9376,36,1,27,8,0.027777777777777776,"Assam, India",0,0,0
-Bihar,India,25.0961,85.3131,274,2,56,216,0.0072992700729927005,"Bihar, India",0,0,0
+Bihar,India,25.0961,85.3131,277,2,56,219,0.007220216606498195,"Bihar, India",0,0,0
 Chandigarh,India,30.7333,76.7794,30,0,17,13,0.0,"Chandigarh, India",0,0,0
 Chhattisgarh,India,21.2787,81.8661,37,0,32,5,0.0,"Chhattisgarh, India",0,0,0
 Delhi,India,28.7041,77.1025,2918,54,877,1987,0.018505825908156272,"Delhi, India",0,0,0
@@ -3154,21 +3154,21 @@ Haryana,India,29.0588,76.0856,289,3,176,110,0.010380622837370242,"Haryana, India
 Himachal Pradesh,India,31.1048,77.1734,40,1,22,17,0.025,"Himachal Pradesh, India",0,0,0
 Jammu and Kashmir,India,33.7782,76.5762,523,6,137,380,0.011472275334608031,"Jammu and Kashmir, India",0,0,0
 Jharkhand,India,23.6102,85.2799,82,3,13,66,0.036585365853658534,"Jharkhand, India",0,0,0
-Karnataka,India,15.3173,75.7139,503,19,182,302,0.03777335984095427,"Karnataka, India",0,0,0
-Kerala,India,10.8505,76.2711,458,4,338,116,0.008733624454148471,"Kerala, India",0,0,0
+Karnataka,India,15.3173,75.7139,511,20,188,303,0.03913894324853229,"Karnataka, India",0,0,0
+Kerala,India,10.8505,76.2711,469,4,342,123,0.008528784648187633,"Kerala, India",0,0,0
 Ladakh,India,34.2996,78.2932,20,0,14,6,0.0,"Ladakh, India",0,0,0
-Madhya Pradesh,India,22.9734,78.6569,2096,103,302,1691,0.0491412213740458,"Madhya Pradesh, India",0,0,0
-Maharashtra,India,19.7515,75.7139,8068,342,1076,6650,0.04238968765493307,"Maharashtra, India",0,0,0
+Madhya Pradesh,India,22.9734,78.6569,2168,106,302,1760,0.048892988929889296,"Madhya Pradesh, India",0,0,0
+Maharashtra,India,19.7515,75.7139,8068,342,1188,6538,0.04238968765493307,"Maharashtra, India",0,0,0
 Manipur,India,24.6637,93.9063,2,0,2,0,0.0,"Manipur, India",0,0,0
 Meghalaya,India,25.467,91.3662,12,1,0,11,0.08333333333333333,"Meghalaya, India",0,0,0
 Mizoram,India,23.1645,92.9376,1,0,0,1,0.0,"Mizoram, India",0,0,0
-Odisha,India,20.9517,85.0985,103,1,35,67,0.009708737864077669,"Odisha, India",0,0,0
-Puducherry,India,11.9416,79.8083,7,0,3,4,0.0,"Puducherry, India",0,0,0
+Odisha,India,20.9517,85.0985,108,1,35,72,0.009259259259259259,"Odisha, India",0,0,0
+Puducherry,India,11.9416,79.8083,8,0,3,5,0.0,"Puducherry, India",0,0,0
 Punjab,India,31.1471,75.3412,313,18,71,224,0.05750798722044728,"Punjab, India",0,0,0
-Rajasthan,India,27.0238,74.2179,2185,33,518,1634,0.015102974828375287,"Rajasthan, India",0,0,0
+Rajasthan,India,27.0238,74.2179,2185,41,518,1626,0.018764302059496567,"Rajasthan, India",0,0,0
 Tamil Nadu,India,11.1271,78.6569,1885,24,1020,841,0.01273209549071618,"Tamil Nadu, India",0,0,0
 Telengana,India,18.1124,79.0193,1002,26,280,696,0.02594810379241517,"Telengana, India",0,0,0
 Tripura,India,23.9408,91.9882,2,0,2,0,0.0,"Tripura, India",0,0,0
-Uttarakhand,India,30.0668,79.0193,50,0,28,22,0.0,"Uttarakhand, India",0,0,0
-Uttar Pradesh,India,26.8467,80.9462,1868,29,289,1550,0.015524625267665952,"Uttar Pradesh, India",0,0,0
+Uttarakhand,India,30.0668,79.0193,51,0,33,18,0.0,"Uttarakhand, India",0,0,0
+Uttar Pradesh,India,26.8467,80.9462,1955,31,335,1589,0.015856777493606138,"Uttar Pradesh, India",0,0,0
 West Bengal,India,22.9868,87.855,649,20,105,524,0.030816640986132512,"West Bengal, India",0,0,0
