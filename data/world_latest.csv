@@ -3150,11 +3150,11 @@ South Australia,Australia,-34.9285,138.6007,438,4,414,20,0.0091324200913242,"Sou
 Tasmania,Australia,-42.8821,147.3272,214,11,132,71,0.0514018691588785,"Tasmania, Australia",0,0,0
 Victoria,Australia,-37.8136,144.9631,1349,17,1280,52,0.012601927353595256,"Victoria, Australia",0,0,0
 Western Australia,Australia,-31.9505,115.8605,549,8,486,55,0.014571948998178506,"Western Australia, Australia",0,0,0
-Andaman and Nicobar Islands,India,11.7401,92.6586,33,0,11,22,0.0,"Andaman and Nicobar Islands, India",1545,346,53
-Andhra Pradesh,India,15.9129,79.74,1183,31,235,917,0.026204564666103127,"Andhra Pradesh, India",0,0,0
+Andaman and Nicobar Islands,India,11.7401,92.6586,33,0,11,22,0.0,"Andaman and Nicobar Islands, India",1944,504,56
+Andhra Pradesh,India,15.9129,79.74,1259,31,258,970,0.024622716441620333,"Andhra Pradesh, India",0,0,0
 Arunachal Pradesh,India,28.218000000000004,94.7278,1,0,1,0,0.0,"Arunachal Pradesh, India",0,0,0
-Assam,India,26.2006,92.9376,36,1,27,8,0.027777777777777776,"Assam, India",0,0,0
-Bihar,India,25.0961,85.3131,345,2,57,286,0.005797101449275362,"Bihar, India",0,0,0
+Assam,India,26.2006,92.9376,38,1,27,10,0.02631578947368421,"Assam, India",0,0,0
+Bihar,India,25.0961,85.3131,346,2,57,287,0.005780346820809248,"Bihar, India",0,0,0
 Chandigarh,India,30.7333,76.7794,40,0,17,23,0.0,"Chandigarh, India",0,0,0
 Chhattisgarh,India,21.2787,81.8661,37,0,32,5,0.0,"Chhattisgarh, India",0,0,0
 Delhi,India,28.7041,77.1025,3108,54,877,2177,0.017374517374517374,"Delhi, India",0,0,0
@@ -3163,11 +3163,11 @@ Gujarat,India,22.2587,71.1924,3548,162,394,2992,0.04565952649379933,"Gujarat, In
 Haryana,India,29.0588,76.0856,296,3,183,110,0.010135135135135136,"Haryana, India",0,0,0
 Himachal Pradesh,India,31.1048,77.1734,40,1,22,17,0.025,"Himachal Pradesh, India",0,0,0
 Jammu and Kashmir,India,33.7782,76.5762,546,7,164,375,0.01282051282051282,"Jammu and Kashmir, India",0,0,0
-Jharkhand,India,23.6102,85.2799,82,3,13,66,0.036585365853658534,"Jharkhand, India",0,0,0
-Karnataka,India,15.3173,75.7139,512,20,193,299,0.0390625,"Karnataka, India",0,0,0
-Kerala,India,10.8505,76.2711,481,4,355,122,0.008316008316008316,"Kerala, India",0,0,0
-Ladakh,India,34.2996,78.2932,20,0,14,6,0.0,"Ladakh, India",0,0,0
-Madhya Pradesh,India,22.9734,78.6569,2168,110,302,1756,0.0507380073800738,"Madhya Pradesh, India",0,0,0
+Jharkhand,India,23.6102,85.2799,103,3,17,83,0.02912621359223301,"Jharkhand, India",0,0,0
+Karnataka,India,15.3173,75.7139,520,20,198,302,0.038461538461538464,"Karnataka, India",0,0,0
+Kerala,India,10.8505,76.2711,482,4,355,123,0.008298755186721992,"Kerala, India",0,0,0
+Ladakh,India,34.2996,78.2932,22,0,16,6,0.0,"Ladakh, India",0,0,0
+Madhya Pradesh,India,22.9734,78.6569,2368,113,361,1894,0.04771959459459459,"Madhya Pradesh, India",0,0,0
 Maharashtra,India,19.7515,75.7139,8590,369,1282,6939,0.04295692665890571,"Maharashtra, India",0,0,0
 Manipur,India,24.6637,93.9063,2,0,2,0,0.0,"Manipur, India",0,0,0
 Meghalaya,India,25.467,91.3662,12,1,0,11,0.08333333333333333,"Meghalaya, India",0,0,0
@@ -3180,5 +3180,5 @@ Tamil Nadu,India,11.1271,78.6569,1937,24,1101,812,0.0123902942694889,"Tamil Nadu
 Telengana,India,18.1124,79.0193,1004,26,321,657,0.025896414342629483,"Telengana, India",0,0,0
 Tripura,India,23.9408,91.9882,2,0,2,0,0.0,"Tripura, India",0,0,0
 Uttarakhand,India,30.0668,79.0193,51,0,33,18,0.0,"Uttarakhand, India",0,0,0
-Uttar Pradesh,India,26.8467,80.9462,1955,31,335,1589,0.015856777493606138,"Uttar Pradesh, India",0,0,0
+Uttar Pradesh,India,26.8467,80.9462,2043,31,400,1612,0.015173764072442487,"Uttar Pradesh, India",0,0,0
 West Bengal,India,22.9868,87.855,697,20,109,568,0.028694404591104734,"West Bengal, India",0,0,0
