@@ -248,12 +248,16 @@ def load_world_latest_data():
     return df_world
 
 def load_US_data():
-    print("load latest world data")
+    print("load latest US data")
     df_us = pd.read_csv(model.get_latest_day_data_file("./data_sources/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports_us"))
 
+    df_us["Recovered"].fillna(0, inplace=True)
     df_us["Province_State"].fillna("", inplace=True)
     df_us = replace_country_names(df_us, "Country_Region")
 
+    df_us.drop(df_us[df_us["Province_State"] == "Recovered"].index, inplace=True)
+    
+    return df_us
 
 def load_time_series_data():
     """
@@ -300,9 +304,19 @@ def process_data():
     ###############################
     df_world = load_world_latest_data()
     df_world.drop(df_world[df_world["Country_Region"] == "India"].index, inplace=True)
-    
-    df_world = pd.concat([df_world, df_India], ignore_index=True)
 
+
+    ###############################
+    # infuse US data as well
+    ###############################
+    df_us = load_US_data()
+    df_world.drop(df_world[df_world["Country_Region"] == "United States"].index, inplace=True)
+
+    COMMON_COLS = ["Province_State","Confirmed","Recovered","Deaths","Country_Region","Last_Update","Lat","Long_"]
+
+    df_world = pd.concat([df_world, df_India, df_us[COMMON_COLS]], ignore_index=True)
+
+    # Process
     COLS = ['Confirmed', 'Deaths', 'Recovered']
     for c in COLS:
         df_world[c] = df_world[c].astype(float)
