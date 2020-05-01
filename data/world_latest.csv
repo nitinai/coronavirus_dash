@@ -263,11 +263,11 @@ Western Sahara,Western Sahara,24.2155,-12.8858,6,0,5,1,0.0,Western Sahara,0,0,0
 Yemen,Yemen,15.552727,48.516388,6,2,1,3,0.3333333333333333,Yemen,0,0,2
 Zambia,Zambia,-13.133897,27.849332,106,3,55,48,0.02830188679245283,Zambia,9,1,0
 Zimbabwe,Zimbabwe,-19.015438,29.154857,40,4,5,31,0.1,Zimbabwe,8,0,0
-Andaman and Nicobar Islands,India,11.7401,92.6586,33,0,16,17,0.0,"Andaman and Nicobar Islands, India",1690,452,68
-Andhra Pradesh,India,15.9129,79.74,1403,31,321,1051,0.022095509622238062,"Andhra Pradesh, India",0,0,0
+Andaman and Nicobar Islands,India,11.7401,92.6586,33,0,16,17,0.0,"Andaman and Nicobar Islands, India",1910,628,73
+Andhra Pradesh,India,15.9129,79.74,1463,33,403,1027,0.022556390977443608,"Andhra Pradesh, India",0,0,0
 Arunachal Pradesh,India,28.218000000000004,94.7278,1,0,1,0,0.0,"Arunachal Pradesh, India",0,0,0
 Assam,India,26.2006,92.9376,42,1,29,12,0.023809523809523808,"Assam, India",0,0,0
-Bihar,India,25.0961,85.3131,418,2,82,334,0.004784688995215311,"Bihar, India",0,0,0
+Bihar,India,25.0961,85.3131,426,2,82,342,0.004694835680751174,"Bihar, India",0,0,0
 Chandigarh,India,30.7333,76.7794,56,0,17,39,0.0,"Chandigarh, India",0,0,0
 Chhattisgarh,India,21.2787,81.8661,40,0,36,4,0.0,"Chhattisgarh, India",0,0,0
 Delhi,India,28.7041,77.1025,3515,59,1094,2362,0.01678520625889047,"Delhi, India",0,0,0
@@ -276,24 +276,24 @@ Gujarat,India,22.2587,71.1924,4395,214,613,3568,0.04869169510807736,"Gujarat, In
 Haryana,India,29.0588,76.0856,313,3,209,101,0.009584664536741214,"Haryana, India",0,0,0
 Himachal Pradesh,India,31.1048,77.1734,40,1,28,11,0.025,"Himachal Pradesh, India",0,0,0
 Jammu and Kashmir,India,33.7782,76.5762,614,8,216,390,0.013029315960912053,"Jammu and Kashmir, India",0,0,0
-Jharkhand,India,23.6102,85.2799,109,3,20,86,0.027522935779816515,"Jharkhand, India",0,0,0
-Karnataka,India,15.3173,75.7139,565,21,229,315,0.03716814159292035,"Karnataka, India",0,0,0
+Jharkhand,India,23.6102,85.2799,111,3,20,88,0.02702702702702703,"Jharkhand, India",0,0,0
+Karnataka,India,15.3173,75.7139,576,22,235,319,0.03819444444444445,"Karnataka, India",0,0,0
 Kerala,India,10.8505,76.2711,497,4,383,110,0.008048289738430584,"Kerala, India",0,0,0
 Ladakh,India,34.2996,78.2932,22,0,16,6,0.0,"Ladakh, India",0,0,0
-Madhya Pradesh,India,22.9734,78.6569,2660,137,482,2041,0.05150375939849624,"Madhya Pradesh, India",0,0,0
+Madhya Pradesh,India,22.9734,78.6569,2719,137,482,2100,0.05038617138653917,"Madhya Pradesh, India",0,0,0
 Maharashtra,India,19.7515,75.7139,10498,459,1773,8266,0.043722613831205945,"Maharashtra, India",0,0,0
 Manipur,India,24.6637,93.9063,2,0,2,0,0.0,"Manipur, India",0,0,0
 Meghalaya,India,25.467,91.3662,12,1,0,11,0.08333333333333333,"Meghalaya, India",0,0,0
 Mizoram,India,23.1645,92.9376,1,0,0,1,0.0,"Mizoram, India",0,0,0
-Odisha,India,20.9517,85.0985,142,1,39,102,0.007042253521126761,"Odisha, India",0,0,0
+Odisha,India,20.9517,85.0985,143,1,41,101,0.006993006993006993,"Odisha, India",0,0,0
 Puducherry,India,11.9416,79.8083,8,0,5,3,0.0,"Puducherry, India",0,0,0
 Punjab,India,31.1471,75.3412,357,19,90,248,0.05322128851540616,"Punjab, India",0,0,0
 Rajasthan,India,27.0238,74.2179,2584,58,836,1690,0.02244582043343653,"Rajasthan, India",0,0,0
 Tamil Nadu,India,11.1271,78.6569,2323,27,1258,1038,0.01162290142057684,"Tamil Nadu, India",0,0,0
-Telengana,India,18.1124,79.0193,1038,26,397,615,0.025048169556840076,"Telengana, India",0,0,0
+Telengana,India,18.1124,79.0193,1039,26,441,572,0.025024061597690085,"Telengana, India",0,0,0
 Tripura,India,23.9408,91.9882,2,0,2,0,0.0,"Tripura, India",0,0,0
 Uttarakhand,India,30.0668,79.0193,57,0,36,21,0.0,"Uttarakhand, India",0,0,0
-Uttar Pradesh,India,26.8467,80.9462,2203,39,513,1651,0.017703132092601,"Uttar Pradesh, India",0,0,0
+Uttar Pradesh,India,26.8467,80.9462,2281,41,555,1685,0.01797457255589654,"Uttar Pradesh, India",0,0,0
 West Bengal,India,22.9868,87.855,795,33,139,623,0.04150943396226415,"West Bengal, India",0,0,0
 Alabama,United States,32.3182,-86.9023,7088,272,0,6816,0.03837471783295711,"Alabama, United States",29515,33227,2029
 Alaska,United States,61.3707,-152.4044,355,9,252,94,0.02535211267605634,"Alaska, United States",0,0,0

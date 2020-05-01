@@ -320,14 +320,14 @@ def process_data():
     df_world["Deaths"].fillna(0, inplace=True)
     df_world["Recovered"].fillna(0, inplace=True)
 
-    print("df_world.columns : ", df_world.columns)
+    #print("df_world.columns : ", df_world.columns)
     
-    save(df_world, "world_latest_intermediate")
+    #save(df_world, "world_latest_intermediate")
 
     # Process
     COLS = ['Confirmed', 'Deaths', 'Recovered']
     for c in COLS:
-        print("Converting type for ", c)
+        #print("Converting type for ", c)
         df_world[c] = df_world[c].astype(float)
         df_world[c] = df_world[c].astype(int)
 
