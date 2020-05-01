@@ -251,8 +251,7 @@ def load_US_data():
     print("load latest US data")
     df_us = pd.read_csv(model.get_latest_day_data_file("./data_sources/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports_us"))
 
-    df_us["Recovered"].fillna(0, inplace=True)
-    df_us["Province_State"].fillna("", inplace=True)
+    
     df_us = replace_country_names(df_us, "Country_Region")
 
     df_us.drop(df_us[df_us["Province_State"] == "Recovered"].index, inplace=True)
@@ -315,10 +314,20 @@ def process_data():
     COMMON_COLS = ["Province_State","Confirmed","Recovered","Deaths","Country_Region","Last_Update","Lat","Long_"]
 
     df_world = pd.concat([df_world, df_India, df_us[COMMON_COLS]], ignore_index=True)
+    df_world.dropna(how="all", inplace=True) # drop rows with all null values
+    df_world["Province_State"].fillna("", inplace=True)
+    df_world["Confirmed"].fillna(0, inplace=True)
+    df_world["Deaths"].fillna(0, inplace=True)
+    df_world["Recovered"].fillna(0, inplace=True)
+
+    print("df_world.columns : ", df_world.columns)
+    
+    save(df_world, "world_latest_intermediate")
 
     # Process
     COLS = ['Confirmed', 'Deaths', 'Recovered']
     for c in COLS:
+        print("Converting type for ", c)
         df_world[c] = df_world[c].astype(float)
         df_world[c] = df_world[c].astype(int)
 
