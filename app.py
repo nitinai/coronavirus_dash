@@ -85,6 +85,52 @@ def load_time_series_data():
 
     return df_confirmed, df_recovered, df_deaths
 
+
+df_world = pd.read_csv(f"{PATH}/world_latest.csv")
+
+df_co, df_re, df_de = load_time_series_data()
+
+all_countries = sorted(list(df_world["Country/Region"].unique()))
+num_countries = len(all_countries) 
+total_cases = df_co.iloc[:,-1].sum()
+recovered_cases = df_re.iloc[:,-1].sum()
+death_cases = df_de.iloc[:,-1].sum()
+active_cases = total_cases - recovered_cases - death_cases
+
+def get_change_string(current, change, type="Default"):
+    sign = "increse_arw" if change > 0 else "decrese_arw" if change < 0 else ""
+    change_string = f""" {change:,d} """
+    percent = f"({round((change / (current-change))*100, 2)}%)"
+
+    #color = COLOR_MAP[TYPE_TO_COLOR[type]]
+    if sign == "decrese_arw" or type == "Recovered":
+        color = COLOR_MAP["Green"]
+    else:
+        color = COLOR_MAP["Red"]
+
+    return [html.Span(className=sign, style={"border-bottom-color":color}), 
+            html.Strong(change_string),percent]
+
+new_cases_num = df_world['New Cases'].sum()
+new_recovered_num = df_world['New Recovered'].sum()
+new_deaths_num = df_world['New Deaths'].sum()
+
+new_cases = get_change_string(total_cases, new_cases_num)
+new_recovered = get_change_string(recovered_cases, new_recovered_num, "Recovered")
+new_deaths = get_change_string(death_cases, new_deaths_num)
+
+new_active_num = new_cases_num - new_recovered_num - new_deaths_num
+new_active = get_change_string(active_cases, new_active_num, "Active")
+
+# Offline: Ideally read the India data and infuse it in all timelines and df_world
+
+# So here all timeline and df_world has latest data
+
+# Use df_world for map and table
+
+# THINK: Read all other stats data from timeline (Ideally,
+# this is also possible offline )
+
 def graph_scatter_mapbox(df_world):
     latitude=14
     longitude=8
@@ -148,17 +194,17 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     fig = go.Figure()
     if country is None: return fig
 
-    Types = ["Active", 'Recovered', 'Deaths']
-    Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
+    Types = ["Active", 'Recovered', 'Deaths', "Total Cases"]
+    Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"], COLOR_MAP["Brown"]]
 
     if country == "World" or country == "world":
 
-        gActive = df_co_inp.groupby(["Country/Region"]).sum()
+        gConfirmed = df_co_inp.groupby(["Country/Region"]).sum()
         gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
         gDeaths = df_de_inp.groupby(["Country/Region"]).sum()
 
-        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
-        active = gActive.sum() - gRecovered.sum() - gDeaths.sum()
+        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gConfirmed.columns)]
+        active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
         
         trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
         trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
@@ -166,19 +212,20 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
 
     else:
     
-        gActive = df_co_inp[df_co_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+        gConfirmed = df_co_inp[df_co_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
         gRecovered = df_re_inp[df_re_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
         gDeaths = df_de_inp[df_de_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
 
-        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
+        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gConfirmed.columns)]
         
-        gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
+        active = gConfirmed.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
         
-        trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
+        traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.loc[country,:], name=Types[3], mode='markers+lines', marker={"color":Colors[3]})
+        trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
         trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
         trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
         
-    fig = go.Figure(data=[trace1,trace2,trace3])
+    fig = go.Figure(data=[traceTotal, trace1,trace2,trace3])
     fig.update_layout(
         margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
         #showlegend=False,
@@ -219,7 +266,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
 
 def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     
-    df_ac_inp = df_co_inp.copy(deep=True)
+    #df_ac_inp = df_co_inp.copy(deep=True)
 
     #countries=["China trend","Rest of the World trend"]
     
@@ -241,50 +288,50 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
                                                             gridwidth=.1,
                                                             )
     
-    Types = ["Active", 'Recovered', 'Deaths']
-    Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"]]
+    Types = ["Active", 'Recovered', 'Deaths', "Total Cases"]
+    Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"], COLOR_MAP["Brown"]]
 
-    gActive = df_ac_inp[df_ac_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+    gConfirmed = df_co_inp[df_co_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
     gRecovered = df_re_inp[df_re_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
     gDeaths = df_de_inp[df_de_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
 
-    x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gActive.columns)]
+    x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gConfirmed.columns)]
     
     country = "China"
-    gActive.loc[country,:] = gActive.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
+    active = gConfirmed.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
     
-    trace1 = go.Scatter(x=x_axis_dates, y=gActive.loc[country,:], name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0])
+    traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.loc[country,:], name=Types[3], mode='markers+lines', marker={"color":Colors[3]}, legendgroup=Types[3])
+    trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0])
     trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1])
     trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2])
-
     
+    fig.add_trace(traceTotal, row=1, col=1)
     fig.add_trace(trace1, row=1, col=1)
     fig.add_trace(trace2, row=1, col=1)
     fig.add_trace(trace3, row=1, col=1)
 
-    gActive = df_ac_inp[df_ac_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+    gConfirmed = df_co_inp[df_co_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
     gRecovered = df_re_inp[df_re_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
     gDeaths = df_de_inp[df_de_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
 
-    active = gActive.sum() - gRecovered.sum() - gDeaths.sum()
+    active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
     
-    
+    traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.sum(), name=Types[3], mode='markers+lines', marker={"color":Colors[3]}, legendgroup=Types[3],showlegend = False)
     trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0],showlegend = False)
     trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1],showlegend = False)
     trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2],showlegend = False)
 
-    
+    fig.add_trace(traceTotal, row=1, col=2)
     fig.add_trace(trace1, row=1, col=2)
     fig.add_trace(trace2, row=1, col=2)
     fig.add_trace(trace3, row=1, col=2)
-
     
     #fig.layout.yaxis.title='Total coronavirus cases'
     fig.update_layout(
         margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
         #showlegend=False,
         legend_orientation="h",
-        legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
+        legend=dict(x=-0.1, y=1.08, bgcolor="rgba(0,0,0,0)",),
         hovermode='x',
 
         xaxis= dict(fixedrange = True, # Disable zoom
@@ -307,56 +354,8 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
 
 ##########################################################################
 
-
-df_world = pd.read_csv(f"{PATH}/world_latest.csv")
-
 world_map = graph_scatter_mapbox(df_world)
-
-df_co, df_re, df_de = load_time_series_data()
-
 trend_graph_china_vs_world = relative_trend_graph_china_vs_world(df_co, df_re, df_de)
-
-
-all_countries = sorted(list(df_world["Country/Region"].unique()))
-num_countries = len(all_countries) 
-total_cases = df_co.iloc[:,-1].sum()
-recovered_cases = df_re.iloc[:,-1].sum()
-death_cases = df_de.iloc[:,-1].sum()
-active_cases = total_cases - recovered_cases - death_cases
-
-def get_change_string(current, change, type="Default"):
-    sign = "increse_arw" if change > 0 else "decrese_arw" if change < 0 else ""
-    change_string = f""" {change:,d} """
-    percent = f"({round((change / (current-change))*100, 2)}%)"
-
-    #color = COLOR_MAP[TYPE_TO_COLOR[type]]
-    if sign == "decrese_arw" or type == "Recovered":
-        color = COLOR_MAP["Green"]
-    else:
-        color = COLOR_MAP["Red"]
-
-    return [html.Span(className=sign, style={"border-bottom-color":color}), 
-            html.Strong(change_string),percent]
-
-new_cases_num = df_world['New Cases'].sum()
-new_recovered_num = df_world['New Recovered'].sum()
-new_deaths_num = df_world['New Deaths'].sum()
-
-new_cases = get_change_string(total_cases, new_cases_num)
-new_recovered = get_change_string(recovered_cases, new_recovered_num, "Recovered")
-new_deaths = get_change_string(death_cases, new_deaths_num)
-
-new_active_num = new_cases_num - new_recovered_num - new_deaths_num
-new_active = get_change_string(active_cases, new_active_num, "Active")
-
-# Offline: Ideally read the India data and infuse it in all timelines and df_world
-
-# So here all timeline and df_world has latest data
-
-# Use df_world for map and table
-
-# THINK: Read all other stats data from timeline (Ideally,
-# this is also possible offline )
 
 @memory.cache
 def create_country_df(country):
