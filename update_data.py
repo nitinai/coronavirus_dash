@@ -156,8 +156,12 @@ def scrap_pandas():
         df["Country_Region"] = "India"
 
         df.drop(df.tail(1).index,inplace=True)
+        
         if len(df[df["Province_State"] == "Total number of confirmed cases in India"]) > 0:
             df.drop(df[df["Province_State"] == "Total number of confirmed cases in India"].index, inplace=True)
+        if len(df[df["Province_State"] == "*States wise distribution is subject to further verification and reconciliation"]) > 0:
+            df.drop(df[df["Province_State"] == "*States wise distribution is subject to further verification and reconciliation"].index, inplace=True)
+
     except Exception as ex:
         print("Error while dropping total count row : ", str(ex))   
 
