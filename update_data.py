@@ -64,6 +64,7 @@ def clean_data(df):
         "Nagaland":26.1584,
         "Meghalaya": 25.467,
         "Nagaland":26.1584,
+        "Dadar Nagar Haveli": 20.1809,
         }
 
     long = {'Delhi':77.1025,
@@ -100,6 +101,7 @@ def clean_data(df):
         "Nagaland":94.5624,
         "Meghalaya": 91.3662,
         "Nagaland": 94.5624,
+        "Dadar Nagar Haveli": 73.0169,
         }
 
     df['Lat'] = df['Province_State'].map(lat)
