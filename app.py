@@ -152,7 +152,7 @@ def graph_scatter_mapbox(df_world):
                         for i in df_world['Total Cases']])/(100.**2),
     ),
     text=df_world["hover_name"],
-    hovertext=['Total Cases: {:,d}<br>Recovered: {:,d}<br>Deceased: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_world['Total Cases'],
+    hovertext=['Total Cases: {:,d}<br>Recovered: {:,d}<br>Deaths: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_world['Total Cases'],
                                                                                                                                         df_world['Recovered'],
                                                                                                                                         df_world['Deaths'],
                                                                                                                                         df_world["Active"],
@@ -270,7 +270,7 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
 
     #countries=["China trend","Rest of the World trend"]
     
-    fig = make_subplots(rows=1, cols=2, shared_yaxes='all', shared_xaxes=True, 
+    fig = make_subplots(rows=2, cols=1, shared_yaxes='all', shared_xaxes=True, 
                         horizontal_spacing=0.01, vertical_spacing=0.05,#subplot_titles=countries
                        ).update_xaxes(
                                                             fixedrange = True, # Disable zoom
@@ -321,10 +321,10 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1],showlegend = False)
     trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2],showlegend = False)
 
-    fig.add_trace(traceTotal, row=1, col=2)
-    fig.add_trace(trace1, row=1, col=2)
-    fig.add_trace(trace2, row=1, col=2)
-    fig.add_trace(trace3, row=1, col=2)
+    fig.add_trace(traceTotal, row=2, col=1)
+    fig.add_trace(trace1, row=2, col=1)
+    fig.add_trace(trace2, row=2, col=1)
+    fig.add_trace(trace3, row=2, col=1)
     
     #fig.layout.yaxis.title='Total coronavirus cases'
     fig.update_layout(
@@ -348,6 +348,8 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
                     gridwidth=.1,
                     zeroline=False
                     ),
+        height=600,
+        
     )  
 
     return fig
