@@ -63,7 +63,7 @@ def clean_data(df):
         "Tripura":23.9408,
         "Nagaland":26.1584,
         "Meghalaya": 25.467,
-        "Nagaland":26.1584,
+        "Sikkim":27.533,
         "Dadar Nagar Haveli": 20.1809,
         }
 
@@ -100,7 +100,7 @@ def clean_data(df):
         "Tripura":91.9882,
         "Nagaland":94.5624,
         "Meghalaya": 91.3662,
-        "Nagaland": 94.5624,
+        "Sikkim": 88.5122,
         "Dadar Nagar Haveli": 73.0169,
         }
 
