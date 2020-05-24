@@ -247,6 +247,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                     gridwidth=.1,
                     zeroline=False
                     ),
+        # To show country name in watermark form
         annotations=[
             dict(
                 x=.5,
@@ -305,6 +306,10 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1])
     trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2])
     
+    # Subplot 1 annotation y axis coordinate
+    ann_x = len(x_axis_dates)*0.55
+    ann_y1 = gConfirmed.loc[country,:][-1]*0.4
+
     fig.add_trace(traceTotal, row=1, col=1)
     fig.add_trace(trace1, row=1, col=1)
     fig.add_trace(trace2, row=1, col=1)
@@ -326,6 +331,9 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     fig.add_trace(trace2, row=2, col=1)
     fig.add_trace(trace3, row=2, col=1)
     
+    # Subplot 2 annotation y axis coordinate
+    ann_y2 = gConfirmed.sum()[-1]*0.4
+
     #fig.layout.yaxis.title='Total coronavirus cases'
     fig.update_layout(
         margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
@@ -349,8 +357,32 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
                     zeroline=False
                     ),
         height=600,
-        
-    )  
+
+        annotations=[
+            dict(
+                x=ann_x,
+                y=ann_y1,
+                xref="x1",
+                yref="y1",
+                text="China",
+                opacity=0.5,
+                font=dict(family='Helvetica',
+                          size=60,
+                          color="grey"),
+            ),
+            dict(
+                x=ann_x,
+                y=ann_y2,
+                xref="x2",
+                yref="y2",
+                text="World",
+                opacity=0.5,
+                font=dict(family='Helvetica',
+                          size=60,
+                          color="grey"),
+            )
+        ],
+    ) 
 
     return fig
 
