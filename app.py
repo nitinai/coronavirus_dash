@@ -183,7 +183,18 @@ def graph_scatter_mapbox(df_world):
             ),
             pitch=0,
             zoom=zoom
-        )
+        ),
+        annotations=[
+        dict(
+            x=.5,
+            y=-.01,
+            align='center',
+            showarrow=False,
+            text="Green circle indicates no active cases. Hover over the circles for more details.",
+            xref="paper",
+            yref="paper",
+            font=dict(size=10, color='#292929'),
+        )],
     )
     
     return fig
@@ -247,6 +258,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                     gridwidth=.1,
                     zeroline=False
                     ),
+        xaxis_title="Toggle the legends to show/hide corresponding curve",
         # To show country name in watermark form
         annotations=[
             dict(
@@ -259,7 +271,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                 font=dict(family='Helvetica',
                           size=60 if len(country) < 15 else 60 -len(country),
                           color="grey"),
-            )
+                ),
         ],
     )  
 
@@ -608,7 +620,7 @@ app.layout = html.Div([
                     html.A(html.Img(src=app.get_asset_url('PMcares.png')),
                             href='https://www.pmindia.gov.in/en/', target='_blank'),
                     html.A(html.Img(src=app.get_asset_url('cmrfmahacovid19.png')),
-                            href='https://cmrf.maharashtra.gov.in/CMRFCitizen/index.action', target='_blank'),
+                            href='https://cmrf.maharashtra.gov.in/CMRFCitizen/mainindexaction', target='_blank'),
                     html.P([
                             html.Span("HELP Government in the fight against Coronavirus, STAY Home Stay Safe, DONATE to the Chief Minister's Relief Fund, PM CARES"),
                     ]),
@@ -846,6 +858,9 @@ app.layout = html.Div([
                                     ),
                             
                         ]),
+                        html.P(children=['Sort the tables by clicking on arrows in front of column names. Initially sorted by Active cases.'],
+                        style = {'text-align':"center", "font-size": '1.3rem',
+                                "margin-top": "1rem","margin-bottom": "-0.5rem"},),
             ], id="world_table_div_box", className="five columns"),
             
             html.Div([
