@@ -270,7 +270,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                 text=country,
                 opacity=0.5,
                 font=dict(family='Helvetica',
-                          size=60 if len(country) < 15 else 60 -len(country),
+                          size=60 if len(country) < 14 else 60 -len(country),
                           color="grey"),
                 ),
         ],
