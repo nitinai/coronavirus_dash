@@ -148,14 +148,13 @@ def scrap_pandas():
         df = df[0]
         df.drop("S. No.", axis=1, inplace=True)
 
-        df.columns = ['Province_State',
-                'Confirmed',
-                'Recovered', 'Deaths']
+        df.columns = ['Province_State', "Active",
+                'Recovered', 'Deaths', 'Confirmed']
         
         
         df["Country_Region"] = "India"
 
-        df.drop(df.tail(1).index,inplace=True)
+        #df.drop(df.tail(1).index,inplace=True)
         
         if len(df[df["Province_State"] == "Total number of confirmed cases in India"]) > 0:
             df.drop(df[df["Province_State"] == "Total number of confirmed cases in India"].index, inplace=True)
