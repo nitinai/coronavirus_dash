@@ -410,6 +410,7 @@ def create_country_df(country):
     loc = df.groupby('Country/Region')[['Lat', 'Long_']].mean()
     df = df.groupby('Province/State')[['Total Cases', 'Recovered', 'Active', 'Deaths', 'New Cases','New Recovered', 'New Deaths' ]].sum()
     df.reset_index(inplace=True)
+    df["Recovery rate"] = df['Recovered']/df['Total Cases']
     df["Death rate"] = df['Deaths']/df['Total Cases']
     df = df.sort_values(by=['Active', 'Total Cases'], ascending=False)
     return df, loc
@@ -418,7 +419,7 @@ def create_country_df(country):
 @memory.cache
 def create_datatable_country(df, id="create_datatable_country"):
     
-    PRESENT_COLS = ['Province/State', 'Total Cases', 'Active', 'Recovered', 'Deaths', 'Death rate']
+    PRESENT_COLS = ['Province/State', 'Total Cases', 'Active', 'Recovered', 'Recovery rate', 'Deaths', 'Death rate']
 
     # thousand formatting
     #for c in ['Total Cases', 'Active', 'Recovered', 'Deaths']:
@@ -427,8 +428,8 @@ def create_datatable_country(df, id="create_datatable_country"):
     return DataTable(#id=id,
                     
                     # Don't show coordinates
-                    columns=[{"name": i, "id": i, "type": "numeric","format": FormatTemplate.percentage(2)}
-                             if i == 'Death rate' else {"name": i, "id": i}
+                    columns=[{"name": i, "id": i, "type": "numeric","format": FormatTemplate.percentage(1)}
+                             if i in ('Recovery rate', 'Death rate') else {"name": i, "id": i}
                              for i in PRESENT_COLS],
                     
     # But still store coordinates in the table for interactivity
@@ -448,17 +449,26 @@ def create_datatable_country(df, id="create_datatable_country"):
                                  },
                     style_header={'backgroundColor': '#ffffff',
                                   'fontWeight': 'bold'},
-                    style_cell_conditional=[{'if': {'column_id': 'Province/State'}, 'width': '20%'},
+                    tooltip_data= [{c:
+                                    {
+                                        'type': 'markdown',
+                                        'value': f'{state} : {round(df.loc[df[df["Province/State"] == state].index[0], c]*100,1)}% {c}' if c in ('Recovery rate', 'Death rate')  else
+                                                    f'{state} : {df.loc[df[df["Province/State"] == state].index[0], c]:,d} {c}'
+                                    } for c in df.columns[1:]
+                            } for state in df[df.columns[0]].values ],
+                    style_cell_conditional=[#{'if': {'column_id': 'Province/State'}, 'width': '10%'},
                                             #{'if': {'column_id': 'Country/Region'}, 'width': '36%'},
-                                            {'if': {'column_id': 'Active'}, 'width': '16%'},
-                                            {'if': {'column_id': 'Total Cases'}, 'width': '16%'},
-                                            {'if': {'column_id': 'Recovered'}, 'width': '16%'},
-                                            {'if': {'column_id': 'Deaths'}, 'width': '16%'},
-                                            {'if': {'column_id': 'Death rate'}, 'width': '16%'},
+                                            #{'if': {'column_id': 'Active'}, 'width': '16%'},
+                                            #{'if': {'column_id': 'Total Cases'}, 'width': '16%'},
+                                            #{'if': {'column_id': 'Recovered'}, 'width': '16%'},
+                                            #{'if': {'column_id': 'Recovery rate'}, 'width': '16%'},
+                                            #{'if': {'column_id': 'Deaths'}, 'width': '16%'},
+                                            #{'if': {'column_id': 'Death rate'}, 'width': '16%'},
                                             #{'if': {'column_id': 'Total Cases/100k'}, 'width': '19%'},
                                             {'if': {'column_id': 'Active'}, 'color':COLOR_MAP["Orange"]},
                                             {'if': {'column_id': 'Total Cases'}, 'color': COLOR_MAP["Brown"]},
                                             {'if': {'column_id': 'Recovered'}, 'color': COLOR_MAP["Green"]},
+                                            {'if': {'column_id': 'Recovery rate'}, 'color': COLOR_MAP["Green"]},
                                             {'if': {'column_id': 'Deaths'}, 'color': COLOR_MAP["Red"]},
                                             {'if': {'column_id': 'Death rate'}, 'color': COLOR_MAP["Red"]},
                                             {'textAlign': 'center'}],
@@ -468,7 +478,7 @@ def create_datatable_country(df, id="create_datatable_country"):
 def create_datatable_world(id):
 
     GRPBY = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
-    PRESENT_COLS = ['Country/Region'] + 
+    PRESENT_COLS = ['Country/Region'] + \
     ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Recovery rate', 'Deaths', "New Deaths"] + ['Death rate']
 
     df = df_world.groupby('Country/Region')[GRPBY].sum()
@@ -480,7 +490,7 @@ def create_datatable_world(id):
     return DataTable(id=id,
                     
                     columns=[{"name": i, "id": i, "type": "numeric", "format": FormatTemplate.percentage(1)}
-                             if i == 'Death rate' or i == 'Recovery rate' else {"name": i, "id": i}
+                             if i in ('Recovery rate', 'Death rate') else {"name": i, "id": i}
                              for i in PRESENT_COLS],
                     
                     data=df[PRESENT_COLS].to_dict("rows"),
@@ -496,6 +506,10 @@ def create_datatable_world(id):
                                  'height': '600px',
                                  'maxHeight': '600px',
                                  #'overflowX': 'scroll',
+                                 #"margin-right": "-2.5rem",
+                                 #"margin-left": "-2.5rem",
+                                 #'background': 'red',
+                                 #'margin': '-10px'
                                  },
                     style_header={'backgroundColor': '#ffffff',
                                   'fontWeight': 'bold'},
@@ -503,21 +517,21 @@ def create_datatable_world(id):
                     tooltip_data= [{c:
                                     {
                                         'type': 'markdown',
-                                        'value': f'{country} : {round(df.loc[df[df["Country/Region"] == country].index[0], c]*100,1)}% {c}' if c == 'Death rate' else
+                                        'value': f'{country} : {round(df.loc[df[df["Country/Region"] == country].index[0], c]*100,1)}% {c}' if c in ('Recovery rate', 'Death rate')  else
                                                     f'{country} : {df.loc[df[df["Country/Region"] == country].index[0], c]:,d} {c}'
                                     } for c in df.columns[1:]
                             } for country in df[df.columns[0]].values ],
                     style_cell_conditional=[#{'if': {'column_id': 'Province/State'}, 'width': '36%'},
-                                            {'if': {'column_id': 'Country/Region'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Active'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Total Cases'}, 'width': '15%'},
-                                            {'if': {'column_id': 'New Cases'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Recovered'}, 'width': '15%'},
-                                            {'if': {'column_id': 'New Recovered'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Recovery rate'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Deaths'}, 'width': '15%'},
-                                            {'if': {'column_id': 'New Deaths'}, 'width': '15%'},
-                                            {'if': {'column_id': 'Death rate'}, 'width': '15%'},
+                                            #{'if': {'column_id': 'Country/Region'}, 'width': '10%'},
+                                            #{'if': {'column_id': 'Active'}, 'width': '15%'},
+                                            #{'if': {'column_id': 'Total Cases'}, 'width': '15%'},
+                                            #{'if': {'column_id': 'New Cases'}, 'width': '15%'},
+                                            #{'if': {'column_id': 'Recovered'}, 'width': '15%'},
+                                            #{'if': {'column_id': 'New Recovered'}, 'width': '15%'},
+                                            #{'if': {'column_id': 'Recovery rate'}, 'width': '15%'},
+                                            #{'if': {'column_id': 'Deaths'}, 'width': '15%'},
+                                            #{'if': {'column_id': 'New Deaths'}, 'width': '15%'},
+                                            #{'if': {'column_id': 'Death rate'}, 'width': '15%'},
                                             #{'if': {'column_id': 'Total Cases/100k'}, 'width': '19%'},
                                             {'if': {'column_id': 'Active'}, 'color':COLOR_MAP["Orange"]},
                                             {'if': {'column_id': 'Total Cases'}, 'color': COLOR_MAP["Brown"]},
@@ -788,7 +802,9 @@ app.layout = html.Div([
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
                 )
-            ], id="trend_graph_box", className="four columns"),
+            ], id="trend_graph_box", className="four columns",
+            #style = {"margin-right": "-2.5rem"},
+            ),
 
             html.Div([
                 
@@ -808,7 +824,9 @@ app.layout = html.Div([
                     id="world_map",
                     #figure=world_map
                 ),
-            ], id="world_map_box", className="eight columns"),
+            ], id="world_map_box", className="eight columns",
+            #style = {"margin-left": "-2.5rem"},
+            ),
 
         ],className="row"),
 
@@ -862,11 +880,15 @@ app.layout = html.Div([
                                     ]
                                     ),
                             
-                        ]),
+                        ],
+                        #style = {"margin-left": "2rem","margin-right": "2rem"}
+                                ),
                         html.P(children=['Sort the tables by clicking on arrows in front of column names. Initially sorted by Active cases.'],
                         style = {'text-align':"center", "font-size": '1.3rem',
                                 "margin-top": "1rem","margin-bottom": "-0.5rem"},),
-            ], id="world_table_div_box", className="five columns"),
+            ], id="world_table_div_box", className="five columns",
+            #style = {"margin-left": "-2.5rem"},
+            ),
             
             html.Div([
                 #html.Label("China vs Rest of the World trend", id="trend_china_world_label"),
