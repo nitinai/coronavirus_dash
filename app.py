@@ -468,17 +468,19 @@ def create_datatable_country(df, id="create_datatable_country"):
 def create_datatable_world(id):
 
     GRPBY = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
-    PRESENT_COLS = ['Country/Region'] + GRPBY + ['Death rate']
+    PRESENT_COLS = ['Country/Region'] + 
+    ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Recovery rate', 'Deaths', "New Deaths"] + ['Death rate']
 
     df = df_world.groupby('Country/Region')[GRPBY].sum()
     df.reset_index(inplace=True)
+    df["Recovery rate"] = df['Recovered']/df['Total Cases']
     df["Death rate"] = df['Deaths']/df['Total Cases']
     df = df.sort_values(by=['Active', 'Total Cases'], ascending=False)
 
     return DataTable(id=id,
                     
                     columns=[{"name": i, "id": i, "type": "numeric", "format": FormatTemplate.percentage(1)}
-                             if i == 'Death rate' else {"name": i, "id": i}
+                             if i == 'Death rate' or i == 'Recovery rate' else {"name": i, "id": i}
                              for i in PRESENT_COLS],
                     
                     data=df[PRESENT_COLS].to_dict("rows"),
@@ -512,6 +514,7 @@ def create_datatable_world(id):
                                             {'if': {'column_id': 'New Cases'}, 'width': '15%'},
                                             {'if': {'column_id': 'Recovered'}, 'width': '15%'},
                                             {'if': {'column_id': 'New Recovered'}, 'width': '15%'},
+                                            {'if': {'column_id': 'Recovery rate'}, 'width': '15%'},
                                             {'if': {'column_id': 'Deaths'}, 'width': '15%'},
                                             {'if': {'column_id': 'New Deaths'}, 'width': '15%'},
                                             {'if': {'column_id': 'Death rate'}, 'width': '15%'},
@@ -521,6 +524,7 @@ def create_datatable_world(id):
                                             {'if': {'column_id': 'New Cases'}, 'color': COLOR_MAP["Brown"]},
                                             {'if': {'column_id': 'Recovered'}, 'color': COLOR_MAP["Green"]},
                                             {'if': {'column_id': 'New Recovered'}, 'color': COLOR_MAP["Green"]},
+                                            {'if': {'column_id': 'Recovery rate'}, 'color': COLOR_MAP["Green"]},
                                             {'if': {'column_id': 'Deaths'}, 'color': COLOR_MAP["Red"]},
                                             {'if': {'column_id': 'New Deaths'}, 'color': COLOR_MAP["Red"]},
                                             {'if': {'column_id': 'Death rate'}, 'color': COLOR_MAP["Red"]},
