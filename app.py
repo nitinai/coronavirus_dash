@@ -152,10 +152,11 @@ def graph_scatter_mapbox(df_world):
                         for i in df_world['Total Cases']])/(100.**2),
     ),
     text=df_world["hover_name"],
-    hovertext=['Total Cases: {:,d}<br>Recovered: {:,d}<br>Deaths: {:,d}<br>Active: {:,d}<br>Death rate: {:.2%}'.format(c, r, d, a, dr) for c, r, d, a, dr in zip(df_world['Total Cases'],
+    hovertext=['Total Cases: {:,d}<br>Recovered: {:,d}<br>Deaths: {:,d}<br>Active: {:,d}<br><br>Recovery rate: {:.2%}<br>Death rate: {:.2%}'.format(c, r, d, a, rr, dr) for c, r, d, a, rr, dr in zip(df_world['Total Cases'],
                                                                                                                                         df_world['Recovered'],
                                                                                                                                         df_world['Deaths'],
                                                                                                                                         df_world["Active"],
+                                                                                                                                        df_world['Recovery rate'],
                                                                                                                                         df_world['Death rate'])],
     hoverlabel = dict(
         bgcolor =[f"{COLOR_MAP['White']}" for i in df_world['Total Cases']],

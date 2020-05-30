@@ -341,7 +341,9 @@ def process_data():
     df_world["Active"].clip(lower=0, inplace=True)
 
 
+    df_world["Recovery rate"] = df_world['Recovered']/df_world['Confirmed']
     df_world["Death rate"] = df_world['Deaths']/df_world['Confirmed']
+    
     
     df_world["hover_name"] = ""
     for i in range(len(df_world)):
