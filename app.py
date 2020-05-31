@@ -882,7 +882,9 @@ app.layout = html.Div([
                         ],
                         #style = {"margin-left": "2rem","margin-right": "2rem"}
                                 ),
-                        html.P(children=['Sort the tables by clicking on arrows in front of column names. Initially sorted by Active cases.'],
+                        html.P(children=['Sort the tables by clicking on',
+                                        #html.Span(className="table_arrow"),
+                                        ' arrows in front of column names. Initially sorted by Active cases.'],
                         style = {'text-align':"center", "font-size": '1.3rem',
                                 "margin-top": "1rem","margin-bottom": "-0.5rem"},),
             ], id="world_table_div_box", className="five columns",
