@@ -23,10 +23,12 @@ memory = Memory("./cache/", verbose=0)
 
 MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
 
-COLOR_MAP = {"Brown": "rgb(165, 42, 0)",
+COLOR_MAP = {"Brown": "rgb(87, 22, 22)",
             "Black": "rgb(0, 0, 0)",
-            "Red": "rgb(255, 0, 0)",
-            "Green": "rgb(3, 125, 50)",
+            "Red": "rgb(216, 0, 0)",
+            "Green": "rgb(0, 120, 0)",
+            "Light_Red": "rgb(196, 0, 0)",
+            "Light_Green": "rgb(0, 120, 0)",
             "Blue": "rgb(0, 0, 255)", 
             "Orange": "rgb(255, 115, 0)",
             "White": "rgb(255, 255, 255)"}
@@ -141,9 +143,7 @@ def graph_scatter_mapbox(df_world):
     lon=df_world['Long_'],
     mode='markers',
     marker=go.scattermapbox.Marker(
-        color=[COLOR_MAP["Red"] if (a > 0 or d == c) else COLOR_MAP["Green"] for a, d, c in zip(df_world["Active"],
-                                                                                    df_world['Deaths'],
-                                                                                    df_world['Total Cases'])],
+        color=[COLOR_MAP["Red"] if (a > 0) else COLOR_MAP["Green"] for a in df_world["Active"]],
 
         size=[i**(1/3) for i in df_world['Total Cases']],
         sizemin=1,
@@ -159,9 +159,8 @@ def graph_scatter_mapbox(df_world):
                                                                                                                                         df_world['Recovery rate'],
                                                                                                                                         df_world['Death rate'])],
     hoverlabel = dict(
-        bgcolor =[f"{COLOR_MAP['White']}" for i in df_world['Total Cases']],
+        bgcolor =[f"{COLOR_MAP['Light_Red']}" if (a > 0) else f"{COLOR_MAP['Light_Green']}" for a in df_world['Active']],
         ),
-    
     hovertemplate="<b>%{text}</b><br><br>" +
                     "%{hovertext}<br>" +
                     "<extra></extra>")
