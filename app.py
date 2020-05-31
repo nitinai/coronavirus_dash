@@ -3,7 +3,8 @@ __author__ = "Nitin Patil"
 
 import math
 import pandas as pd
-from joblib import Memory
+#from joblib import Memory
+from flask_caching import Cache
 
 from dash import Dash
 import dash_core_components as dcc
@@ -19,7 +20,12 @@ from plotly.subplots import make_subplots
 #from model import graph_scatter_mapbox, load_time_series_data, relative_trend_graph_china_vs_world, get_country_trend
 #import datetime as dt
 
-memory = Memory("./cache/", verbose=0)
+#memory = Memory("./cache/", verbose=0)
+cache = Cache(config={
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': './cache/'
+})
+TIMEOUT = 60
 
 MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
 
@@ -231,10 +237,13 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         
         active = gConfirmed.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
         
-        traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.loc[country,:], name=Types[3], mode='markers+lines', marker={"color":Colors[3]})
-        trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
-        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
-        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+        # go.Scattergl trace type can be used to create a WebGL enabled scatter plot. 
+        # go.Scatter creates SVG plots. WebGL plots loads faster than SVG plots.
+        # https://plotly.com/python/webgl-vs-svg/
+        traceTotal = go.Scattergl(x=x_axis_dates, y=gConfirmed.loc[country,:], name=Types[3], mode='markers+lines', marker={"color":Colors[3]})
+        trace1 = go.Scattergl(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
+        trace2 = go.Scattergl(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
+        trace3 = go.Scattergl(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
         
     fig = go.Figure(data=[traceTotal, trace1,trace2,trace3])
     fig.update_layout(
@@ -313,10 +322,10 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     country = "China"
     active = gConfirmed.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
     
-    traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.loc[country,:], name=Types[3], mode='markers+lines', marker={"color":Colors[3]}, legendgroup=Types[3])
-    trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0])
-    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1])
-    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2])
+    traceTotal = go.Scattergl(x=x_axis_dates, y=gConfirmed.loc[country,:], name=Types[3], mode='markers+lines', marker={"color":Colors[3]}, legendgroup=Types[3])
+    trace1 = go.Scattergl(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0])
+    trace2 = go.Scattergl(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1])
+    trace3 = go.Scattergl(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2])
     
     # Subplot 1 annotation y axis coordinate
     ann_x = len(x_axis_dates)*0.55
@@ -333,10 +342,10 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
 
     active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
     
-    traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.sum(), name=Types[3], mode='markers+lines', marker={"color":Colors[3]}, legendgroup=Types[3],showlegend = False)
-    trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0],showlegend = False)
-    trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1],showlegend = False)
-    trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2],showlegend = False)
+    traceTotal = go.Scattergl(x=x_axis_dates, y=gConfirmed.sum(), name=Types[3], mode='markers+lines', marker={"color":Colors[3]}, legendgroup=Types[3],showlegend = False)
+    trace1 = go.Scattergl(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]}, legendgroup=Types[0],showlegend = False)
+    trace2 = go.Scattergl(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]}, legendgroup=Types[1],showlegend = False)
+    trace3 = go.Scattergl(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]}, legendgroup=Types[2],showlegend = False)
 
     fig.add_trace(traceTotal, row=2, col=1)
     fig.add_trace(trace1, row=2, col=1)
@@ -403,7 +412,8 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
 world_map = graph_scatter_mapbox(df_world)
 trend_graph_china_vs_world = relative_trend_graph_china_vs_world(df_co, df_re, df_de)
 
-@memory.cache
+#@memory.cache
+@cache.memoize(timeout=TIMEOUT)
 def create_country_df(country):
     df = df_world[df_world["Country/Region"] == country]
     loc = df.groupby('Country/Region')[['Lat', 'Long_']].mean()
@@ -415,7 +425,8 @@ def create_country_df(country):
     return df, loc
 
 
-@memory.cache
+#@memory.cache
+@cache.memoize(timeout=TIMEOUT)
 def create_datatable_country(df, id="create_datatable_country"):
     
     PRESENT_COLS = ['Province/State', 'Total Cases', 'Active', 'Recovered', 'Recovery rate', 'Deaths', 'Death rate']
@@ -611,6 +622,9 @@ app.index_string = """<!DOCTYPE html>
 app.config['suppress_callback_exceptions'] = True
 
 server = app.server # the Flask app to run it on web server
+
+# flash_caching
+cache.init_app(server)
 
 app.layout = html.Div([
 
@@ -933,7 +947,8 @@ app.layout = html.Div([
 
 
 # to make use of joblib memory decorator
-@memory.cache
+#@memory.cache
+@cache.memoize(timeout=TIMEOUT)
 def update_country_specific(selected_country, view_option):
     df_country, country_loc = create_country_df(selected_country)
     
