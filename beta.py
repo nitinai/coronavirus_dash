@@ -2,6 +2,7 @@
 __author__ = "Nitin Patil"
 
 import math
+import numpy as np
 import pandas as pd
 #from joblib import Memory
 from flask_caching import Cache
@@ -18,7 +19,7 @@ import dash_table.FormatTemplate as FormatTemplate
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 #from model import graph_scatter_mapbox, load_time_series_data, relative_trend_graph_china_vs_world, get_country_trend
-import datetime as dt
+#import datetime as dt
 
 #memory = Memory("./cache/", verbose=0)
 cache = Cache(config={
@@ -29,15 +30,27 @@ TIMEOUT = 60
 
 MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
 
-COLOR_MAP = {"Brown": "rgb(87, 22, 22)",
+COLOR_MAP = {
+            #"Brown": "rgb(87, 22, 22)",
+            "Brown": "rgb(160,82,45)",
+            "Sienna": "rgb(160,82,45)", # For Total cases
             "Black": "rgb(0, 0, 0)",
             "Red": "rgb(216, 0, 0)",
-            "Green": "rgb(0, 120, 0)",
+            
+            "Green": "rgb(0, 128, 0)",
+            
+            "ForestGreen":"rgb(34,139,34)",
             "Light_Red": "rgb(196, 0, 0)",
             "Light_Green": "rgb(0, 120, 0)",
             "Blue": "rgb(0, 0, 255)", 
-            "Orange": "rgb(255, 115, 0)",
-            "White": "rgb(255, 255, 255)"}
+            #"Orange": "rgb(255, 115, 0)",
+            #"Orange": "rgb(244,164,96)",
+            "Orange":	"rgb(255,140,0)",
+            "White": "rgb(255, 255, 255)",
+            "SandyBrown": "rgb(244,164,96)", # For active
+            "DarkOrange":	"rgb(255,140,0)", # For active
+            "Salmon":"rgb(250,128,114)", # For Deaths
+            "LightGreen":"rgb(144,238,144)"}
 
 TYPE_TO_COLOR={
     "Total":"Brown",
@@ -95,6 +108,9 @@ def load_time_series_data():
 
 
 df_world = pd.read_csv(f"{PATH}/world_latest.csv")
+df_world_table = pd.read_csv(f"{PATH}/world_table.csv")
+
+WORLD_POP = df_world_table["Population"].sum()
 
 df_co, df_re, df_de = load_time_series_data()
 
@@ -139,7 +155,7 @@ new_active = get_change_string(active_cases, new_active_num, "Active")
 # THINK: Read all other stats data from timeline (Ideally,
 # this is also possible offline )
 
-def graph_scatter_mapbox(df_world):
+def graph_scatter_mapbox():
     latitude=14
     longitude=8
     zoom=1
@@ -175,7 +191,7 @@ def graph_scatter_mapbox(df_world):
     fig.update_layout(
         plot_bgcolor='#151920',
         paper_bgcolor='#cbd2d3',
-        margin=go.layout.Margin(l=5, r=5, b=5, t=5, pad=40),
+        margin=go.layout.Margin(l=5, r=5, b=10, t=5, pad=40),
         hovermode='closest',
         transition={'duration': 50},
         mapbox=go.layout.Mapbox(
@@ -205,6 +221,260 @@ def graph_scatter_mapbox(df_world):
     
     return fig
 
+def apply_line_plot_layout(fig, country, annot, annot_size=60):
+    
+    fig.update_layout(
+        margin=go.layout.Margin(
+        l=0,
+        r=5,
+        b=30,
+        t=0,
+        pad=0
+        ), # Set graph margin
+        #showlegend=False,
+        legend_orientation="h",
+        legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
+        hovermode='x',
+        #title="Daily Trend",
+        xaxis= dict(fixedrange = True, # Disable zoom
+                    #tickangle=-45,
+                    showgrid=False,
+                    showline=False, linecolor='#272e3e',
+                    gridcolor='rgba(203, 210, 211,.3)',
+                    gridwidth=.1,
+                    zeroline=False
+                    ),
+        xaxis_tickformat='%b %d',
+        yaxis= dict(fixedrange = True, # Disable zoom
+                    showline=False, linecolor='#272e3e',
+                    gridcolor='rgba(203, 210, 211,.3)',
+                    gridwidth=.1,
+                    zeroline=False
+                    ),
+        #xaxis_title="Toggle the legends to show/hide corresponding curve",
+        plot_bgcolor='#ffffff',
+        paper_bgcolor='#ffffff',
+        # To show country name in watermark form
+        annotations=[
+            dict(
+                x=.5,
+                y=.4,
+                xref="paper",
+                yref="paper",
+                text=annot,
+                opacity=0.5,
+                font=dict(family='Helvetica',
+                          size=annot_size if len(country) < 14 else annot_size -len(country),
+                          color="grey"),
+                ),
+        ] if annot else [],
+    ) 
+    return fig
+    
+    
+def plot_daily_cases_vs_recoveries_trend(country):
+    fig = go.Figure()
+    if country is None: return fig
+
+    Colors = {'New Recovered':COLOR_MAP["LightGreen"], 
+            'New Deaths':COLOR_MAP["Salmon"], 
+            "New Cases": COLOR_MAP["SandyBrown"]}
+
+    COLS = df_co.columns
+    LINE_WIDTH = 4
+    if country == "World":
+        
+        s = df_co[list(COLS[2:])].sum()
+        daily_new = s.diff()
+        x_axis_dates = [d for d in pd.to_datetime(s.index)]
+        
+        trace1 = go.Scatter(x=x_axis_dates, y=daily_new, 
+                            name="New Cases",
+                            marker={"color":Colors["New Cases"]},
+                            line_shape='spline',
+                            line=dict(color=Colors["New Cases"], width=LINE_WIDTH)
+                                   
+                                    )
+
+        s = df_re[list(COLS[2:])].sum()
+        daily_rec = s.diff()
+        trace2 = go.Scatter(x=x_axis_dates, y=daily_rec, 
+                            name="New Recoveries",
+                            marker={"color":Colors["New Recovered"]},
+                            line_shape='spline',
+                            line=dict(color=Colors["New Recovered"], width=LINE_WIDTH)
+                                )
+    
+    fig = go.Figure(data=[trace1,trace2])
+ 
+    fig = apply_line_plot_layout(fig, country=country, annot="New Cases vs Recoveries", annot_size=40)
+    fig.update_layout(height=200)
+    return fig
+
+# plot
+# - Total cases / 1M pop
+# - Total Deaths / 1M pop
+# - Daily New Cases / 1M pop
+# - Daily New Deaths / 1M pop
+def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
+                     annot=""):
+    fig = go.Figure()
+    if country is None: return fig
+
+    Colors = {
+            'Total Deaths':COLOR_MAP["Salmon"], 
+            "Total Cases": COLOR_MAP["SandyBrown"]}
+
+    COLS = df_co.columns
+    LINE_WIDTH=4
+    if country == "World":
+        
+        s = df_co[list(COLS[2:])].sum()
+        
+        if type == "Daily":
+            daily_new = s.diff()
+            daily_new.fillna(0,inplace=True)
+            y = ((daily_new/WORLD_POP)*1000000).astype(int)
+            name = "Daily New Cases/1M pop"
+        else:
+            y = ((s/WORLD_POP)*1000000).astype(int)
+            name = "Total Cases/1M pop"
+        
+        x_axis_dates = [d for d in pd.to_datetime(s.index)]
+        
+        trace1 = go.Scatter(x=x_axis_dates, y=y, 
+                            name=name,
+                            marker={"color":Colors["Total Cases"]},
+                            line_shape='spline',
+                            line=dict(color=Colors["Total Cases"], width=LINE_WIDTH)
+                            )
+
+        s = df_de[list(COLS[2:])].sum()
+        if type == "Daily":
+            daily_deaths = s.diff()
+            daily_deaths.fillna(0,inplace=True)
+            y = ((daily_deaths/WORLD_POP)*1000000).astype(int)
+            name = "Daily New Deaths/1M pop"
+        else:
+            y = ((s/WORLD_POP)*1000000).astype(int)
+            name = "Total Deaths/1M pop"
+        trace2 = go.Scatter(x=x_axis_dates, y=y, 
+                            name=name,
+                            marker={"color":Colors["Total Deaths"]},
+                            line_shape='spline',
+                            line=dict(color=Colors["Total Deaths"], width=LINE_WIDTH)
+                            )
+
+    else:
+        s = df_co[df_co["Country/Region"]==country].groupby(["Country/Region"]).sum()
+
+        daily = s.loc[country,:]
+        
+        daily.fillna(0,inplace=True)
+        x_axis_dates = [d for d in pd.to_datetime(daily.index)]
+
+        COUNTRY_POP =df_world_table[df_world_table["Country/Region"] == "India"]["Population"].values[0]
+        if type == "Daily":
+            daily = daily.diff()
+            y = ((daily/COUNTRY_POP)*1000000).astype(int)
+            name = "Daily New Cases/1M pop"
+        else:
+            y = ((daily/COUNTRY_POP)*1000000).astype(int)
+            name = "Total Cases/1M pop"
+        
+        trace1 = go.Scatter(x=x_axis_dates, y=y, 
+                            name=name,
+                            marker={"color":Colors["Total Cases"]},
+                            line_shape='spline',
+                            line=dict(color=Colors["Total Cases"], width=LINE_WIDTH)
+                            )
+
+        s = df_de[df_de["Country/Region"]==country].groupby(["Country/Region"]).sum()
+
+        daily = s.loc[country,:]
+        
+        daily.fillna(0,inplace=True)
+
+        if type == "Daily":
+            daily = daily.diff()
+            y = ((daily/COUNTRY_POP)*1000000).astype(int)
+            name = "Daily New Deaths/1M pop"
+        else:
+            y = ((daily/COUNTRY_POP)*1000000).astype(int)
+            name = "Total Deaths/1M pop"
+        
+        trace2 = go.Scatter(x=x_axis_dates, y=y, 
+                            name=name,
+                            marker={"color":Colors["Total Deaths"]},
+                            line_shape='spline',
+                            line=dict(color=Colors["Total Deaths"], width=LINE_WIDTH)
+                                )
+
+    fig = go.Figure(data=[trace1,trace2])
+    fig = apply_line_plot_layout(fig, country, annot)
+    fig.update_layout(height=200)
+    return fig
+
+
+
+def plot_daily_trend(df, country, type, annot):
+    fig = go.Figure()
+    if country is None: return fig
+    
+    Colors = {'New Recovered':COLOR_MAP["LightGreen"], 
+            'New Deaths':COLOR_MAP["Salmon"], 
+            "New Cases": COLOR_MAP["SandyBrown"]}
+
+    COLS = df.columns
+    LINE_WIDTH=4
+    if country == "World":
+
+        s = df[list(COLS[2:])].sum()
+        daily = s.diff()
+        daily.fillna(0,inplace=True)
+        x_axis_dates = [d for d in pd.to_datetime(s.index)]
+
+        trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
+                        marker={"color":Colors[type]})
+
+        trace2 = go.Scatter(x=x_axis_dates, y=daily.rolling(window=3).mean(), 
+                            name="3-day moving average",
+                            line_shape='spline',
+                            line=dict(width=LINE_WIDTH)
+                            )
+        trace3 = go.Scatter(x=x_axis_dates, y=daily.rolling(window=7).mean(), 
+                            name="7-day moving average",
+                            line_shape='spline',
+                            line=dict(width=LINE_WIDTH) )
+        fig = go.Figure(data=[trace1,trace2,trace3])
+    else:
+
+        s = df[df["Country/Region"]==country].groupby(["Country/Region"]).sum()
+
+        daily = s.loc[country,:]
+        daily = daily.diff()
+        daily.fillna(0,inplace=True)
+        x_axis_dates = [d for d in pd.to_datetime(daily.index)]
+
+        trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
+                        marker={"color":Colors[type]})
+
+        trace2 = go.Scatter(x=x_axis_dates, y=daily.rolling(window=3).mean(), 
+                            name="3-day moving average",
+                            line_shape='spline',
+                            line=dict(width=LINE_WIDTH)
+                            )
+        trace3 = go.Scatter(x=x_axis_dates, y=daily.rolling(window=7).mean(), 
+                            name="7-day moving average",
+                            line_shape='spline',
+                            line=dict(width=LINE_WIDTH) )
+
+        fig = go.Figure(data=[trace1,trace2,trace3])
+    fig = apply_line_plot_layout(fig, country, annot, annot_size=40)
+    fig.update_layout(height=200)
+    
+    return fig
+
 # trend graph for said country
 def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     
@@ -220,21 +490,45 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
         gDeaths = df_de_inp.groupby(["Country/Region"]).sum()
 
-        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gConfirmed.columns)]
+        x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
         active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
         
-        traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.sum(), 
-                                    name=Types[3], mode='lines+markers', 
+        traceTotal = go.Scattergl(x=x_axis_dates, y=gConfirmed.sum(), 
+                                    name=Types[3], mode='markers+lines', 
                                     marker={"color":Colors[3]},
                                     text=[d for d in x_axis_dates],
-                                    hovertext=['Total cases {:,d}'.format(
+                                    hovertext=['{} {:,d}'.format(Types[3],
                                         i) for i in gConfirmed.sum()],
                                     hovertemplate='%{hovertext}' +
                                               '<extra></extra>'
                                     )
-        trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
-        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
-        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+        trace1 = go.Scattergl(x=x_axis_dates, y=active, 
+                            name=Types[0], mode='markers+lines', 
+                            marker={"color":Colors[0]},
+                            text=[d for d in x_axis_dates],
+                            hovertext=['{} {:,d}'.format(Types[0],
+                                i) for i in active],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
+                            )
+        trace2 = go.Scattergl(x=x_axis_dates, y=gRecovered.sum(), 
+                            name=Types[1], mode='markers+lines', 
+                            marker={"color":Colors[1]},
+                            text=[d for d in x_axis_dates],
+                            hovertext=['{} {:,d}'.format(Types[1],
+                                i) for i in gRecovered.sum()],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
+                            )
+        trace3 = go.Scattergl(x=x_axis_dates, y=gDeaths.sum(), 
+                            name=Types[2], mode='markers+lines', 
+                            marker={"color":Colors[2]},
+                            text=[d for d in x_axis_dates],
+                            hovertext=['{} {:,d}'.format(Types[2],
+                                i) for i in gDeaths.sum()],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
+                            )
 
     else:
     
@@ -242,7 +536,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         gRecovered = df_re_inp[df_re_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
         gDeaths = df_de_inp[df_de_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
 
-        x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gConfirmed.columns)]
+        x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
         
         active = gConfirmed.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
         
@@ -255,50 +549,9 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         trace3 = go.Scattergl(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
         
     fig = go.Figure(data=[traceTotal, trace1,trace2,trace3])
-    fig.update_layout(
-        margin=go.layout.Margin(
-        l=10,
-        r=10,
-        b=10,
-        t=5,
-        pad=0
-        ), # Set graph margin
-        #showlegend=False,
-        legend_orientation="h",
-        legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
-        hovermode='x unified',
-        #title=country,
-        xaxis= dict(fixedrange = True, # Disable zoom
-                    tickangle=-45,
-                    showgrid=False,
-                    showline=False, linecolor='#272e3e',
-                    gridcolor='rgba(203, 210, 211,.3)',
-                    gridwidth=.1,
-                    zeroline=False
-                    ),
-        yaxis= dict(fixedrange = True, # Disable zoom
-                    showline=False, linecolor='#272e3e',
-                    gridcolor='rgba(203, 210, 211,.3)',
-                    gridwidth=.1,
-                    zeroline=False
-                    ),
-        xaxis_title="Toggle the legends to show/hide corresponding curve",
-        # To show country name in watermark form
-        annotations=[
-            dict(
-                x=.5,
-                y=.4,
-                xref="paper",
-                yref="paper",
-                text=country,
-                opacity=0.5,
-                font=dict(family='Helvetica',
-                          size=60 if len(country) < 14 else 60 -len(country),
-                          color="grey"),
-                ),
-        ],
-    )  
-
+     
+    fig = apply_line_plot_layout(fig, country=country, annot=country, annot_size=60)
+    fig.update_layout(height=350)
     return fig
 
 def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
@@ -332,7 +585,7 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     gRecovered = df_re_inp[df_re_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
     gDeaths = df_de_inp[df_de_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
 
-    x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gConfirmed.columns)]
+    x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
     
     country = "China"
     active = gConfirmed.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
@@ -386,6 +639,7 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
                     gridwidth=.1,
                     zeroline=False
                     ),
+        xaxis_tickformat='%b %d',
         yaxis= dict(fixedrange = True, # Disable zoom
                     showline=False, linecolor='#272e3e',
                     gridcolor='rgba(203, 210, 211,.3)',
@@ -424,8 +678,8 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
 
 ##########################################################################
 
-world_map = graph_scatter_mapbox(df_world)
-trend_graph_china_vs_world = relative_trend_graph_china_vs_world(df_co, df_re, df_de)
+world_map = graph_scatter_mapbox()
+#trend_graph_china_vs_world = relative_trend_graph_china_vs_world(df_co, df_re, df_de)
 
 #@memory.cache
 @cache.memoize(timeout=TIMEOUT)
@@ -467,9 +721,9 @@ def create_datatable_country(df, id="create_datatable_country"):
                                 'padding': '.1rem',
                                 'backgroundColor': '#ffffff', },
                     fixed_rows={'headers': True, 'data': 0},
-                    style_table={'minHeight': '600px',
-                                 'height': '600px',
-                                 'maxHeight': '600px',
+                    style_table={'minHeight': '450px',
+                                 'height': '450px',
+                                 'maxHeight': '450px',
                                  #'overflowX': 'scroll',
                                  },
                     style_header={'backgroundColor': '#ffffff',
@@ -499,7 +753,7 @@ def create_datatable_country(df, id="create_datatable_country"):
                                             {'textAlign': 'center'}],
                         )
 
-df_world_table = pd.read_csv(f"{PATH}/world_table.csv")
+
 def create_datatable_world(id):
 
     GRPBY = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
@@ -538,9 +792,9 @@ def create_datatable_world(id):
                                 'padding': '.1rem',
                                 'backgroundColor': '#ffffff', },
                     fixed_rows={'headers': True, 'data': 0},
-                    style_table={'minHeight': '600px',
-                                 'height': '600px',
-                                 'maxHeight': '600px',
+                    style_table={'minHeight': '450px',
+                                 'height': '450px',
+                                 'maxHeight': '450px',
                                  #'overflowX': 'scroll',
                                  #"margin-right": "-2.5rem",
                                  #"margin-left": "-2.5rem",
@@ -765,7 +1019,7 @@ app.layout = html.Div([
         #### World grpahs
         html.Div([
             html.Div([
-                #html.H6(["Select or type country",], className="graph_title"),
+                html.H6(["Worldwide Trend (Cumulative)",], className="graph_title"),
 #
                 #dcc.Dropdown(
                 #            placeholder="Select or type country",
@@ -780,11 +1034,83 @@ app.layout = html.Div([
                     figure=get_country_trend(df_co, df_re, df_de, country="World"),
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
-                )
-            ], id="world_trend_graph_box", className="four columns",
+                ),
+
+                html.Hr(),
+
+                html.Div([
+                    html.H6(["Worldwide Total Cases vs Deaths / 1M pop (Cumulative)",], className="graph_title"),
+
+                    dcc.Graph(
+                        #id="world_daily_trend",
+                        figure=plot_total_per_1M_pop_trend(country="World", type="Cum"),
+                        config={'displayModeBar': False, # Hide the floating toolbar
+                                "scrollZoom": False,},
+                    )
+                ], #id="world_daily_trend_box", 
+                #className="six columns",
+                #style = {"margin-right": "-2.5rem"},
+                ),
+
+            ], id="world_trend_graph_box", className="six columns",
+            #style = {"margin-right": "-2.5rem"},
+            ), 
+            
+            html.Div([
+                html.H6(["Worldwide Trend (Daily)",], className="graph_title"),
+                dcc.Graph(
+                    id="world_daily_trend",
+                    figure=plot_daily_trend(df_co, country="World", type="New Cases", annot="Daily New Cases"),
+                    config={'displayModeBar': False, # Hide the floating toolbar
+                            "scrollZoom": False,},
+                ),
+                html.Hr(),
+                dcc.Graph(
+                    #id="world_daily_trend",
+                    figure=plot_daily_trend(df_re, country="World", type="New Recovered", annot="Daily Recoveries"),
+                    config={'displayModeBar': False, # Hide the floating toolbar
+                            "scrollZoom": False,},
+                ),
+                html.Hr(),
+                dcc.Graph(
+                    #id="world_daily_trend",
+                    figure=plot_daily_trend(df_de, country="World", type="New Deaths", annot="Daily Deaths"),
+                    config={'displayModeBar': False, # Hide the floating toolbar
+                            "scrollZoom": False,},
+                ),
+
+                #dcc.Graph(
+                #    figure=plot_daily_cases_vs_recoveries_trend(country="World"),
+                #    config={'displayModeBar': False, # Hide the floating toolbar
+                #            "scrollZoom": False,},
+                #),
+
+
+            ], id="world_daily_trend_box", className="six columns",
             #style = {"margin-right": "-2.5rem"},
             ),
         ],className="row"),
+
+
+        #html.Div([
+
+            
+            
+            #html.Div([
+            #    html.H6(["Worldwide Cases/1M pop (Daily)",], className="graph_title"),
+#
+            #    dcc.Graph(
+            #        #id="world_daily_trend",
+            #        figure=plot_total_per_1M_pop_trend(country="World", type="Daily", annot="Daily/1M pop"),
+            #        config={'displayModeBar': False, # Hide the floating toolbar
+            #                "scrollZoom": False,},
+            #    )
+            #], #id="world_daily_trend_box", 
+            #className="six columns",
+            ##style = {"margin-right": "-2.5rem"},
+            #),
+
+        #],className="row"),
 
         html.Div([
             html.Hr(),
@@ -798,33 +1124,41 @@ app.layout = html.Div([
             html.Div([
                 #html.Label("Countries affected", id="countries_table_label"),
                 
-                dcc.Tabs(
-                        id="tabs_world_table",
-                        value='The World',
-                        parent_className='custom-tabs',
-                        className='custom-tabs-container',
-                        children=[
-                            dcc.Tab(
-                                    id='tab_world_table',
-                                    label='The World',
-                                    value='The World',
-                                    className='custom-tab',
-                                    selected_className='custom-tab--selected',
-                                    children=[
-                                    create_datatable_world(id="world_countries_table"), 
-                                    ]
-                                    ),
-                            
-                        ],
-                        #style = {"margin-left": "2rem","margin-right": "2rem"}
-                                ),
-                        html.P(children=['Sort the tables by clicking on',
-                                        #html.Span(className="table_arrow"),
-                                        ' arrows in front of column names. Initially sorted by Active cases.'],
+                #dcc.Tabs(
+                #        id="tabs_world_table",
+                #        value='The World',
+                #        parent_className='custom-tabs',
+                #        className='custom-tabs-container',
+                #        children=[
+                #            dcc.Tab(
+                #                    id='tab_world_table',
+                #                    label='The World',
+                #                    value='The World',
+                #                    className='custom-tab',
+                #                    selected_className='custom-tab--selected',
+                #                    children=[
+                #                    create_datatable_world(id="world_countries_table"), 
+                #                    ]
+                #                    ),
+                #            
+                #        ],
+                #        #style = {"margin-left": "2rem","margin-right": "2rem"}
+                #                ),
+
+                html.H6(["The World",], className="graph_title"),
+                html.P(children=["Click the radio button for detail information of country."],
                         style = {'text-align':"center", "font-size": '1.3rem',
-                                "margin-top": "1rem","margin-bottom": "-0.5rem"},),
-            ], id="world_table_div_box", className="eight columns",
-            #style = {"margin-left": "-2.5rem"},
+                                "margin-top": "0.5rem","margin-bottom": "0rem"},),
+                html.P(children=['To sort the table click arrows in front of column names. Initially sorted by Active cases.'],
+                        style = {'text-align':"center", "font-size": '1.3rem',
+                                "margin-top": "0rem","margin-bottom": "0.5rem"},),
+                create_datatable_world(id="world_countries_table"), 
+                    
+                #),
+
+                        
+            ], id="world_table_div_box", className="seven columns",
+            #style = dict(width= "50%"),
             ),
 
             html.Div([
@@ -845,8 +1179,8 @@ app.layout = html.Div([
                     id="world_map",
                     #figure=world_map
                 ),
-            ], id="world_map_box", className="four columns",
-            #style = {"margin-left": "-2.5rem"},
+            ], id="world_map_box", className="five columns",
+            #style = dict(width= "40%"),
             ),
 
         ],className="row"),
@@ -920,7 +1254,8 @@ app.layout = html.Div([
 
         html.Div([
             html.Div([
-                #html.H6(["Select or type country",], className="graph_title"),
+                html.H6(["Country trend",], 
+                id="country_trend_cumulative_label", className="graph_title"),
 #
                 #dcc.Dropdown(
                 #            placeholder="Select or type country",
@@ -935,14 +1270,10 @@ app.layout = html.Div([
                     #figure=trend_graph
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
-                )
-            ], id="trend_graph_box", className="four columns",
-            #style = {"margin-right": "-2.5rem"},
-            ),
+                ),
 
-            html.Div([
-                #html.Label(id="country_table_label"),
-                
+                html.Hr(),
+
                 dcc.Tabs(
                         id="tabs_country_table",
                         #value='The World',
@@ -962,20 +1293,88 @@ app.layout = html.Div([
                             
                         ]),
 
-            ],id="country_table_div_box", className="four columns"),
-            
-            
-            
+                
+
+            ], id="trend_graph_box", className="six columns",
+            #style = {"margin-right": "-2.5rem"},
+            ),
+
             html.Div([
-                #html.Label("China vs Rest of the World trend", id="trend_china_world_label"),
-                html.H6(["China vs Rest of the World trend",], className="graph_title"),
-                dcc.Graph(id="trend_china_world",
-                    figure=trend_graph_china_vs_world,
+                html.H6(["country_trend_daily_label",], 
+                id="country_trend_daily_label", className="graph_title"),
+
+                dcc.Graph(
+                    #id="world_daily_trend",
+                    id="country_trend_daily_new_cases",
+                    #figure=plot_daily_trend(df_co, country="World", type="New Cases", annot="Daily New Cases"),
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
                 ),
-            ], id="trend_china_world_box",  className="three columns"),
+                html.Hr(),
+                dcc.Graph(
+                    id="country_trend_daily_new_recovered",
+                    #figure=plot_daily_trend(df_re, country="World", type="New Recovered", annot="Daily Recoveries"),
+                    config={'displayModeBar': False, # Hide the floating toolbar
+                            "scrollZoom": False,},
+                ),
+                html.Hr(),
+                dcc.Graph(
+                    id="country_trend_daily_new_deaths",
+                    #figure=plot_daily_trend(df_de, country="World", type="New Deaths", annot="Daily Deaths"),
+                    config={'displayModeBar': False, # Hide the floating toolbar
+                            "scrollZoom": False,},
+                ),
 
+                html.Div([
+                    html.H6(["Country Total Cases vs Deaths / 1M pop (Cumulative)",],
+                    id="country_total_cases_vs_deaths_1M_pop_cumulative_label", className="graph_title"),
+
+                    dcc.Graph(
+                        id="country_total_cases_vs_deaths_1M_pop_cumulative",
+                        #figure=plot_total_per_1M_pop_trend(country="World", type="Cum"),
+                        config={'displayModeBar': False, # Hide the floating toolbar
+                                "scrollZoom": False,},
+                    )
+                ], #id="world_daily_trend_box", 
+                #className="six columns",
+                #style = {"margin-right": "-2.5rem"},
+                ),
+                
+                #dcc.Graph(
+                #    figure=plot_daily_cases_vs_recoveries_trend(country="World"),
+                #    config={'displayModeBar': False, # Hide the floating toolbar
+                #            "scrollZoom": False,},
+                #),
+
+
+            ], id="country_daily_trend_box", className="six columns",
+            #style = {"margin-right": "-2.5rem"},
+            ),
+
+            #html.Div([
+            #    #html.Label(id="country_table_label"),
+            #    
+            #    dcc.Tabs(
+            #            id="tabs_country_table",
+            #            #value='The World',
+            #            parent_className='custom-tabs',
+            #            className='custom-tabs-container',
+            #            children=[
+            #                dcc.Tab(
+            #                        id='tab_country_table',
+            #                        #label='The World',
+            #                        #value='The World',
+            #                        className='custom-tab',
+            #                        selected_className='custom-tab--selected',
+            #                        #children=[
+            #                        # dash_table.DataTable( 
+            #                        #]
+            #                        ),
+            #                
+            #            ]),
+#
+            #],id="country_table_div_box", className="four columns"),
+            
             
         ],className="row"),
 
@@ -1004,7 +1403,10 @@ app.layout = html.Div([
 
     ],className="all_content"), # excluding the title bar
 
-])
+],
+
+#style={'backgroundColor': '#ffffff',}
+)
 
 
 # to make use of joblib memory decorator
@@ -1016,8 +1418,19 @@ def update_country_specific(selected_country, view_option):
     ###############
     #trend_graph
     ###############
+    
     trend_graph = get_country_trend(df_co, df_re, df_de, selected_country)
     
+    countryTrendCumulativeLabel = f'{selected_country} Trend (Cumulative)'
+    countryTrendDailyLabel = f'{selected_country} Trend (Daily)'
+
+    fig_CountryTrendDailyNewCases = plot_daily_trend(df_co, country=selected_country, type="New Cases", annot="Daily New Cases")
+    fig_CountryTrendDailyNewRecovered = plot_daily_trend(df_re, country=selected_country, type="New Recovered", annot="Daily Recoveries")
+    fig_CountryTrendDailyNewDeaths = plot_daily_trend(df_de, country=selected_country, type="New Deaths", annot="Daily Deaths")
+
+    fig_CountryTrendCum1Mpop_label = f'{selected_country} Total Cases vs Deaths / 1M pop (Cumulative)'
+    fig_CountryTrendCum1Mpop = plot_total_per_1M_pop_trend(country=selected_country, type="Cum")
+
     ###############
     # update center of world_map
     ###############
@@ -1100,7 +1513,11 @@ def update_country_specific(selected_country, view_option):
     return (trend_graph, world_map, country_stat_head, country_stat_province_state,
     country_stat_total_cases, country_stat_recovered, country_stat_deceased, country_stat_active,
     country_new_cases,  country_new_recovered, country_new_deaths, country_new_active,
-    tab_country_table, tabs_country_table_label)
+    tab_country_table, tabs_country_table_label, 
+    countryTrendCumulativeLabel, countryTrendDailyLabel, 
+    fig_CountryTrendDailyNewCases, fig_CountryTrendDailyNewRecovered, fig_CountryTrendDailyNewDeaths,
+    fig_CountryTrendCum1Mpop_label, fig_CountryTrendCum1Mpop
+)
 
 
 @app.callback(
@@ -1118,6 +1535,15 @@ def update_country_specific(selected_country, view_option):
     Output('country_stat_new_active', 'children'),
     Output('tab_country_table', 'children'),
     Output('tab_country_table', 'label'),
+    
+    Output('country_trend_cumulative_label', 'children'),
+    Output('country_trend_daily_label', 'children'),
+    Output('country_trend_daily_new_cases', 'figure'),
+    Output('country_trend_daily_new_recovered', 'figure'),
+    Output('country_trend_daily_new_deaths', 'figure'),
+
+    Output('country_total_cases_vs_deaths_1M_pop_cumulative_label', 'children'),
+    Output('country_total_cases_vs_deaths_1M_pop_cumulative', 'figure'),
     ],
     [Input("world_countries_table", "derived_virtual_data"),
     Input("world_countries_table", "derived_virtual_selected_rows"),
@@ -1127,13 +1553,16 @@ def update_country_specific(selected_country, view_option):
 def update_country_trend(derived_virtual_data,derived_virtual_selected_rows,  view_option):
     
     try:
+        #print("derived_virtual_data ", derived_virtual_data)
+        print("derived_virtual_data type", type(derived_virtual_data))
         print("derived_virtual_selected_rows ", derived_virtual_selected_rows)
         print("view_option ", view_option)
         if derived_virtual_selected_rows is None:
             derived_virtual_selected_rows = []
             selected_country = "India"
         else:
-            selected_country = df_world_table.loc[derived_virtual_selected_rows[0]]['Country/Region']
+            dff = pd.DataFrame(derived_virtual_data)
+            selected_country = dff.loc[derived_virtual_selected_rows[0]]['Country/Region']
     except:
         print("Error occured")
         selected_country = "India"

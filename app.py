@@ -205,6 +205,7 @@ def graph_scatter_mapbox(df_world):
     
     return fig
 
+
 # trend graph for said country
 def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     
@@ -214,7 +215,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     Types = ["Active", 'Recovered', 'Deaths', "Total Cases"]
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"], COLOR_MAP["Brown"]]
 
-    if country == "World" or country == "world":
+    if country == "World":
 
         gConfirmed = df_co_inp.groupby(["Country/Region"]).sum()
         gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
