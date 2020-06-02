@@ -18,7 +18,7 @@ import dash_table.FormatTemplate as FormatTemplate
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 #from model import graph_scatter_mapbox, load_time_series_data, relative_trend_graph_china_vs_world, get_country_trend
-#import datetime as dt
+import datetime as dt
 
 #memory = Memory("./cache/", verbose=0)
 cache = Cache(config={
@@ -223,6 +223,15 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         x_axis_dates = [d.month_name()[:3] +" "+ str(d.day) for d in pd.to_datetime(gConfirmed.columns)]
         active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
         
+        traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.sum(), 
+                                    name=Types[3], mode='lines+markers', 
+                                    marker={"color":Colors[3]},
+                                    text=[d for d in x_axis_dates],
+                                    hovertext=['Total cases {:,d}'.format(
+                                        i) for i in gConfirmed.sum()],
+                                    hovertemplate='%{hovertext}' +
+                                              '<extra></extra>'
+                                    )
         trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
         trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
         trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
@@ -247,11 +256,17 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         
     fig = go.Figure(data=[traceTotal, trace1,trace2,trace3])
     fig.update_layout(
-        margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
+        margin=go.layout.Margin(
+        l=10,
+        r=10,
+        b=10,
+        t=5,
+        pad=0
+        ), # Set graph margin
         #showlegend=False,
         legend_orientation="h",
         legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
-        hovermode='x',
+        hovermode='x unified',
         #title=country,
         xaxis= dict(fixedrange = True, # Disable zoom
                     tickangle=-45,
@@ -444,7 +459,7 @@ def create_datatable_country(df, id="create_datatable_country"):
                     
     # But still store coordinates in the table for interactivity
                     data=df[PRESENT_COLS].to_dict("rows"),
-                    row_selectable=False, #"single" if countryName != 'Schengen' else False,
+                    row_selectable=False, # "single if countryName != 'Schengen' else False,
                     sort_action="native",
                     style_as_list_view=True,
                     style_cell={'font_family': 'Helvetica',
@@ -484,7 +499,7 @@ def create_datatable_country(df, id="create_datatable_country"):
                                             {'textAlign': 'center'}],
                         )
 
-
+df_world_table = pd.read_csv(f"{PATH}/world_table.csv")
 def create_datatable_world(id):
 
     GRPBY = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
@@ -493,7 +508,7 @@ def create_datatable_world(id):
 
     POP_COLS = ['Total Cases/1M pop', 'Deaths/1M pop', "Population"]
     PRESENT_COLS+=POP_COLS
-    df = pd.read_csv(f"{PATH}/world_table.csv")
+    df = df_world_table#pd.read_csv(f"{PATH}/world_table.csv")
     #df = df_world.groupby('Country/Region')[GRPBY].sum()
     #df.reset_index(inplace=True)
     #df["Recovery rate"] = df['Recovered']/df['Total Cases']
@@ -507,7 +522,15 @@ def create_datatable_world(id):
                              for i in PRESENT_COLS],
                     
                     data=df[PRESENT_COLS].to_dict("rows"),
-                    row_selectable=False, #"single" if countryName != 'Schengen' else False,
+                    row_selectable="single",# if countryName != 'Schengen' else False,
+                    
+                    
+                    
+                    #selected_row_indices=[],
+                    #row_selectable=True,
+                    #row_single_select=True,
+                                
+                    
                     sort_action="native",
                     style_as_list_view=True,
                     style_cell={'font_family': 'Helvetica',
@@ -733,8 +756,108 @@ app.layout = html.Div([
                 ]),
         #### World stat end
        
+        
+        
+        html.Div([
+            html.Hr(),
+        ]),
+
+        #### World grpahs
+        html.Div([
+            html.Div([
+                #html.H6(["Select or type country",], className="graph_title"),
+#
+                #dcc.Dropdown(
+                #            placeholder="Select or type country",
+                #            options=[{'label':c, 'value':c} for c in all_countries],
+                #            value='India',
+                #            id='countries_dropdown',
+                #            #style={'border':BORDER}
+                #            ),
+#
+                dcc.Graph(
+                    id="world_trend_graph",
+                    figure=get_country_trend(df_co, df_re, df_de, country="World"),
+                    config={'displayModeBar': False, # Hide the floating toolbar
+                            "scrollZoom": False,},
+                )
+            ], id="world_trend_graph_box", className="four columns",
+            #style = {"margin-right": "-2.5rem"},
+            ),
+        ],className="row"),
+
+        html.Div([
+            html.Hr(),
+        ]),
+        ####
+
+        # 
+        html.Div([
+            
+
+            html.Div([
+                #html.Label("Countries affected", id="countries_table_label"),
+                
+                dcc.Tabs(
+                        id="tabs_world_table",
+                        value='The World',
+                        parent_className='custom-tabs',
+                        className='custom-tabs-container',
+                        children=[
+                            dcc.Tab(
+                                    id='tab_world_table',
+                                    label='The World',
+                                    value='The World',
+                                    className='custom-tab',
+                                    selected_className='custom-tab--selected',
+                                    children=[
+                                    create_datatable_world(id="world_countries_table"), 
+                                    ]
+                                    ),
+                            
+                        ],
+                        #style = {"margin-left": "2rem","margin-right": "2rem"}
+                                ),
+                        html.P(children=['Sort the tables by clicking on',
+                                        #html.Span(className="table_arrow"),
+                                        ' arrows in front of column names. Initially sorted by Active cases.'],
+                        style = {'text-align':"center", "font-size": '1.3rem',
+                                "margin-top": "1rem","margin-bottom": "-0.5rem"},),
+            ], id="world_table_div_box", className="eight columns",
+            #style = {"margin-left": "-2.5rem"},
+            ),
+
+            html.Div([
+                
+                html.H6("World Map", id="world_map_label", className="graph_title"),
+                
+                dcc.RadioItems(
+                            id="view_radio_option",
+                            options=[
+                                {'label': 'World view', 'value': 'World_view'},
+                                {'label': 'Country view', 'value': 'Country_view'},
+                            ],
+                            value='Country_view',
+                            labelStyle={'display': 'inline-block'}
+                        ),
+
+                dcc.Graph(
+                    id="world_map",
+                    #figure=world_map
+                ),
+            ], id="world_map_box", className="four columns",
+            #style = {"margin-left": "-2.5rem"},
+            ),
+
+        ],className="row"),
+
+        html.Div([
+            html.Hr(),
+        ]),
+
+        ##
         #### Country stat start
-            html.Div(className="row", 
+        html.Div(className="row", 
             children=[html.Div(className="stats",
             children=[
 
@@ -794,24 +917,19 @@ app.layout = html.Div([
                 ]),
             ]),
         #### Country stat end
-        
-        html.Div([
-            html.Hr(),
-        ]),
 
-        # 
         html.Div([
             html.Div([
-                html.H6(["Select or type country",], className="graph_title"),
-
-                dcc.Dropdown(
-                            placeholder="Select or type country",
-                            options=[{'label':c, 'value':c} for c in all_countries],
-                            value='India',
-                            id='countries_dropdown',
-                            #style={'border':BORDER}
-                            ),
-
+                #html.H6(["Select or type country",], className="graph_title"),
+#
+                #dcc.Dropdown(
+                #            placeholder="Select or type country",
+                #            options=[{'label':c, 'value':c} for c in all_countries],
+                #            value='India',
+                #            id='countries_dropdown',
+                #            #style={'border':BORDER}
+                #            ),
+#
                 dcc.Graph(
                     id="trend_graph",
                     #figure=trend_graph
@@ -822,36 +940,6 @@ app.layout = html.Div([
             #style = {"margin-right": "-2.5rem"},
             ),
 
-            html.Div([
-                
-                html.H6("World Map", id="world_map_label", className="graph_title"),
-                
-                dcc.RadioItems(
-                            id="view_radio_option",
-                            options=[
-                                {'label': 'World view', 'value': 'World_view'},
-                                {'label': 'Country view', 'value': 'Country_view'},
-                            ],
-                            value='Country_view',
-                            labelStyle={'display': 'inline-block'}
-                        ),
-
-                dcc.Graph(
-                    id="world_map",
-                    #figure=world_map
-                ),
-            ], id="world_map_box", className="eight columns",
-            #style = {"margin-left": "-2.5rem"},
-            ),
-
-        ],className="row"),
-
-        html.Div([
-            html.Hr(),
-        ]),
-
-        ##
-        html.Div([
             html.Div([
                 #html.Label(id="country_table_label"),
                 
@@ -876,37 +964,7 @@ app.layout = html.Div([
 
             ],id="country_table_div_box", className="four columns"),
             
-            html.Div([
-                #html.Label("Countries affected", id="countries_table_label"),
-                
-                dcc.Tabs(
-                        id="tabs_world_table",
-                        value='The World',
-                        parent_className='custom-tabs',
-                        className='custom-tabs-container',
-                        children=[
-                            dcc.Tab(
-                                    id='tab_world_table',
-                                    label='The World',
-                                    value='The World',
-                                    className='custom-tab',
-                                    selected_className='custom-tab--selected',
-                                    children=[
-                                    create_datatable_world(id="world_countries_table"), 
-                                    ]
-                                    ),
-                            
-                        ],
-                        #style = {"margin-left": "2rem","margin-right": "2rem"}
-                                ),
-                        html.P(children=['Sort the tables by clicking on',
-                                        #html.Span(className="table_arrow"),
-                                        ' arrows in front of column names. Initially sorted by Active cases.'],
-                        style = {'text-align':"center", "font-size": '1.3rem',
-                                "margin-top": "1rem","margin-bottom": "-0.5rem"},),
-            ], id="world_table_div_box", className="five columns",
-            #style = {"margin-left": "-2.5rem"},
-            ),
+            
             
             html.Div([
                 #html.Label("China vs Rest of the World trend", id="trend_china_world_label"),
@@ -927,7 +985,7 @@ app.layout = html.Div([
 
         # Footer
         html.Div([
-            html.P(
+            html.P(id="sample_str",
             children=['STAY Home | KEEP a safe distance | WASH hands often | COVER your cough']),
     
             html.P(
@@ -1060,20 +1118,44 @@ def update_country_specific(selected_country, view_option):
     Output('country_stat_new_active', 'children'),
     Output('tab_country_table', 'children'),
     Output('tab_country_table', 'label'),
-
     ],
-    [Input('countries_dropdown', 'value'),
+    [Input("world_countries_table", "derived_virtual_data"),
+    Input("world_countries_table", "derived_virtual_selected_rows"),
     Input('view_radio_option', 'value'),
-    
     ]
     )
-def update_country_trend(selected_country, view_option):
+def update_country_trend(derived_virtual_data,derived_virtual_selected_rows,  view_option):
     
+    try:
+        print("derived_virtual_selected_rows ", derived_virtual_selected_rows)
+        print("view_option ", view_option)
+        if derived_virtual_selected_rows is None:
+            derived_virtual_selected_rows = []
+            selected_country = "India"
+        else:
+            selected_country = df_world_table.loc[derived_virtual_selected_rows[0]]['Country/Region']
+    except:
+        print("Error occured")
+        selected_country = "India"
+
     print("Dropdown Selected country : ",selected_country)
-    print("view_option : ",view_option)
-    
     return update_country_specific(selected_country, view_option)
 
+"""
+@app.callback(
+    [Output('sample_str', 'children'),],
+    [Input('world_countries_table', 'derived_virtual_selected_rows'),
+    Input('world_countries_table', 'selected_row_ids'),
+    Input('world_countries_table', 'derived_virtual_indices'),
+               Input('world_countries_table', 'selected_rows')
+    ])
+def debug_fu(derived_virtual_selected_rows, selected_row_ids,derived_virtual_indices,selected_rows):
+    print("derived_virtual_selected_rows ", derived_virtual_selected_rows)
+    print("selected_row_ids ", selected_row_ids)
+    print("derived_virtual_indices ", derived_virtual_indices)
+    print("selected_rows ", selected_rows)
 
+    return ["Hello"]
+"""
 if __name__ == '__main__':
     app.run_server(debug=True)

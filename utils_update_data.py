@@ -444,6 +444,48 @@ def process_data():
     save(df_re, "recovered_global")
     save(df_de, "deaths_global")
 
+    prepare_world_table(df_world)
+
+
+def prepare_world_table(df_world):
+    GRPBY = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
+    PRESENT_COLS = ['Country/Region'] + \
+    ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Recovery rate', 'Deaths', "New Deaths"] + ['Death rate']
+
+    POP_COLS = ['Total Cases/1M pop', 'Deaths/1M pop', "Population"]
+
+    PRESENT_COLS+=POP_COLS
+
+    df = df_world.groupby('Country/Region')[GRPBY].sum()
+    df.reset_index(inplace=True)
+
+    pop = pd.read_csv(os.path.join("./data_sources", "pop_countries.csv"),encoding='latin-1')
+    df = df.merge(pop[["Country", "Population"]], how="outer", left_on=["Country/Region"], right_on=["Country"])
+
+    save(df, "world_table")
+    #return
+    df['Total Cases/1M pop']=0
+    df['Deaths/1M pop'] = 0
+    for i in range(len(df)):
+        if df.loc[i,"Population"]:
+            df.loc[i,'Total Cases/1M pop'] = (df.loc[i,'Total Cases']/df.loc[i,"Population"])*1000000
+            df.loc[i,'Deaths/1M pop'] = (df.loc[i,'Deaths']/df.loc[i,"Population"])*1000000
+
+    #df['Total Cases/1M pop'] = (df['Total Cases']/df["Population"])*1000000
+    #df['Deaths/1M pop'] = (df['Deaths']/df["Population"])*1000000
+    df['Total Cases/1M pop'].fillna(0, inplace=True)
+    df['Deaths/1M pop'].fillna(0, inplace=True)
+    df['Total Cases/1M pop'] = df['Total Cases/1M pop'].astype(int)
+    df['Deaths/1M pop'] = df['Deaths/1M pop'].astype(int)
+
+    df["Recovery rate"] = df['Recovered']/df['Total Cases']
+    df["Death rate"] = df['Deaths']/df['Total Cases']
+    df.drop("Country", axis=1, inplace=True)
+
+    df.dropna(inplace=True)
+
+    df = df.sort_values(by=['Active', 'Total Cases'], ascending=False)
+    save(df, "world_table")
 
 def check_data_discrepancy(df_w, grp, col):
     simialr = (df_w[col] == grp[col])
