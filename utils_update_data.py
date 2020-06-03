@@ -235,7 +235,17 @@ def save(df, filename):
 
 
 def replace_country_names(df, countryCol):
-    df[countryCol].replace({"Mainland China": "China","Taiwan*":"Taiwan", "Korea, South": "South Korea", "US":"United States"},inplace=True)
+    df[countryCol].replace({
+        "Mainland China": "China",
+        "Taiwan*":"Taiwan", 
+        "Korea, South": "South Korea", 
+        "US":"United States",
+        "CÃ´te d'Ivoire": "Cote d'Ivoire",
+        "RÃ©union":"Réunion", 
+        "CuraÃ§ao": "Curaçao",
+        "Saint Vincent and the Grenadines":"St. Vincent & Grenadines",
+
+        },inplace=True)
     return df
 
 def load_world_latest_data():
@@ -449,12 +459,13 @@ def process_data():
 
 def prepare_world_table(df_world):
     GRPBY = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
-    PRESENT_COLS = ['Country/Region'] + \
-    ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Recovery rate', 'Deaths', "New Deaths"] + ['Death rate']
+    RATE_COLS = ['Recovery rate', 'Death rate']
+    MAIN_COLS = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
+    PRESENT_COLS = ['Country/Region'] + MAIN_COLS + RATE_COLS
 
     POP_COLS = ['Total Cases/1M pop', 'Deaths/1M pop', "Population"]
-
     PRESENT_COLS+=POP_COLS
+    INT_COLS = MAIN_COLS + POP_COLS
 
     df = df_world.groupby('Country/Region')[GRPBY].sum()
     df.reset_index(inplace=True)
@@ -462,7 +473,7 @@ def prepare_world_table(df_world):
     pop = pd.read_csv(os.path.join("./data_sources", "pop_countries.csv"),encoding='latin-1')
     df = df.merge(pop[["Country", "Population"]], how="outer", left_on=["Country/Region"], right_on=["Country"])
 
-    save(df, "world_table")
+    #save(df, "world_table")
     #return
     df['Total Cases/1M pop']=0
     df['Deaths/1M pop'] = 0
@@ -477,6 +488,15 @@ def prepare_world_table(df_world):
     df['Deaths/1M pop'].fillna(0, inplace=True)
     df['Total Cases/1M pop'] = df['Total Cases/1M pop'].astype(int)
     df['Deaths/1M pop'] = df['Deaths/1M pop'].astype(int)
+    df['Population'].fillna(0, inplace=True)
+    df['Population'] = df['Population'].astype(int)
+
+    for c in INT_COLS:
+        #print("Converting type for ", c)
+        df[c].fillna(0, inplace=True)
+        df[c] = df[c].astype(float)
+        df[c] = df[c].astype(int)
+
 
     df["Recovery rate"] = df['Recovered']/df['Total Cases']
     df["Death rate"] = df['Deaths']/df['Total Cases']

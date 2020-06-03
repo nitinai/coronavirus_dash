@@ -1388,15 +1388,18 @@ app.layout = html.Div([
             children=['STAY Home | KEEP a safe distance | WASH hands often | COVER your cough']),
     
             html.P(
-            children=["Developed by NITIN PATIL | If you have any feedback on this dashboard, please let him know on ", html.A('Twitter', href='https://twitter.com/intent/tweet?source=webclient&text=%40_nitinp', target='_blank'), ' or ',
-                        html.A('LinkedIn', href='https://www.linkedin.com/in/nitinai', target='_blank'),
-                    ]),
-
-            html.P(
-            children=["Data source: ", html.A('MoHFW GoI', href='https://www.mohfw.gov.in', target='_blank'), ' | ',
+            children=["Developed by ", html.A('NITIN PATIL', href='https://www.linkedin.com/in/nitinai', target='_blank'),
+                        " | Data source: ", html.A('MoHFW GoI', href='https://www.mohfw.gov.in', target='_blank'), ' | ',
                         html.A('JHU CSSE', href='https://github.com/CSSEGISandData/COVID-19', target='_blank'), " | ",
                         html.A('WHO', href='https://www.who.int', target='_blank'),
+                    #"NITIN PATIL | If you have any feedback on this dashboard, please let him know on ", html.A('Twitter', href='https://twitter.com/intent/tweet?source=webclient&text=%40_nitinp', target='_blank'), ' or ',
                     ]),
+
+            #html.P(
+            #children=["Data source: ", html.A('MoHFW GoI', href='https://www.mohfw.gov.in', target='_blank'), ' | ',
+            #            html.A('JHU CSSE', href='https://github.com/CSSEGISandData/COVID-19', target='_blank'), " | ",
+            #            html.A('WHO', href='https://www.who.int', target='_blank'),
+            #        ]),
 
 
             ], id='my-footer',),

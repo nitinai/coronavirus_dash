@@ -51,12 +51,20 @@ def save(df, filename):
     df.to_csv(DATA_PATH, index=False)
     print("Data saved to: ", DATA_PATH)
 
-
 def replace_country_names(df, countryCol):
-    df[countryCol].replace({"Mainland China": "China","Taiwan*":"Taiwan", "Korea, South": "South Korea", "US":"United States",
-    "CÃ´te d'Ivoire": "Cote d'Ivoire","RÃ©union":"Réunion", "CuraÃ§ao": "Curaçao"},inplace=True)
-   
+    df[countryCol].replace({
+        "Mainland China": "China",
+        "Taiwan*":"Taiwan", 
+        "Korea, South": "South Korea", 
+        "US":"United States",
+        "CÃ´te d'Ivoire": "Cote d'Ivoire",
+        "RÃ©union":"Réunion", 
+        "CuraÃ§ao": "Curaçao",
+        "Saint Vincent and the Grenadines":"St. Vincent & Grenadines",
+
+        },inplace=True)
     return df
+
 
 if __name__ == '__main__':
 
