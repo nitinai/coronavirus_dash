@@ -192,9 +192,9 @@ def graph_scatter_mapbox():
     fig.update_layout(
         plot_bgcolor='#151920',
         paper_bgcolor='#cbd2d3',
-        margin=go.layout.Margin(l=5, r=5, b=10, t=5, pad=40),
+        margin=go.layout.Margin(l=2, r=2, b=2, t=2, pad=0),
         hovermode='closest',
-        transition={'duration': 50},
+        #transition={'duration': 50},
         mapbox=go.layout.Mapbox(
             accesstoken=MAPBOX_TOKEN,
             style="light",
