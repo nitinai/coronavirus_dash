@@ -27,6 +27,7 @@ cache = Cache(config={
     'CACHE_DIR': './cache/'
 })
 TIMEOUT = 60
+LINE_WIDTH = 4
 
 MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
 
@@ -226,7 +227,7 @@ def apply_line_plot_layout(fig, country, annot, annot_size=60):
     fig.update_layout(
         margin=go.layout.Margin(
         l=0,
-        r=5,
+        r=15,
         b=30,
         t=0,
         pad=0
@@ -281,7 +282,7 @@ def plot_daily_cases_vs_recoveries_trend(country):
             "New Cases": COLOR_MAP["SandyBrown"]}
 
     COLS = df_co.columns
-    LINE_WIDTH = 4
+    
     if country == "World":
         
         s = df_co[list(COLS[2:])].sum()
@@ -326,7 +327,6 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             "Total Cases": COLOR_MAP["SandyBrown"]}
 
     COLS = df_co.columns
-    LINE_WIDTH=4
     if country == "World":
         
         s = df_co[list(COLS[2:])].sum()
@@ -415,6 +415,53 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
     fig.update_layout(height=200)
     return fig
 
+# https://stackoverflow.com/a/61047134
+def doubling(indata):
+    readings = indata.to_numpy()
+    readingsLength = len(readings)
+    double = np.zeros(readingsLength)
+    double[:] = np.NaN
+    for i in range(readingsLength - 1, -1, -1):
+        target = readings[i]
+        count = 0
+        for j in range(i, -1, -1):
+            diffsofar = target-readings[j]
+            exact = target / 2
+            if diffsofar > exact:
+                f = (exact - readings[j]) / (readings[j]-readings[j+1]) + count
+                double[i] = f
+                break
+            else:
+                count = count+1
+    outdata = pd.Series(data=double, name=indata.name, index=indata.index)
+    return outdata
+
+def plot_doubling_rate(country):
+    if country is None: return go.Figure()
+    Colors = {
+            'Total Deaths':COLOR_MAP["Salmon"], 
+            "Total Cases": COLOR_MAP["SandyBrown"]}
+
+    total_d = doubling(df_co[df_co["Country/Region"]==country].groupby(["Country/Region"]).sum().iloc[0,2:])
+    deaths_d = doubling(df_de[df_de["Country/Region"]==country].groupby(["Country/Region"]).sum().iloc[0,2:])
+    x_axis_dates = [d for d in pd.to_datetime(total_d.index)]
+    trace1 = go.Scatter(x=x_axis_dates, y=total_d, 
+                            name="Total Cases Doubling Time (Days)",
+                            marker={"color":Colors["Total Cases"]},
+                            line_shape='spline',
+                            line=dict(color=Colors["Total Cases"], width=LINE_WIDTH)
+                            )
+    trace2 = go.Scatter(x=x_axis_dates, y=deaths_d, 
+                            name="Deaths Doubling Time (Days)",
+                            marker={"color":Colors["Total Deaths"]},
+                            line_shape='spline',
+                            line=dict(color=Colors["Total Deaths"], width=LINE_WIDTH)
+                            )
+
+    fig = go.Figure(data=[trace1,trace2])
+    fig = apply_line_plot_layout(fig, country, annot="Doubling Time", annot_size=40)
+    fig.update_layout(height=200)
+    return fig
 
 
 def plot_daily_trend(df, country, type, annot):
@@ -426,7 +473,6 @@ def plot_daily_trend(df, country, type, annot):
             "New Cases": COLOR_MAP["SandyBrown"]}
 
     COLS = df.columns
-    LINE_WIDTH=4
     if country == "World":
 
         s = df[list(COLS[2:])].sum()
@@ -721,9 +767,9 @@ def create_datatable_country(df, id="create_datatable_country"):
                                 'padding': '.1rem',
                                 'backgroundColor': '#ffffff', },
                     fixed_rows={'headers': True, 'data': 0},
-                    style_table={'minHeight': '450px',
-                                 'height': '450px',
-                                 'maxHeight': '450px',
+                    style_table={'minHeight': '350px',
+                                 'height': '350px',
+                                 'maxHeight': '350px',
                                  #'overflowX': 'scroll',
                                  },
                     style_header={'backgroundColor': '#ffffff',
@@ -1274,6 +1320,23 @@ app.layout = html.Div([
 
                 html.Hr(),
 
+                html.Div([
+                    html.H6(["country_doubling_rate_label",],
+                    id="country_doubling_rate_label", className="graph_title"),
+
+                    dcc.Graph(
+                        id="country_doubling_rate",
+                        #figure=plot_total_per_1M_pop_trend(country="World", type="Cum"),
+                        config={'displayModeBar': False, # Hide the floating toolbar
+                                "scrollZoom": False,},
+                    )
+                ], #id="world_daily_trend_box", 
+                #className="six columns",
+                #style = {"margin-right": "-2.5rem"},
+                ),
+
+                html.Hr(),
+
                 dcc.Tabs(
                         id="tabs_country_table",
                         #value='The World',
@@ -1340,6 +1403,9 @@ app.layout = html.Div([
                 #style = {"margin-right": "-2.5rem"},
                 ),
                 
+                
+                
+
                 #dcc.Graph(
                 #    figure=plot_daily_cases_vs_recoveries_trend(country="World"),
                 #    config={'displayModeBar': False, # Hide the floating toolbar
@@ -1434,6 +1500,9 @@ def update_country_specific(selected_country, view_option):
     fig_CountryTrendCum1Mpop_label = f'{selected_country} Total Cases vs Deaths / 1M pop (Cumulative)'
     fig_CountryTrendCum1Mpop = plot_total_per_1M_pop_trend(country=selected_country, type="Cum")
 
+    label_CountryDoublingRate= f'{selected_country} Doubling Time in Days'
+    fig_doubling_rate = plot_doubling_rate(country=selected_country)
+    
     ###############
     # update center of world_map
     ###############
@@ -1519,7 +1588,7 @@ def update_country_specific(selected_country, view_option):
     tab_country_table, tabs_country_table_label, 
     countryTrendCumulativeLabel, countryTrendDailyLabel, 
     fig_CountryTrendDailyNewCases, fig_CountryTrendDailyNewRecovered, fig_CountryTrendDailyNewDeaths,
-    fig_CountryTrendCum1Mpop_label, fig_CountryTrendCum1Mpop
+    fig_CountryTrendCum1Mpop_label, fig_CountryTrendCum1Mpop, label_CountryDoublingRate,fig_doubling_rate
 )
 
 
@@ -1547,6 +1616,9 @@ def update_country_specific(selected_country, view_option):
 
     Output('country_total_cases_vs_deaths_1M_pop_cumulative_label', 'children'),
     Output('country_total_cases_vs_deaths_1M_pop_cumulative', 'figure'),
+
+    Output('country_doubling_rate_label', 'children'),
+    Output('country_doubling_rate', 'figure'),
     ],
     [Input("world_countries_table", "derived_virtual_data"),
     Input("world_countries_table", "derived_virtual_selected_rows"),
