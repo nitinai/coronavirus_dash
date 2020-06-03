@@ -354,10 +354,10 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             daily_deaths = s.diff()
             daily_deaths.fillna(0,inplace=True)
             y = ((daily_deaths/WORLD_POP)*1000000).astype(int)
-            name = "Daily New Deaths/1M pop"
+            name = "Daily Deaths/1M pop"
         else:
             y = ((s/WORLD_POP)*1000000).astype(int)
-            name = "Total Deaths/1M pop"
+            name = "Deaths/1M pop"
         trace2 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
                             marker={"color":Colors["Total Deaths"]},
@@ -398,10 +398,10 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         if type == "Daily":
             daily = daily.diff()
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
-            name = "Daily New Deaths/1M pop"
+            name = "Daily Deaths/1M pop"
         else:
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
-            name = "Total Deaths/1M pop"
+            name = "Deaths/1M pop"
         
         trace2 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
