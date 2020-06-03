@@ -224,13 +224,13 @@ def download_India_data():
     return df
 
 
-def save(df, filename):
+def save(df, filename, index=False):
     PATH = "./data"
     DATA_PATH = f"{PATH}/{filename}.csv"
     if(os.path.exists(DATA_PATH)):
         DST = f"./archieve/{filename}_backup.csv"
         shutil.copy2(DATA_PATH, DST)
-    df.to_csv(DATA_PATH, index=False)
+    df.to_csv(DATA_PATH, index=index)
     print("Data saved to: ", DATA_PATH)
 
 
@@ -456,6 +456,8 @@ def process_data():
 
     prepare_world_table(df_world)
 
+    #prepare_daily_trend_data(df_co)
+
 
 def prepare_world_table(df_world):
     GRPBY = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
@@ -506,6 +508,25 @@ def prepare_world_table(df_world):
 
     df = df.sort_values(by=['Active', 'Total Cases'], ascending=False)
     save(df, "world_table")
+
+
+def prepare_daily_trend_data(df_co):
+
+
+    COLS = df_co.columns
+    s = df_co[list(COLS[2:])].sum()
+    daily = s.diff()
+    daily.fillna(0,inplace=True)
+    x_axis_dates = [d for d in pd.to_datetime(s.index)]
+    print(type(daily))
+    country="World"
+    df_co_daily = pd.DataFrame(data=[daily, daily.rolling(window=3).mean(), daily.rolling(window=7).mean()] ,
+    columns=[country, f"{country}_3day_moving_avg", f"{country}_7day_moving_avg"],
+    #index=x_axis_dates
+    )
+    
+    save(df_co_daily, "daily_confirmed", index=True)
+
 
 def check_data_discrepancy(df_w, grp, col):
     simialr = (df_w[col] == grp[col])

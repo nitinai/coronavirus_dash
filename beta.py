@@ -274,8 +274,7 @@ def apply_line_plot_layout(fig, country, annot, annot_size=60):
     
     
 def plot_daily_cases_vs_recoveries_trend(country):
-    fig = go.Figure()
-    if country is None: return fig
+    if country is None: return go.Figure()
 
     Colors = {'New Recovered':COLOR_MAP["LightGreen"], 
             'New Deaths':COLOR_MAP["Salmon"], 
@@ -319,8 +318,7 @@ def plot_daily_cases_vs_recoveries_trend(country):
 # - Daily New Deaths / 1M pop
 def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                      annot=""):
-    fig = go.Figure()
-    if country is None: return fig
+    if country is None: return go.Figure()
 
     Colors = {
             'Total Deaths':COLOR_MAP["Salmon"], 
@@ -465,8 +463,8 @@ def plot_doubling_rate(country):
 
 
 def plot_daily_trend(df, country, type, annot):
-    fig = go.Figure()
-    if country is None: return fig
+
+    if country is None: return go.Figure()
     
     Colors = {'New Recovered':COLOR_MAP["LightGreen"], 
             'New Deaths':COLOR_MAP["Salmon"], 
@@ -492,7 +490,6 @@ def plot_daily_trend(df, country, type, annot):
                             name="7-day moving average",
                             line_shape='spline',
                             line=dict(width=LINE_WIDTH) )
-        fig = go.Figure(data=[trace1,trace2,trace3])
     else:
 
         s = df[df["Country/Region"]==country].groupby(["Country/Region"]).sum()
@@ -515,7 +512,7 @@ def plot_daily_trend(df, country, type, annot):
                             line_shape='spline',
                             line=dict(width=LINE_WIDTH) )
 
-        fig = go.Figure(data=[trace1,trace2,trace3])
+    fig = go.Figure(data=[trace1,trace2,trace3])
     fig = apply_line_plot_layout(fig, country, annot, annot_size=40)
     fig.update_layout(height=200)
     
@@ -524,8 +521,7 @@ def plot_daily_trend(df, country, type, annot):
 # trend graph for said country
 def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     
-    fig = go.Figure()
-    if country is None: return fig
+    if country is None: return go.Figure()
 
     Types = ["Active", 'Recovered', 'Deaths', "Total Cases"]
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"], COLOR_MAP["Brown"]]
@@ -937,7 +933,6 @@ app.index_string = """<!DOCTYPE html>
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MQ9HJRF"
         height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <!-- End Google Tag Manager (noscript) -->
-
         {%app_entry%}
         <footer>
             {%config%}
@@ -1615,10 +1610,8 @@ def update_country_specific(selected_country, view_option):
     Output('country_trend_daily_new_cases', 'figure'),
     Output('country_trend_daily_new_recovered', 'figure'),
     Output('country_trend_daily_new_deaths', 'figure'),
-
     Output('country_total_cases_vs_deaths_1M_pop_cumulative_label', 'children'),
     Output('country_total_cases_vs_deaths_1M_pop_cumulative', 'figure'),
-
     Output('country_doubling_rate_label', 'children'),
     Output('country_doubling_rate', 'figure'),
     ],
@@ -1660,7 +1653,6 @@ def debug_fu(derived_virtual_selected_rows, selected_row_ids,derived_virtual_ind
     print("selected_row_ids ", selected_row_ids)
     print("derived_virtual_indices ", derived_virtual_indices)
     print("selected_rows ", selected_rows)
-
     return ["Hello"]
 """
 if __name__ == '__main__':
