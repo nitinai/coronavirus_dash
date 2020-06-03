@@ -383,7 +383,7 @@ ol {
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 hr {
   margin-top: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   border-width: 0;
   border-top: 1px solid #E1E1E1; }
 
@@ -449,6 +449,7 @@ div, svg {
   clear: both;
   font-weight: bold;
   margin-left: 1rem;
+  margin-bottom: 0rem;
   font-size: 1.2rem;
 }
 

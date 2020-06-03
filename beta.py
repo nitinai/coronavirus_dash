@@ -990,14 +990,14 @@ app.layout = html.Div([
         ], className="row"),
 
         
-        html.Div([
+        #html.Div([
 
             html.Div([
                 html.P(children=last_update()), 
             ], className="last_update"),
 
             html.Hr(),
-        ], className="row"),
+        #], className="row"),
 
         #### World stat start
             html.Div(className="row", 
@@ -1060,9 +1060,9 @@ app.layout = html.Div([
        
         
         
-        html.Div([
-            html.Hr(),
-        ]),
+        #html.Div([
+        #    html.Hr(),
+        #]),
 
         #### World grpahs
         html.Div([
@@ -1194,7 +1194,7 @@ app.layout = html.Div([
                 #                ),
 
                 html.H6(["The World",], className="graph_title"),
-                html.P(children=["Click the radio button for detail information of country."],
+                html.P(children=[html.Strong("Click the radio button for detail information of country.")],
                         style = {'text-align':"center", "font-size": '1.3rem',
                                 "margin-top": "0.5rem","margin-bottom": "0rem"},),
                 html.P(children=['To sort the table click arrows in front of column names. Initially sorted by Active cases.'],
