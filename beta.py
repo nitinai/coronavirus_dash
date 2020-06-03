@@ -530,7 +530,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     Types = ["Active", 'Recovered', 'Deaths', "Total Cases"]
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"], COLOR_MAP["Brown"]]
 
-    if country == "World" or country == "world":
+    if country == "World":
 
         gConfirmed = df_co_inp.groupby(["Country/Region"]).sum()
         gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
@@ -598,6 +598,8 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
      
     fig = apply_line_plot_layout(fig, country=country, annot=country, annot_size=60)
     fig.update_layout(height=350)
+    if country == "World":
+        fig.update_layout(xaxis_title="Toggle the legends to show/hide corresponding curve")
     return fig
 
 def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
