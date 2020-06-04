@@ -985,4 +985,4 @@ if __name__ == '__main__':
     dump_world_map()
     dump_world_stats()
     #dump_country_graphs()
-    dump_all_countries_data()
+    #dump_all_countries_data()
