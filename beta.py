@@ -26,7 +26,7 @@ cache = Cache(config={
     'CACHE_TYPE': 'filesystem',
     'CACHE_DIR': './cache/'
 })
-TIMEOUT = 60
+TIMEOUT = 300
 LINE_WIDTH = 4
 
 MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
