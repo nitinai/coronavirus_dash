@@ -8,3 +8,10 @@ Please check out at https://covid19updates.herokuapp.com
 - Total Deaths / 1M pop
 - Outcome of cases (% of recoveries vs deaths)
 
+
+# Performance improvement
+- utils_offline_plots : create and pickle the plotly figures
+- app : just load the pickled figure and render
+
+
+
