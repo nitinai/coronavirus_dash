@@ -235,7 +235,7 @@ def apply_line_plot_layout(fig, country, annot, annot_size=60, y_title=""):
         #showlegend=False,
         legend_orientation="h",
         legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
-        hovermode='x',
+        hovermode='x unified',
         #title="Daily Trend",
         xaxis= dict(fixedrange = True, # Disable zoom
                     #tickangle=-45,
