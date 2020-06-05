@@ -14,12 +14,11 @@ from dash.dependencies import Input, Output
 from dash_table import DataTable
 #from dash_table.Format import Sign
 import dash_table.FormatTemplate as FormatTemplate
-import dash_bootstrap_components as dbc
+#import dash_bootstrap_components as dbc
 
-import plotly.express as px
+#import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-#from model import graph_scatter_mapbox, load_time_series_data, relative_trend_graph_china_vs_world, get_country_trend
 #import datetime as dt
 
 #memory = Memory("./cache/", verbose=0)
@@ -236,7 +235,7 @@ def apply_line_plot_layout(fig, country, annot, annot_size=60, y_title=""):
         #showlegend=False,
         legend_orientation="h",
         legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
-        hovermode='x unified',
+        hovermode='x',
         #title="Daily Trend",
         xaxis= dict(fixedrange = True, # Disable zoom
                     #tickangle=-45,
