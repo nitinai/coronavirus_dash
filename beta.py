@@ -222,7 +222,7 @@ def graph_scatter_mapbox():
     
     return fig
 
-def apply_line_plot_layout(fig, country, annot, annot_size=60):
+def apply_line_plot_layout(fig, country, annot, annot_size=60, y_title=""):
     
     fig.update_layout(
         margin=go.layout.Margin(
@@ -240,17 +240,19 @@ def apply_line_plot_layout(fig, country, annot, annot_size=60):
         xaxis= dict(fixedrange = True, # Disable zoom
                     #tickangle=-45,
                     showgrid=False,
-                    showline=False, linecolor='#272e3e',
-                    gridcolor='rgba(203, 210, 211,.3)',
+                    showline=False, #linecolor='#272e3e',
+                    #gridcolor='rgba(203, 210, 211,.3)',
                     gridwidth=.1,
-                    zeroline=False
+                    zeroline=False,
+                    
                     ),
         xaxis_tickformat='%b %d',
         yaxis= dict(fixedrange = True, # Disable zoom
-                    showline=False, linecolor='#272e3e',
+                    showline=False, #linecolor='#272e3e',
                     gridcolor='rgba(203, 210, 211,.3)',
                     gridwidth=.1,
-                    zeroline=False
+                    zeroline=False,
+                    title=y_title
                     ),
         #xaxis_title="Toggle the legends to show/hide corresponding curve",
         plot_bgcolor='#ffffff',
@@ -336,7 +338,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             name = "Daily New Cases/1M pop"
         else:
             y = ((s/WORLD_POP)*1000000).astype(int)
-            name = "Total Cases/1M pop"
+            name = "Cases/1M pop"
         
         x_axis_dates = [d for d in pd.to_datetime(s.index)]
         
@@ -378,7 +380,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             name = "Daily New Cases/1M pop"
         else:
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
-            name = "Total Cases/1M pop"
+            name = "Cases/1M pop"
         
         trace1 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
@@ -431,7 +433,7 @@ def doubling(indata):
                 break
             else:
                 count = count+1
-    outdata = pd.Series(data=double, name=indata.name, index=indata.index)
+    outdata = pd.Series(data=np.round(double, 2), name=indata.name, index=indata.index)
     return outdata
 
 def plot_doubling_rate(country):
@@ -444,20 +446,20 @@ def plot_doubling_rate(country):
     deaths_d = doubling(df_de[df_de["Country/Region"]==country].groupby(["Country/Region"]).sum().iloc[0,2:])
     x_axis_dates = [d for d in pd.to_datetime(total_d.index)]
     trace1 = go.Scatter(x=x_axis_dates, y=total_d, 
-                            name="Total Cases Doubling Time (Days)",
+                            name="Cases Doubling Time",
                             marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
                             line=dict(color=Colors["Total Cases"], width=LINE_WIDTH)
                             )
     trace2 = go.Scatter(x=x_axis_dates, y=deaths_d, 
-                            name="Deaths Doubling Time (Days)",
+                            name="Deaths Doubling Time",
                             marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
                             line=dict(color=Colors["Total Deaths"], width=LINE_WIDTH)
                             )
 
     fig = go.Figure(data=[trace1,trace2])
-    fig = apply_line_plot_layout(fig, country, annot="Doubling Time", annot_size=40)
+    fig = apply_line_plot_layout(fig, country, annot="Doubling Time", annot_size=40, y_title="Days")
     fig.update_layout(height=200)
     return fig
 
@@ -481,12 +483,14 @@ def plot_daily_trend(df, country, type, annot):
         trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
                         marker={"color":Colors[type]})
 
-        trace2 = go.Scatter(x=x_axis_dates, y=daily.rolling(window=3).mean(), 
+        trace2 = go.Scatter(x=x_axis_dates, 
+                            y=np.round(daily.rolling(window=3).mean()), 
                             name="3-day moving average",
                             line_shape='spline',
                             line=dict(width=LINE_WIDTH)
                             )
-        trace3 = go.Scatter(x=x_axis_dates, y=daily.rolling(window=7).mean(), 
+        trace3 = go.Scatter(x=x_axis_dates, 
+                            y=np.round(daily.rolling(window=7).mean()), 
                             name="7-day moving average",
                             line_shape='spline',
                             line=dict(width=LINE_WIDTH) )
@@ -502,12 +506,14 @@ def plot_daily_trend(df, country, type, annot):
         trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
                         marker={"color":Colors[type]})
 
-        trace2 = go.Scatter(x=x_axis_dates, y=daily.rolling(window=3).mean(), 
+        trace2 = go.Scatter(x=x_axis_dates, 
+                            y=np.round(daily.rolling(window=3).mean()), 
                             name="3-day moving average",
                             line_shape='spline',
                             line=dict(width=LINE_WIDTH)
                             )
-        trace3 = go.Scatter(x=x_axis_dates, y=daily.rolling(window=7).mean(), 
+        trace3 = go.Scatter(x=x_axis_dates, 
+                            y=np.round(daily.rolling(window=7).mean()), 
                             name="7-day moving average",
                             line_shape='spline',
                             line=dict(width=LINE_WIDTH) )
@@ -1082,7 +1088,7 @@ app.layout = html.Div([
                 html.Hr(),
 
                 html.Div([
-                    html.H6(["Worldwide Total Cases vs Deaths / 1M pop (Cumulative)",], className="graph_title"),
+                    html.H6(["Worldwide Cases vs Deaths / 1M pop",], className="graph_title"),
 
                     dcc.Graph(
                         #id="world_daily_trend",
@@ -1386,7 +1392,7 @@ app.layout = html.Div([
                 ),
 
                 html.Div([
-                    html.H6(["Country Total Cases vs Deaths / 1M pop (Cumulative)",],
+                    html.H6(["Country Cases vs Deaths / 1M pop",],
                     id="country_total_cases_vs_deaths_1M_pop_cumulative_label", className="graph_title"),
 
                     dcc.Graph(
@@ -1494,10 +1500,10 @@ def update_country_specific(selected_country, view_option):
     fig_CountryTrendDailyNewRecovered = plot_daily_trend(df_re, country=selected_country, type="New Recovered", annot="Daily Recoveries")
     fig_CountryTrendDailyNewDeaths = plot_daily_trend(df_de, country=selected_country, type="New Deaths", annot="Daily Deaths")
 
-    fig_CountryTrendCum1Mpop_label = f'{selected_country} Total Cases vs Deaths / 1M pop (Cumulative)'
+    fig_CountryTrendCum1Mpop_label = f'{selected_country} Cases vs Deaths / 1M pop'
     fig_CountryTrendCum1Mpop = plot_total_per_1M_pop_trend(country=selected_country, type="Cum")
 
-    label_CountryDoublingRate= f'{selected_country} Doubling Time in Days'
+    label_CountryDoublingRate= f'{selected_country} Doubling Time'
     fig_doubling_rate = plot_doubling_rate(country=selected_country)
     
     ###############
