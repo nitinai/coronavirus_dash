@@ -35,6 +35,6 @@ TYPE_TO_COLOR={
     "Default":"Red"
 }
 
-TIMEOUT = 60
+TIMEOUT = 300
 LINE_WIDTH = 4
 

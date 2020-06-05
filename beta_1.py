@@ -17,14 +17,10 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from dash_table import DataTable
-#from dash_table.Format import Sign
 import dash_table.FormatTemplate as FormatTemplate
 
-#import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-#from model import graph_scatter_mapbox, load_time_series_data, relative_trend_graph_china_vs_world, get_country_trend
-#import datetime as dt
 
 #memory = Memory("./cache/", verbose=0)
 cache = Cache(config={
@@ -32,9 +28,9 @@ cache = Cache(config={
     'CACHE_DIR': './cache/'
 })
 
-MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
+#MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
 
-cwd = os.path.dirname(os.path.realpath(__file__))
+#cwd = os.path.dirname(os.path.realpath(__file__))
 
 def last_update():
     with open("./data/LastUpdate.txt", "r") as f:
@@ -50,95 +46,10 @@ def last_update():
 
 
 #-----------------------------------------------------------------------------------
-#NAMING CONVENTION : load/dump + country/world + daily/cum + new_cases/recoveries/deaths/doubling_time/total_cases_deaths_per_1M_pop + trend (for graph)
-#-----------------------------------------------------------------------------------
-def load_world_cum_trend():
-    """Render a plotly figure from a pickle file"""
-    #with open(os.path.join(cwd, "data", 'world.json'), 'r') as f:
-    #    v = json.loads(f.read())
-
-    #return go.Figure(data=v['data'], layout=v['layout'])
-
-    with open(os.path.join(cwd, 'data', 'plots', 'world_cum_trend.pkl'), 'rb') as fid:
-        fig = pickle.load(fid)
-
-    return fig
-
-#-----------------------------------------------------------------------------------
-def load_world_daily_new_cases_trend():
-    with open(os.path.join(cwd, 'data', 'plots', 'world_daily_new_cases_trend.pkl'), 'rb') as fid:
-        fig = pickle.load(fid)
-
-    return fig
-#-----------------------------------------------------------------------------------
-def load_world_total_cases_deaths_per_1M_pop_trend():
-    with open(os.path.join(cwd, 'data', 'plots', 'world_total_cases_deaths_per_1M_pop_trend.pkl'), 'rb') as fid:
-        fig = pickle.load(fid)
-
-    return fig
-#-----------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------
-def load_world_daily_recoveries_trend():
-    with open(os.path.join(cwd, 'data', 'plots', 'world_daily_recoveries_trend.pkl'), 'rb') as fid:
-        fig = pickle.load(fid)
-    return fig
-
-#-----------------------------------------------------------------------------------
-def load_world_daily_deaths_trend():
-    with open(os.path.join(cwd, 'data', 'plots', 'world_daily_deaths_trend.pkl'), 'rb') as fid:
-        fig = pickle.load(fid)
-    return fig
-
-#-----------------------------------------------------------------------------------
-def load_world_table():
-    with open(os.path.join(cwd, 'data', 'plots', 'world_table.pkl'), 'rb') as fid:
-        fig = pickle.load(fid)
-    return fig
-#-----------------------------------------------------------------------------------
-def load_world_map():
-    with open(os.path.join(cwd, 'data', 'plots', 'world_map.pkl'), 'rb') as fid:
-        fig = pickle.load(fid)
-    return fig
-
 world_map = create_world_map()
 
 #-----------------------------------------------------------------------------------
-def load_world_stats():
-    with open(os.path.join(cwd, 'data', 'plots', 'world_stats.pkl'), 'rb') as fid:
-        country = pickle.load(fid)
-
-    return (country["num_countries"],
-        country["total_cases"],
-        country["recovered_cases"],
-        country["death_cases"],
-        country["active_cases"],
-        country["new_cases"],
-        country["new_recovered"],
-        country["new_deaths"],
-        country["new_active"])
-
-num_countries, total_cases, recovered_cases, death_cases, active_cases, new_cases, new_recovered, new_deaths, new_active = load_world_stats()
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------------
+num_countries, total_cases, recovered_cases, death_cases, active_cases, new_cases, new_recovered, new_deaths, new_active = get_world_stats()
 
 ##########################################################################
 
@@ -334,7 +245,7 @@ app.layout = html.Div([
 #
                 dcc.Graph(
                     id="world_trend_graph",
-                    figure=load_world_cum_trend(),
+                    figure=get_country_trend("World"),
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
                 ),
@@ -346,7 +257,7 @@ app.layout = html.Div([
 
                     dcc.Graph(
                         #id="world_daily_trend",
-                        figure=load_world_total_cases_deaths_per_1M_pop_trend(),
+                        figure=plot_total_per_1M_pop_trend(country="World", type="Cum"),
                         config={'displayModeBar': False, # Hide the floating toolbar
                                 "scrollZoom": False,},
                     )
@@ -363,21 +274,21 @@ app.layout = html.Div([
                 html.H6(["Worldwide Trend (Daily)",], className="graph_title"),
                 dcc.Graph(
                     id="world_daily_trend",
-                    figure=load_world_daily_new_cases_trend(),
+                    figure=plot_daily_trend_new_cases("World"),
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
                 ),
                 html.Hr(),
                 dcc.Graph(
                     #id="world_daily_trend",
-                    figure=load_world_daily_recoveries_trend(),
+                    figure=plot_daily_trend_recoveries("World"),
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
                 ),
                 html.Hr(),
                 dcc.Graph(
                     #id="world_daily_trend",
-                    figure=load_world_daily_deaths_trend(),
+                    figure=plot_daily_trend_deaths("World"),
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
                 ),
@@ -455,7 +366,7 @@ app.layout = html.Div([
                 html.P(children=['To sort the table click arrows in front of column names. Initially sorted by Active cases.'],
                         style = {'text-align':"center", "font-size": '1.3rem',
                                 "margin-top": "0rem","margin-bottom": "0.5rem"},),
-                load_world_table(), 
+                create_datatable_world(id="world_countries_table"), 
                     
                 #),
 
@@ -728,7 +639,7 @@ app.layout = html.Div([
             ], id='my-footer',),
 
         # Hidden div inside the app that stores the selected values like : selected_country and map view_option
-        html.Div(id='selected_country', children= "", style={'display': 'none'}
+        html.P(id='selected_country', children= "", style={'display': 'none'}
         )
 
     ],className="all_content"), # excluding the title bar
@@ -739,17 +650,115 @@ app.layout = html.Div([
 )
 
 
-@app.callback(Output('selected_country', 'children'), 
+#@app.callback(Output('selected_country', 'children'), 
+#    [Input("world_countries_table", "derived_virtual_data"),
+#    Input("world_countries_table", "derived_virtual_selected_rows"),
+#    ])
+#def cache_selected_country(derived_virtual_data, derived_virtual_selected_rows):
+#    
+#    try:
+#        #print("derived_virtual_data ", derived_virtual_data)
+#        #print("derived_virtual_data type", type(derived_virtual_data))
+#        #print("derived_virtual_selected_rows ", derived_virtual_selected_rows)
+#        print("cache_selected_values")
+#        if derived_virtual_selected_rows is None:
+#            derived_virtual_selected_rows = []
+#            selected_country = "India"
+#        else:
+#            dff = pd.DataFrame(derived_virtual_data)
+#            selected_country = dff.loc[derived_virtual_selected_rows[0]]['Country/Region']
+#    except:
+#        print("cache_selected_values : Error occured")
+#        selected_country = "India"
+#
+#    return selected_country
+#    
+    
+#-----------------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------------
+@cache.memoize(timeout=TIMEOUT)
+def update_world_map(selected_country, view_option, lat, long):
+    ###############
+    # update center of world_map
+    ###############
+    
+    if view_option == "World_view":
+        latitude=14
+        longitude=8
+        zoom=1
+
+    elif selected_country == "United Kingdom":
+        latitude=55.3781
+        longitude=-3.436
+        zoom=3.2
+    elif selected_country == "Netherlands":
+        latitude=52.1326
+        longitude=5.2913
+        zoom=4
+    elif selected_country == "France":
+        latitude=46.2276
+        longitude=2.2137
+        zoom=4
+    elif selected_country == "Denmark":
+        latitude=56.2639
+        longitude=9.5018
+        zoom=4
+    else:
+        latitude=lat
+        longitude=long
+        zoom=3.2
+        
+    mapbox=go.layout.Mapbox(
+                accesstoken=MAPBOX_TOKEN,
+                style="light",
+                # The direction you're facing, measured clockwise as an angle from true north on a compass
+                bearing=0,
+                center=go.layout.mapbox.Center(
+                    lat=latitude,
+                    lon=longitude
+                ),
+                pitch=0,
+                zoom=zoom
+            )
+
+    world_map.update_layout(mapbox=mapbox)
+
+    return world_map
+
+#-----------------------------------------------------------------------------------
+@app.callback([
+    Output('selected_country', 'children'),
+    Output('country_stat_head', 'children'),
+    Output('country_stat_province_state', 'children'),
+    Output('country_stat_total_cases', 'children'),
+    Output('country_stat_recovered', 'children'),
+    Output('country_stat_deceased', 'children'),
+    Output('country_stat_active', 'children'),
+    Output('country_stat_new_cases', 'children'),
+    Output('country_stat_new_recovered', 'children'),
+    Output('country_stat_new_deceased', 'children'),
+    Output('country_stat_new_active', 'children'),
+    
+    Output('tab_country_table', 'label'),
+    Output('country_trend_cumulative_label', 'children'),
+    Output('country_trend_daily_label', 'children'),
+    Output('country_total_cases_vs_deaths_1M_pop_cumulative_label', 'children'),
+    Output('country_doubling_rate_label', 'children'),
+    
+    Output('tab_country_table', 'children'),
+    Output('world_map', 'figure')
+    ],
     [Input("world_countries_table", "derived_virtual_data"),
     Input("world_countries_table", "derived_virtual_selected_rows"),
-    ])
-def cache_selected_country(derived_virtual_data, derived_virtual_selected_rows):
-    
+    Input('view_radio_option', 'value'),])
+def update_country_stats_labels_and_map(derived_virtual_data, derived_virtual_selected_rows, view_option):
+
     try:
         #print("derived_virtual_data ", derived_virtual_data)
         #print("derived_virtual_data type", type(derived_virtual_data))
         #print("derived_virtual_selected_rows ", derived_virtual_selected_rows)
-        print("cache_selected_values")
+        #print("cache_selected_values")
         if derived_virtual_selected_rows is None:
             derived_virtual_selected_rows = []
             selected_country = "India"
@@ -760,43 +769,65 @@ def cache_selected_country(derived_virtual_data, derived_virtual_selected_rows):
         print("cache_selected_values : Error occured")
         selected_country = "India"
 
-    return selected_country
+    df_country, country_loc = create_country_df(selected_country)
+
+    ###############
+    # Country statistics
+    ###############
+    country_stat_province_state = df_country["Province/State"].nunique()
+
+    total_cases = df_country['Total Cases'].sum()
+    recovered = df_country["Recovered"].sum()
+    deceased = df_country["Deaths"].sum()
+    active_cases = df_country["Active"].sum()
+
+    country_stat_total_cases = f"""{total_cases:,d}"""
+    country_stat_recovered = f"""{recovered:,d}"""
+    country_stat_deceased = f"""{deceased:,d}"""
+    country_stat_active = f"""{active_cases:,d}"""
+
+    new_cases_num = df_country['New Cases'].sum()
+    new_recovered_num = df_country['New Recovered'].sum()
+    new_deaths_num = df_country['New Deaths'].sum()
+
+    country_new_cases = get_change_string(total_cases, new_cases_num)
+    country_new_recovered = get_change_string(recovered, new_recovered_num, "Recovered")
+    country_new_deaths = get_change_string(deceased, new_deaths_num)
+
+    new_active_num = new_cases_num - new_recovered_num - new_deaths_num
+    country_new_active = get_change_string(active_cases, new_active_num, "Active")
+    
+    return (selected_country,
+        selected_country,
+        country_stat_province_state,
+        country_stat_total_cases,
+        country_stat_recovered,
+        country_stat_deceased,
+        country_stat_active,
+        country_new_cases,
+        country_new_recovered,
+        country_new_deaths,
+        country_new_active,
+        selected_country,
+        f'{selected_country} Trend (Cumulative)',
+        f'{selected_country} Trend (Daily)',
+        f'{selected_country} Total Cases vs Deaths / 1M pop (Cumulative)',
+        f'{selected_country} Doubling Time in Days',
+
+        create_datatable_country(df_country),
+        update_world_map(selected_country, view_option, country_loc['Lat'].values[0], country_loc['Long_'].values[0])
+        )
     
     
-#-----------------------------------------------------------------------------------
-
 
 #-----------------------------------------------------------------------------------
-"""
-@app.callback([
-    Output('trend_graph', 'figure'),
-    Output('country_trend_daily_new_cases', 'figure'),
-    Output('country_trend_daily_new_recovered', 'figure'),
-    Output('country_trend_daily_new_deaths', 'figure'),
-    Output('country_total_cases_vs_deaths_1M_pop_cumulative', 'figure'),
-    Output('country_doubling_rate', 'figure'),
-    Output('tab_country_table', 'children'),
-    ],
-    [Input('selected_country', 'children')])
-def update_country_graphs(selected_country):
-    
-    with open(os.path.join(cwd, 'data', 'plots', f'{selected_country}.pkl'), 'rb') as fid:
-        country = pickle.load(fid)
 
-    return (country["cum_trend"],
-        country["daily_new_cases_trend"],
-        country["daily_recoveries_trend"],
-        country["daily_deaths_trend"],
-        country["daily_new_cases_deaths_per1Mpop_trend"],
-        country["daily_doubling_time_trend"],
-        country["datatable"])
-"""
 #-----------------------------------------------------------------------------------
-@app.callback(Output('trend_graph', 'figure'),
+@app.callback([Output('trend_graph', 'figure')],
     [Input('selected_country', 'children')])
 def update_country_trend_graph1(selected_country):
-    
-    return get_country_trend(selected_country)
+    print("update_country_trend_graph1 selected_country : ", selected_country)  
+    return [get_country_trend(selected_country)]
 
 #-----------------------------------------------------------------------------------
 @app.callback(Output('country_trend_daily_new_cases', 'figure'),
@@ -804,6 +835,7 @@ def update_country_trend_graph1(selected_country):
 def update_country_trend_graph2(selected_country):
     
     return plot_daily_trend_new_cases(selected_country)
+
 
 #-----------------------------------------------------------------------------------
 @app.callback(Output('country_trend_daily_new_recovered', 'figure'),
@@ -838,121 +870,7 @@ def update_country_trend_graph6(selected_country):
 
 
 #-----------------------------------------------------------------------------------
-@app.callback(Output('tab_country_table', 'children'),
-    [Input('selected_country', 'children')])
-def update_country_trend_graph7(selected_country):
 
-    return create_datatable_country(df_country)
-
-#-----------------------------------------------------------------------------------
-@app.callback([
-    Output('country_stat_head', 'children'),
-    Output('country_stat_province_state', 'children'),
-    Output('country_stat_total_cases', 'children'),
-    Output('country_stat_recovered', 'children'),
-    Output('country_stat_deceased', 'children'),
-    Output('country_stat_active', 'children'),
-    Output('country_stat_new_cases', 'children'),
-    Output('country_stat_new_recovered', 'children'),
-    Output('country_stat_new_deceased', 'children'),
-    Output('country_stat_new_active', 'children'),
-    
-    Output('tab_country_table', 'label'),
-    Output('country_trend_cumulative_label', 'children'),
-    Output('country_trend_daily_label', 'children'),
-    Output('country_total_cases_vs_deaths_1M_pop_cumulative_label', 'children'),
-    Output('country_doubling_rate_label', 'children'),
-    
-    ],
-    [Input('selected_country', 'children')])
-def update_country_stats_and_labels(selected_country):
-
-    with open(os.path.join(cwd, 'data', 'plots', f'{selected_country}_stats.pkl'), 'rb') as fid:
-        country = pickle.load(fid)
-
-    return (selected_country, 
-        country["country_stat_province_state"],
-        country["country_stat_total_cases"],
-        country["country_stat_recovered"],
-        country["country_stat_deceased"],
-        country["country_stat_active"],
-        country["country_new_cases"],
-        country["country_new_recovered"],
-        country["country_new_deaths"],
-        country["country_new_active"],
-        selected_country,
-        f'{selected_country} Trend (Cumulative)',
-        f'{selected_country} Trend (Daily)',
-        f'{selected_country} Total Cases vs Deaths / 1M pop (Cumulative)',
-        f'{selected_country} Doubling Time in Days'
-        )
-    
-    
-
-#-----------------------------------------------------------------------------------
-#@app.callback(Output('country_trend_daily_new_cases', 'figure'),
-#    [Input('selected_country', 'children')])
-#def update_country_daily_new_cases_graph(selected_country):
-#    return plot_daily_trend(df_co, country=selected_country, type="New Cases", annot="Daily New Cases")
-#
-#-----------------------------------------------------------------------------------
-@app.callback(Output('world_map', 'figure'),
-    [Input('selected_country', 'children'),
-    Input('view_radio_option', 'value'),])
-def update_world_map(selected_country, view_option):
-    ###############
-    # update center of world_map
-    ###############
-    
-    if view_option == "World_view":
-        latitude=14
-        longitude=8
-        zoom=1
-
-    elif selected_country == "United Kingdom":
-        latitude=55.3781
-        longitude=-3.436
-        zoom=3.2
-    elif selected_country == "Netherlands":
-        latitude=52.1326
-        longitude=5.2913
-        zoom=4
-    elif selected_country == "France":
-        latitude=46.2276
-        longitude=2.2137
-        zoom=4
-    elif selected_country == "Denmark":
-        latitude=56.2639
-        longitude=9.5018
-        zoom=4
-    else:
-        print("update_world_map selected_country: ", selected_country)
-        if selected_country == "":
-            selected_country="India"
-        # get these values for country
-        with open(os.path.join(cwd, 'data', 'plots', f'{selected_country}_stats.pkl'), 'rb') as fid:
-            country = pickle.load(fid)
-
-        latitude=country["Lat"]
-        longitude=country["Long"]
-        zoom=3.2
-        
-    mapbox=go.layout.Mapbox(
-                accesstoken=MAPBOX_TOKEN,
-                style="light",
-                # The direction you're facing, measured clockwise as an angle from true north on a compass
-                bearing=0,
-                center=go.layout.mapbox.Center(
-                    lat=latitude,
-                    lon=longitude
-                ),
-                pitch=0,
-                zoom=zoom
-            )
-
-    world_map.update_layout(mapbox=mapbox)
-
-    return world_map
 
 if __name__ == '__main__':
     app.run_server(debug=True)
