@@ -1480,7 +1480,6 @@ app.layout = html.Div([
 #style={'backgroundColor': '#ffffff',}
 )
 
-
 # to make use of joblib memory decorator
 #@memory.cache
 @cache.memoize(timeout=TIMEOUT)
