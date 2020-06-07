@@ -480,19 +480,27 @@ def plot_daily_trend(df, country, type, annot):
         daily.fillna(0,inplace=True)
         x_axis_dates = [d for d in pd.to_datetime(s.index)]
 
-        trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
-                        marker={"color":Colors[type]})
+        #trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
+        #                marker={"color":Colors[type]})
+        trace1 = go.Scattergl(x=x_axis_dates, 
+                            y=daily,
+                            fill='tozeroy',
+                            name=type, 
+                            #line_shape='spline',
+                            line=dict(color=Colors[type], width=LINE_WIDTH
+                            )
+                            )
 
-        trace2 = go.Scatter(x=x_axis_dates, 
+        trace2 = go.Scattergl(x=x_axis_dates, 
                             y=np.round(daily.rolling(window=3).mean()), 
                             name="3-day moving average",
-                            line_shape='spline',
+                            #line_shape='spline',
                             line=dict(width=LINE_WIDTH)
                             )
-        trace3 = go.Scatter(x=x_axis_dates, 
+        trace3 = go.Scattergl(x=x_axis_dates, 
                             y=np.round(daily.rolling(window=7).mean()), 
                             name="7-day moving average",
-                            line_shape='spline',
+                            #line_shape='spline',
                             line=dict(width=LINE_WIDTH) )
     else:
 
@@ -503,19 +511,27 @@ def plot_daily_trend(df, country, type, annot):
         daily.fillna(0,inplace=True)
         x_axis_dates = [d for d in pd.to_datetime(daily.index)]
 
-        trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
-                        marker={"color":Colors[type]})
+        #trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
+        #                marker={"color":Colors[type]})
 
-        trace2 = go.Scatter(x=x_axis_dates, 
+        trace1 = go.Scattergl(x=x_axis_dates, 
+                            y=daily,
+                            fill='tozeroy',
+                            name=type, 
+                            #line_shape='spline',
+                            line=dict(color=Colors[type], width=LINE_WIDTH)
+                            )
+
+        trace2 = go.Scattergl(x=x_axis_dates, 
                             y=np.round(daily.rolling(window=3).mean()), 
                             name="3-day moving average",
-                            line_shape='spline',
+                            #line_shape='spline',
                             line=dict(width=LINE_WIDTH)
                             )
-        trace3 = go.Scatter(x=x_axis_dates, 
+        trace3 = go.Scattergl(x=x_axis_dates, 
                             y=np.round(daily.rolling(window=7).mean()), 
                             name="7-day moving average",
-                            line_shape='spline',
+                            #line_shape='spline',
                             line=dict(width=LINE_WIDTH) )
 
     fig = go.Figure(data=[trace1,trace2,trace3])
@@ -541,7 +557,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
         active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
         
-        traceTotal = go.Scattergl(x=x_axis_dates, y=gConfirmed.sum(), 
+        traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.sum(), 
                                     name=Types[3], mode='markers+lines', 
                                     marker={"color":Colors[3]},
                                     text=[d for d in x_axis_dates],
@@ -550,7 +566,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                                     hovertemplate='%{hovertext}' +
                                               '<extra></extra>'
                                     )
-        trace1 = go.Scattergl(x=x_axis_dates, y=active, 
+        trace1 = go.Scatter(x=x_axis_dates, y=active, 
                             name=Types[0], mode='markers+lines', 
                             marker={"color":Colors[0]},
                             text=[d for d in x_axis_dates],
@@ -559,7 +575,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                             hovertemplate='%{hovertext}' +
                                         '<extra></extra>'
                             )
-        trace2 = go.Scattergl(x=x_axis_dates, y=gRecovered.sum(), 
+        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), 
                             name=Types[1], mode='markers+lines', 
                             marker={"color":Colors[1]},
                             text=[d for d in x_axis_dates],
@@ -568,7 +584,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                             hovertemplate='%{hovertext}' +
                                         '<extra></extra>'
                             )
-        trace3 = go.Scattergl(x=x_axis_dates, y=gDeaths.sum(), 
+        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), 
                             name=Types[2], mode='markers+lines', 
                             marker={"color":Colors[2]},
                             text=[d for d in x_axis_dates],
