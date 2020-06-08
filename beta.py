@@ -470,7 +470,11 @@ def plot_daily_trend(df, country, type, annot):
     
     Colors = {'New Recovered':COLOR_MAP["LightGreen"], 
             'New Deaths':COLOR_MAP["Salmon"], 
-            "New Cases": COLOR_MAP["SandyBrown"]}
+            "New Cases": COLOR_MAP["SandyBrown"],
+            "3-day":"rgb(128,128,128)",
+            #"7-day":"rgb(0,191,255)",
+            "7-day":"rgb(30,144,255)",
+            }
 
     COLS = df.columns
     if country == "World":
@@ -494,13 +498,14 @@ def plot_daily_trend(df, country, type, annot):
                             y=np.round(daily.rolling(window=3).mean()), 
                             name="3-day moving average",
                             #line_shape='spline',
-                            line=dict(width=LINE_WIDTH)
+                            line=dict(color=Colors["3-day"], width=LINE_WIDTH)
                             )
         trace3 = go.Scatter(x=x_axis_dates, 
                             y=np.round(daily.rolling(window=7).mean()), 
                             name="7-day moving average",
                             #line_shape='spline',
-                            line=dict(width=LINE_WIDTH) )
+                            line=dict(color=Colors["7-day"], width=LINE_WIDTH) 
+                            )
     else:
 
         s = df[df["Country/Region"]==country].groupby(["Country/Region"]).sum()
@@ -525,13 +530,14 @@ def plot_daily_trend(df, country, type, annot):
                             y=np.round(daily.rolling(window=3).mean()), 
                             name="3-day moving average",
                             #line_shape='spline',
-                            line=dict(width=LINE_WIDTH)
+                            line=dict(color=Colors["3-day"], width=LINE_WIDTH)
                             )
         trace3 = go.Scatter(x=x_axis_dates, 
                             y=np.round(daily.rolling(window=7).mean()), 
                             name="7-day moving average",
                             #line_shape='spline',
-                            line=dict(width=LINE_WIDTH) )
+                            line=dict(color=Colors["7-day"], width=LINE_WIDTH) 
+                            )
 
     fig = go.Figure(data=[trace1,trace2,trace3])
     fig = apply_line_plot_layout(fig, country, annot, annot_size=40)
