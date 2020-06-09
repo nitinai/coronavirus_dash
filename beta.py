@@ -373,7 +373,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         daily.fillna(0,inplace=True)
         x_axis_dates = [d for d in pd.to_datetime(daily.index)]
 
-        COUNTRY_POP =df_world_table[df_world_table["Country/Region"] == "India"]["Population"].values[0]
+        COUNTRY_POP =df_world_table[df_world_table["Country/Region"] == country]["Population"].values[0]
         if type == "Daily":
             daily = daily.diff()
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
