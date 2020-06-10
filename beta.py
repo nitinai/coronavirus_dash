@@ -131,7 +131,7 @@ def get_change_string(current, change, type="Default"):
     percent = f"({round((change / (current-change))*100, 2)}%)"
 
     #color = COLOR_MAP[TYPE_TO_COLOR[type]]
-    if sign == "decrese_arw" or type == "Recovered":
+    if sign is "decrese_arw" or type is "Recovered":
         color = COLOR_MAP["Green"]
     else:
         color = COLOR_MAP["Red"]
@@ -286,7 +286,7 @@ def plot_daily_cases_vs_recoveries_trend(country):
 
     #COLS = df_co.columns
     
-    if country == "World":
+    if country is "World":
         
         s = df_co[DATE_COLUMN_NAME].sum()
         daily_new = s.diff()
@@ -329,11 +329,11 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             "Total Cases": COLOR_MAP["SandyBrown"]}
 
     #COLS = df_co.columns
-    if country == "World":
+    if country is "World":
         
         s = df_co[DATE_COLUMN_NAME].sum()
         
-        if type == "Daily":
+        if type is "Daily":
             daily_new = s.diff()
             daily_new.fillna(0,inplace=True)
             y = ((daily_new/WORLD_POP)*1000000).astype(int)
@@ -352,7 +352,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                             )
 
         s = df_de[DATE_COLUMN_NAME].sum()
-        if type == "Daily":
+        if type is "Daily":
             daily_deaths = s.diff()
             daily_deaths.fillna(0,inplace=True)
             y = ((daily_deaths/WORLD_POP)*1000000).astype(int)
@@ -376,7 +376,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         #x_axis_dates = [d for d in pd.to_datetime(daily.index)]
 
         COUNTRY_POP =df_world_table[df_world_table["Country/Region"] == country]["Population"].values[0]
-        if type == "Daily":
+        if type is "Daily":
             daily = daily.diff()
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
             name = "Daily New Cases/1M pop"
@@ -397,7 +397,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         
         daily.fillna(0,inplace=True)
 
-        if type == "Daily":
+        if type is "Daily":
             daily = daily.diff()
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
             name = "Daily Deaths/1M pop"
@@ -479,7 +479,7 @@ def plot_daily_trend(df, country, type, annot):
             }
 
     #COLS = df.columns
-    if country == "World":
+    if country is "World":
 
         s = df[DATE_COLUMN_NAME].sum()
         daily = s.diff()
@@ -601,7 +601,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
     Types = ["Active", 'Recovered', 'Deaths', "Total Cases"]
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"], COLOR_MAP["Brown"]]
 
-    if country == "World":
+    if country is "World":
 
         gConfirmed = df_co_inp.groupby(["Country/Region"]).sum()
         gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
@@ -705,7 +705,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
      
     fig = apply_line_plot_layout(fig, country=country, annot=country, annot_size=60)
     fig.update_layout(height=350)
-    if country == "World":
+    if country is "World":
         fig.update_layout(xaxis_title="Toggle the legends to show/hide corresponding curve")
     return fig
 
@@ -1326,7 +1326,9 @@ app.layout = html.Div([
                                 {'label': 'Country view', 'value': 'Country_view'},
                             ],
                             value='Country_view',
-                            labelStyle={'display': 'inline-block'}
+                            labelStyle={
+                                'display': 'inline-block'
+                                }
                         ),
 
                 dcc.Graph(
@@ -1617,30 +1619,32 @@ def update_country_specific(selected_country, view_option):
     if view_option == "World_view":
         latitude=14
         longitude=8
-        zoom=1
+        zoom=0.4
 
-    elif selected_country == "United Kingdom":
-        latitude=55.3781
-        longitude=-3.436
-        zoom=3.2
-    elif selected_country == "Netherlands":
-        latitude=52.1326
-        longitude=5.2913
-        zoom=4
-    elif selected_country == "France":
-        latitude=46.2276
-        longitude=2.2137
-        zoom=4
-    elif selected_country == "Denmark":
-        latitude=56.2639
-        longitude=9.5018
-        zoom=4
     else:
-        # get these values for country
-        latitude=country_loc['Lat'].values[0]
-        longitude=country_loc['Long_'].values[0]
-        zoom=3.2
-        
+
+        if selected_country == "United Kingdom":
+            latitude=55.3781
+            longitude=-3.436
+            zoom=3.2
+        elif selected_country == "Netherlands":
+            latitude=52.1326
+            longitude=5.2913
+            zoom=4
+        elif selected_country == "France":
+            latitude=46.2276
+            longitude=2.2137
+            zoom=4
+        elif selected_country == "Denmark":
+            latitude=56.2639
+            longitude=9.5018
+            zoom=4
+        else:
+            # get these values for country
+            latitude=country_loc['Lat'].values[0]
+            longitude=country_loc['Long_'].values[0]
+            zoom=3.2
+            
     mapbox=go.layout.Mapbox(
                 accesstoken=MAPBOX_TOKEN,
                 style="light",
@@ -1659,7 +1663,7 @@ def update_country_specific(selected_country, view_option):
     ###############
     # Country statistics
     ###############
-    country_stat_head = selected_country
+    #country_stat_head = selected_country
     country_stat_province_state = df_country["Province/State"].nunique()
 
     total_cases = df_country['Total Cases'].sum()
@@ -1687,12 +1691,12 @@ def update_country_specific(selected_country, view_option):
     # Country datatable
     ###############
     tab_country_table = create_datatable_country(df_country)
-    tabs_country_table_label = selected_country
+    #tabs_country_table_label = selected_country
 
-    return (trend_graph, world_map, country_stat_head, country_stat_province_state,
+    return (trend_graph, world_map, selected_country, country_stat_province_state,
     country_stat_total_cases, country_stat_recovered, country_stat_deceased, country_stat_active,
     country_new_cases,  country_new_recovered, country_new_deaths, country_new_active,
-    tab_country_table, tabs_country_table_label, 
+    tab_country_table, selected_country, 
     countryTrendCumulativeLabel, countryTrendDailyLabel, 
     fig_CountryTrendDailyNewCases, fig_CountryTrendDailyNewRecovered, fig_CountryTrendDailyNewDeaths,
     fig_CountryTrendCum1Mpop_label, fig_CountryTrendCum1Mpop, label_CountryDoublingRate,fig_doubling_rate
@@ -1736,7 +1740,6 @@ def update_country_trend(derived_virtual_data, derived_virtual_selected_rows, vi
         #print("derived_virtual_data ", derived_virtual_data)
         #print("derived_virtual_data type", type(derived_virtual_data))
         #print("derived_virtual_selected_rows ", derived_virtual_selected_rows)
-        #print("view_option ", view_option)
         if derived_virtual_selected_rows is None:
             derived_virtual_selected_rows = []
             selected_country = "India"
@@ -1751,6 +1754,7 @@ def update_country_trend(derived_virtual_data, derived_virtual_selected_rows, vi
         selected_country = "India"
 
     #print("Selected country : ", selected_country)
+    #print("view_option : ", view_option)
     return update_country_specific(selected_country, view_option)
 
 
