@@ -482,6 +482,7 @@ def plot_daily_trend(df, country, type, annot):
         s = df[list(COLS[2:])].sum()
         daily = s.diff()
         daily.fillna(0,inplace=True)
+        daily = daily.astype(int)
         x_axis_dates = [d for d in pd.to_datetime(s.index)]
 
         #trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
@@ -492,19 +493,41 @@ def plot_daily_trend(df, country, type, annot):
                             name=type, 
                             mode= 'lines',
                             line=dict(color=Colors[type], width=0),
+                            text=[d for d in x_axis_dates],
+                            hovertext=['{} : {:,d}'.format(type,
+                                i) for i in daily],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
 
+        roll_3 = daily.rolling(window=3).mean()
+        roll_3 = roll_3.fillna(0).astype(int)
+
         trace2 = go.Scatter(x=x_axis_dates, 
-                            y=np.round(daily.rolling(window=3).mean()), 
+                            y=roll_3, 
                             name="3-day moving average",
                             #line_shape='spline',
-                            line=dict(color=Colors["3-day"], width=LINE_WIDTH)
+                            line=dict(color=Colors["3-day"], width=LINE_WIDTH),
+                            text=[d for d in x_axis_dates],
+                            hovertext=['3-day moving average : {:,d}'.format(
+                                i) for i in roll_3],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
+        
+        roll_7 = daily.rolling(window=7).mean()
+        roll_7 = roll_7.fillna(0).astype(int)
+        
         trace3 = go.Scatter(x=x_axis_dates, 
-                            y=np.round(daily.rolling(window=7).mean()), 
+                            y=roll_7, 
                             name="7-day moving average",
                             #line_shape='spline',
-                            line=dict(color=Colors["7-day"], width=LINE_WIDTH) 
+                            line=dict(color=Colors["7-day"], width=LINE_WIDTH),
+                            text=[d for d in x_axis_dates],
+                            hovertext=['7-day moving average : {:,d}'.format(
+                                i) for i in roll_7],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
     else:
 
@@ -513,6 +536,7 @@ def plot_daily_trend(df, country, type, annot):
         daily = s.loc[country,:]
         daily = daily.diff()
         daily.fillna(0,inplace=True)
+        daily = daily.astype(int)
         x_axis_dates = [d for d in pd.to_datetime(daily.index)]
 
         #trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
@@ -524,19 +548,41 @@ def plot_daily_trend(df, country, type, annot):
                             name=type, 
                             mode= 'lines',
                             line=dict(color=Colors[type], width=0),
+                            text=[d for d in x_axis_dates],
+                            hovertext=['{} : {:,d}'.format(type,
+                                i) for i in daily],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
 
+        roll_3 = daily.rolling(window=3).mean()
+        roll_3 = roll_3.fillna(0).astype(int)
+
         trace2 = go.Scatter(x=x_axis_dates, 
-                            y=np.round(daily.rolling(window=3).mean()), 
+                            y=roll_3, 
                             name="3-day moving average",
                             #line_shape='spline',
-                            line=dict(color=Colors["3-day"], width=LINE_WIDTH)
+                            line=dict(color=Colors["3-day"], width=LINE_WIDTH),
+                            text=[d for d in x_axis_dates],
+                            hovertext=['3-day moving average : {:,d}'.format(
+                                i) for i in roll_3],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
+        
+        roll_7 = daily.rolling(window=7).mean()
+        roll_7 = roll_7.fillna(0).astype(int)
+        
         trace3 = go.Scatter(x=x_axis_dates, 
-                            y=np.round(daily.rolling(window=7).mean()), 
+                            y=roll_7, 
                             name="7-day moving average",
                             #line_shape='spline',
-                            line=dict(color=Colors["7-day"], width=LINE_WIDTH) 
+                            line=dict(color=Colors["7-day"], width=LINE_WIDTH),
+                            text=[d for d in x_axis_dates],
+                            hovertext=['7-day moving average : {:,d}'.format(
+                                i) for i in roll_7],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
 
     fig = go.Figure(data=[trace1,trace2,trace3])
@@ -566,7 +612,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                                     name=Types[3], mode='markers+lines', 
                                     marker={"color":Colors[3]},
                                     text=[d for d in x_axis_dates],
-                                    hovertext=['{} {:,d}'.format(Types[3],
+                                    hovertext=['{} : {:,d}'.format(Types[3],
                                         i) for i in gConfirmed.sum()],
                                     hovertemplate='%{hovertext}' +
                                               '<extra></extra>'
@@ -575,7 +621,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                             name=Types[0], mode='markers+lines', 
                             marker={"color":Colors[0]},
                             text=[d for d in x_axis_dates],
-                            hovertext=['{} {:,d}'.format(Types[0],
+                            hovertext=['{} Cases : {:,d}'.format(Types[0],
                                 i) for i in active],
                             hovertemplate='%{hovertext}' +
                                         '<extra></extra>'
@@ -584,7 +630,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                             name=Types[1], mode='markers+lines', 
                             marker={"color":Colors[1]},
                             text=[d for d in x_axis_dates],
-                            hovertext=['{} {:,d}'.format(Types[1],
+                            hovertext=['{} : {:,d}'.format(Types[1],
                                 i) for i in gRecovered.sum()],
                             hovertemplate='%{hovertext}' +
                                         '<extra></extra>'
@@ -593,7 +639,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
                             name=Types[2], mode='markers+lines', 
                             marker={"color":Colors[2]},
                             text=[d for d in x_axis_dates],
-                            hovertext=['{} {:,d}'.format(Types[2],
+                            hovertext=['{} : {:,d}'.format(Types[2],
                                 i) for i in gDeaths.sum()],
                             hovertemplate='%{hovertext}' +
                                         '<extra></extra>'
@@ -612,10 +658,46 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         # go.Scattergl trace type can be used to create a WebGL enabled scatter plot. 
         # go.Scatter creates SVG plots. WebGL plots loads faster than SVG plots.
         # https://plotly.com/python/webgl-vs-svg/
-        traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.loc[country,:], name=Types[3], mode='markers+lines', marker={"color":Colors[3]})
-        trace1 = go.Scatter(x=x_axis_dates, y=active, name=Types[0], mode='markers+lines', marker={"color":Colors[0]})
-        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], name=Types[1], mode='markers+lines', marker={"color":Colors[1]})
-        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], name=Types[2], mode='markers+lines', marker={"color":Colors[2]})
+        traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.loc[country,:],
+                                name=Types[3], mode='markers+lines', 
+                                marker={"color":Colors[3]},
+                                text=[d for d in x_axis_dates],
+                                hovertext=['{} : {:,d}'.format(Types[3],
+                                    i) for i in gConfirmed.loc[country,:]],
+                                hovertemplate='%{hovertext}' +
+                                            '<extra></extra>'
+                                )
+
+        trace1 = go.Scatter(x=x_axis_dates, y=active, 
+                            name=Types[0], mode='markers+lines', 
+                            marker={"color":Colors[0]},
+                            text=[d for d in x_axis_dates],
+                            hovertext=['{} Cases : {:,d}'.format(Types[0],
+                                i) for i in active],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
+                            )
+
+        trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], 
+                            name=Types[1], mode='markers+lines', 
+                            marker={"color":Colors[1]},
+                            text=[d for d in x_axis_dates],
+                            hovertext=['{} : {:,d}'.format(Types[1],
+                                i) for i in gRecovered.loc[country,:]],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
+                            
+                            )
+
+        trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], 
+                            name=Types[2], mode='markers+lines', 
+                            marker={"color":Colors[2]},
+                            text=[d for d in x_axis_dates],
+                            hovertext=['{} : {:,d}'.format(Types[2],
+                                i) for i in gDeaths.loc[country,:]],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
+                            )
         
     fig = go.Figure(data=[traceTotal, trace1,trace2,trace3])
      
