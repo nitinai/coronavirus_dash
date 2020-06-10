@@ -211,16 +211,16 @@ def graph_scatter_mapbox():
             zoom=zoom
         ),
         annotations=[
-        dict(
-            x=.5,
-            y=-.01,
-            align='center',
-            showarrow=False,
-            text="Green circle indicates no active cases. Hover over the circles for more details.",
-            xref="paper",
-            yref="paper",
-            font=dict(size=10, color='#292929'),
-        )],
+            {
+            "x":.5,
+            "y":-.01,
+            "align":'center',
+            "showarrow":False,
+            "text":"Green circle indicates no active cases. Hover over the circles for more details.",
+            "xref":"paper",
+            "yref":"paper",
+            "font": {"size":10, "color":'#292929'},
+            }],
     )
     
     return fig
@@ -237,42 +237,41 @@ def apply_line_plot_layout(fig, country, annot, annot_size=60, y_title=""):
         ), # Set graph margin
         #showlegend=False,
         legend_orientation="h",
-        legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
+        legend={"x":0.02, "y":1.08, "bgcolor":"rgba(0,0,0,0)",},
         hovermode='x unified',
         #title="Daily Trend",
-        xaxis= dict(fixedrange = True, # Disable zoom
+        xaxis= {"fixedrange": True, # Disable zoom
                     #tickangle=-45,
-                    showgrid=False,
-                    showline=False, #linecolor='#272e3e',
+                    "showgrid":False,
+                    "showline":False, #linecolor='#272e3e',
                     #gridcolor='rgba(203, 210, 211,.3)',
-                    gridwidth=.1,
-                    zeroline=False,
-                    
-                    ),
+                    "gridwidth":.1,
+                    "zeroline":False,
+                    },
         xaxis_tickformat='%b %d',
-        yaxis= dict(fixedrange = True, # Disable zoom
-                    showline=False, #linecolor='#272e3e',
-                    gridcolor='rgba(203, 210, 211,.3)',
-                    gridwidth=.1,
-                    zeroline=False,
-                    title=y_title
-                    ),
+        yaxis= {"fixedrange": True, # Disable zoom
+                    "showline":False, #linecolor='#272e3e',
+                    "gridcolor":'rgba(203, 210, 211,.3)',
+                    "gridwidth":.1,
+                    "zeroline":False,
+                    "title":y_title
+                    },
         #xaxis_title="Toggle the legends to show/hide corresponding curve",
         plot_bgcolor='#ffffff',
         paper_bgcolor='#ffffff',
         # To show country name in watermark form
         annotations=[
-            dict(
-                x=.5,
-                y=.4,
-                xref="paper",
-                yref="paper",
-                text=annot,
-                opacity=0.5,
-                font=dict(family='Helvetica',
-                          size=annot_size if len(country) < 14 else annot_size -len(country),
-                          color="grey"),
-                ),
+            {
+                "x":.5,
+                "y":.4,
+                "xref":"paper",
+                "yref":"paper",
+                "text":annot,
+                "opacity":0.5,
+                "font":{"family":'Helvetica',
+                          "size":annot_size if len(country) < 14 else annot_size -len(country),
+                          "color":"grey"},
+            },
         ] if annot else [],
     ) 
     return fig
@@ -345,11 +344,11 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         
         #x_axis_dates = [d for d in pd.to_datetime(s.index)]
         
-        trace1 = go.Scatter(x=x_axis_dates, y=y, 
+        trace1 = go.Scatter(x=x_axis_dates, y=y,
                             name=name,
                             marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
-                            line=dict(color=Colors["Total Cases"], width=LINE_WIDTH)
+                            line={"color":Colors["Total Cases"], "width":LINE_WIDTH}
                             )
 
         s = df_de[DATE_COLUMN_NAME].sum()
@@ -365,7 +364,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                             name=name,
                             marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
-                            line=dict(color=Colors["Total Deaths"], width=LINE_WIDTH)
+                            line={"color":Colors["Total Deaths"], "width":LINE_WIDTH}
                             )
 
     else:
@@ -389,7 +388,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                             name=name,
                             marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
-                            line=dict(color=Colors["Total Cases"], width=LINE_WIDTH)
+                            line={"color":Colors["Total Cases"], "width":LINE_WIDTH}
                             )
 
         s = df_de[df_de["Country/Region"]==country].groupby(["Country/Region"]).sum()
@@ -410,7 +409,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                             name=name,
                             marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
-                            line=dict(color=Colors["Total Deaths"], width=LINE_WIDTH)
+                            line={"color":Colors["Total Deaths"], "width":LINE_WIDTH}
                                 )
 
     fig = go.Figure(data=[trace1,trace2])
@@ -452,13 +451,13 @@ def plot_doubling_rate(country):
                             name="Cases Doubling Time",
                             marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
-                            line=dict(color=Colors["Total Cases"], width=LINE_WIDTH)
+                            line={"color":Colors["Total Cases"], "width":LINE_WIDTH}
                             )
     trace2 = go.Scatter(x=x_axis_dates, y=deaths_d, 
                             name="Deaths Doubling Time",
                             marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
-                            line=dict(color=Colors["Total Deaths"], width=LINE_WIDTH)
+                            line={"color":Colors["Total Deaths"], "width":LINE_WIDTH}
                             )
 
     fig = go.Figure(data=[trace1,trace2])
@@ -495,7 +494,7 @@ def plot_daily_trend(df, country, type, annot):
                             fill='tozeroy',
                             name=type, 
                             mode= 'lines',
-                            line=dict(color=Colors[type], width=0),
+                            line={"color":Colors[type], "width":0},
                             text=[d for d in x_axis_dates],
                             hovertext=['{} : {:,d}'.format(type,
                                 i) for i in daily],
@@ -510,7 +509,7 @@ def plot_daily_trend(df, country, type, annot):
                             y=roll_3, 
                             name="3-day moving average",
                             #line_shape='spline',
-                            line=dict(color=Colors["3-day"], width=LINE_WIDTH),
+                            line={"color":Colors["3-day"], "width":LINE_WIDTH},
                             text=[d for d in x_axis_dates],
                             hovertext=['3-day moving average : {:,d}'.format(
                                 i) for i in roll_3],
@@ -525,7 +524,7 @@ def plot_daily_trend(df, country, type, annot):
                             y=roll_7, 
                             name="7-day moving average",
                             #line_shape='spline',
-                            line=dict(color=Colors["7-day"], width=LINE_WIDTH),
+                            line={"color":Colors["7-day"], "width":LINE_WIDTH},
                             text=[d for d in x_axis_dates],
                             hovertext=['7-day moving average : {:,d}'.format(
                                 i) for i in roll_7],
@@ -550,7 +549,7 @@ def plot_daily_trend(df, country, type, annot):
                             fill='tozeroy',
                             name=type, 
                             mode= 'lines',
-                            line=dict(color=Colors[type], width=0),
+                            line={"color":Colors[type], "width":0},
                             text=[d for d in x_axis_dates],
                             hovertext=['{} : {:,d}'.format(type,
                                 i) for i in daily],
@@ -565,7 +564,7 @@ def plot_daily_trend(df, country, type, annot):
                             y=roll_3, 
                             name="3-day moving average",
                             #line_shape='spline',
-                            line=dict(color=Colors["3-day"], width=LINE_WIDTH),
+                            line={"color":Colors["3-day"], "width":LINE_WIDTH},
                             text=[d for d in x_axis_dates],
                             hovertext=['3-day moving average : {:,d}'.format(
                                 i) for i in roll_3],
@@ -580,7 +579,7 @@ def plot_daily_trend(df, country, type, annot):
                             y=roll_7, 
                             name="7-day moving average",
                             #line_shape='spline',
-                            line=dict(color=Colors["7-day"], width=LINE_WIDTH),
+                            line={"color":Colors["7-day"], "width":LINE_WIDTH},
                             text=[d for d in x_axis_dates],
                             hovertext=['7-day moving average : {:,d}'.format(
                                 i) for i in roll_7],
@@ -781,52 +780,52 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
 
     #fig.layout.yaxis.title='Total coronavirus cases'
     fig.update_layout(
-        margin=dict(l=5, r=5, t=30, b=5), # Set graph margin
+        margin={"l":5, "r":5, "t":30, "b":5}, # Set graph margin
         #showlegend=False,
         legend_orientation="h",
-        legend=dict(x=-0.1, y=1.08, bgcolor="rgba(0,0,0,0)",),
+        legend={"x":-0.1, "y":1.08, "bgcolor":"rgba(0,0,0,0)",},
         hovermode='x',
 
-        xaxis= dict(fixedrange = True, # Disable zoom
-                    tickangle=-45,
-                    showgrid=False,
-                    showline=False, linecolor='#272e3e',
-                    gridcolor='rgba(203, 210, 211,.3)',
-                    gridwidth=.1,
-                    zeroline=False
-                    ),
+        xaxis= {"fixedrange": True, # Disable zoom
+                    "tickangle":-45,
+                    "showgrid":False,
+                    "showline":False, "linecolor":'#272e3e',
+                    "gridcolor":'rgba(203, 210, 211,.3)',
+                    "gridwidth":.1,
+                    "zeroline":False
+                    },
         xaxis_tickformat='%b %d',
-        yaxis= dict(fixedrange = True, # Disable zoom
-                    showline=False, linecolor='#272e3e',
-                    gridcolor='rgba(203, 210, 211,.3)',
-                    gridwidth=.1,
-                    zeroline=False
-                    ),
+        yaxis= {"fixedrange": True, # Disable zoom
+                    "showline":False, "linecolor":'#272e3e',
+                    "gridcolor":'rgba(203, 210, 211,.3)',
+                    "gridwidth":.1,
+                    "zeroline":False
+                    },
         height=600,
 
         annotations=[
-            dict(
-                x=ann_x,
-                y=ann_y1,
-                xref="x1",
-                yref="y1",
-                text="China",
-                opacity=0.5,
-                font=dict(family='Helvetica',
-                          size=60,
-                          color="grey"),
-            ),
-            dict(
-                x=ann_x,
-                y=ann_y2,
-                xref="x2",
-                yref="y2",
-                text="World",
-                opacity=0.5,
-                font=dict(family='Helvetica',
-                          size=60,
-                          color="grey"),
-            )
+            {
+                "x":ann_x,
+                "y":ann_y1,
+                "xref":"x1",
+                "yref":"y1",
+                "text":"China",
+                "opacity":0.5,
+                "font":{"family":'Helvetica',
+                          "size":60,
+                          "color":"grey"},
+            },
+            {
+                "x":ann_x,
+                "y":ann_y2,
+                "xref":"x2",
+                "yref":"y2",
+                "text":"World",
+                "opacity":0.5,
+                "font":{"family":'Helvetica',
+                          "size":60,
+                          "color":"grey"},
+            }
         ],
     ) 
 
@@ -1754,20 +1753,6 @@ def update_country_trend(derived_virtual_data, derived_virtual_selected_rows, vi
     #print("Selected country : ", selected_country)
     return update_country_specific(selected_country, view_option)
 
-"""
-@app.callback(
-    [Output('sample_str', 'children'),],
-    [Input('world_countries_table', 'derived_virtual_selected_rows'),
-    Input('world_countries_table', 'selected_row_ids'),
-    Input('world_countries_table', 'derived_virtual_indices'),
-               Input('world_countries_table', 'selected_rows')
-    ])
-def debug_fu(derived_virtual_selected_rows, selected_row_ids,derived_virtual_indices,selected_rows):
-    print("derived_virtual_selected_rows ", derived_virtual_selected_rows)
-    print("selected_row_ids ", selected_row_ids)
-    print("derived_virtual_indices ", derived_virtual_indices)
-    print("selected_rows ", selected_rows)
-    return ["Hello"]
-"""
+
 if __name__ == '__main__':
     app.run_server(debug=True)
