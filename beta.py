@@ -115,9 +115,10 @@ WORLD_POP = df_world_table["Population"].sum()
 
 df_co, df_re, df_de = load_time_series_data()
 
-x_axis_dates = [d for d in pd.to_datetime(df_co.columns[2:])]
+DATE_COLUMN_NAME = df_co.columns[2:]
+x_axis_dates = [d for d in pd.to_datetime(DATE_COLUMN_NAME)]
 
-all_countries = sorted(list(df_world["Country/Region"].unique()))
+all_countries = sorted(df_world["Country/Region"].unique())
 num_countries = len(all_countries) 
 total_cases = df_co.iloc[:,-1].sum()
 recovered_cases = df_re.iloc[:,-1].sum()
@@ -183,9 +184,9 @@ def graph_scatter_mapbox():
                                                                                                                                         df_world["Active"],
                                                                                                                                         df_world['Recovery rate'],
                                                                                                                                         df_world['Death rate'])],
-    hoverlabel = dict(
-        bgcolor =[f"{COLOR_MAP['Light_Red']}" if (a > 0) else f"{COLOR_MAP['Light_Green']}" for a in df_world['Active']],
-        ),
+    hoverlabel = {
+        "bgcolor":[f"{COLOR_MAP['Light_Red']}" if (a > 0) else f"{COLOR_MAP['Light_Green']}" for a in df_world['Active']],
+    },
     hovertemplate="<b>%{text}</b><br><br>" +
                     "%{hovertext}<br>" +
                     "<extra></extra>")
@@ -284,11 +285,11 @@ def plot_daily_cases_vs_recoveries_trend(country):
             'New Deaths':COLOR_MAP["Salmon"], 
             "New Cases": COLOR_MAP["SandyBrown"]}
 
-    COLS = df_co.columns
+    #COLS = df_co.columns
     
     if country == "World":
         
-        s = df_co[list(COLS[2:])].sum()
+        s = df_co[DATE_COLUMN_NAME].sum()
         daily_new = s.diff()
         #x_axis_dates = [d for d in pd.to_datetime(s.index)]
         
@@ -300,7 +301,7 @@ def plot_daily_cases_vs_recoveries_trend(country):
                                    
                                     )
 
-        s = df_re[list(COLS[2:])].sum()
+        s = df_re[DATE_COLUMN_NAME].sum()
         daily_rec = s.diff()
         trace2 = go.Scatter(x=x_axis_dates, y=daily_rec, 
                             name="New Recoveries",
@@ -328,10 +329,10 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             'Total Deaths':COLOR_MAP["Salmon"], 
             "Total Cases": COLOR_MAP["SandyBrown"]}
 
-    COLS = df_co.columns
+    #COLS = df_co.columns
     if country == "World":
         
-        s = df_co[list(COLS[2:])].sum()
+        s = df_co[DATE_COLUMN_NAME].sum()
         
         if type == "Daily":
             daily_new = s.diff()
@@ -351,7 +352,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                             line=dict(color=Colors["Total Cases"], width=LINE_WIDTH)
                             )
 
-        s = df_de[list(COLS[2:])].sum()
+        s = df_de[DATE_COLUMN_NAME].sum()
         if type == "Daily":
             daily_deaths = s.diff()
             daily_deaths.fillna(0,inplace=True)
@@ -478,10 +479,10 @@ def plot_daily_trend(df, country, type, annot):
             "7-day":"rgb(30,144,255)",
             }
 
-    COLS = df.columns
+    #COLS = df.columns
     if country == "World":
 
-        s = df[list(COLS[2:])].sum()
+        s = df[DATE_COLUMN_NAME].sum()
         daily = s.diff()
         daily.fillna(0,inplace=True)
         daily = daily.astype(int)
@@ -1730,24 +1731,27 @@ def update_country_specific(selected_country, view_option):
     Input('view_radio_option', 'value'),
     ]
     )
-def update_country_trend(derived_virtual_data,derived_virtual_selected_rows,  view_option):
+def update_country_trend(derived_virtual_data, derived_virtual_selected_rows, view_option):
     
     try:
         #print("derived_virtual_data ", derived_virtual_data)
-        print("derived_virtual_data type", type(derived_virtual_data))
-        print("derived_virtual_selected_rows ", derived_virtual_selected_rows)
-        print("view_option ", view_option)
+        #print("derived_virtual_data type", type(derived_virtual_data))
+        #print("derived_virtual_selected_rows ", derived_virtual_selected_rows)
+        #print("view_option ", view_option)
         if derived_virtual_selected_rows is None:
             derived_virtual_selected_rows = []
             selected_country = "India"
         else:
-            dff = pd.DataFrame(derived_virtual_data)
-            selected_country = dff.loc[derived_virtual_selected_rows[0]]['Country/Region']
+            #dff = pd.DataFrame(derived_virtual_data)
+            #selected_country = dff.loc[derived_virtual_selected_rows[0]]['Country/Region']
+
+            # derived_virtual_data is a list of dict containing world table row, key is column
+            selected_country = derived_virtual_data[derived_virtual_selected_rows[0]]['Country/Region']
     except:
-        print("Error occured")
+        #print("Error occured")
         selected_country = "India"
 
-    print("Dropdown Selected country : ",selected_country)
+    #print("Selected country : ", selected_country)
     return update_country_specific(selected_country, view_option)
 
 """
