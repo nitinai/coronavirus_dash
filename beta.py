@@ -235,7 +235,7 @@ def apply_line_plot_layout(fig, country, annot, annot_size=60, y_title=""):
         #showlegend=False,
         legend_orientation="h",
         legend=dict(x=0.02, y=1.08, bgcolor="rgba(0,0,0,0)",),
-        hovermode='x',
+        hovermode='x unified',
         #title="Daily Trend",
         xaxis= dict(fixedrange = True, # Disable zoom
                     #tickangle=-45,
@@ -561,7 +561,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
 
         x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
         active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
-        
+        #active = active.astype(int)
         traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.sum(), 
                                     name=Types[3], mode='markers+lines', 
                                     marker={"color":Colors[3]},

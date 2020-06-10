@@ -4,10 +4,10 @@ import argparse
 import datetime as dt
 from datetime import datetime
 import os
-import requests 
+#import requests 
 import numpy as np
 import pandas as pd
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 import shutil
 import model
 
