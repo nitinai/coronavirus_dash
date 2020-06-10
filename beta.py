@@ -115,6 +115,8 @@ WORLD_POP = df_world_table["Population"].sum()
 
 df_co, df_re, df_de = load_time_series_data()
 
+x_axis_dates = [d for d in pd.to_datetime(df_co.columns[2:])]
+
 all_countries = sorted(list(df_world["Country/Region"].unique()))
 num_countries = len(all_countries) 
 total_cases = df_co.iloc[:,-1].sum()
@@ -288,7 +290,7 @@ def plot_daily_cases_vs_recoveries_trend(country):
         
         s = df_co[list(COLS[2:])].sum()
         daily_new = s.diff()
-        x_axis_dates = [d for d in pd.to_datetime(s.index)]
+        #x_axis_dates = [d for d in pd.to_datetime(s.index)]
         
         trace1 = go.Scatter(x=x_axis_dates, y=daily_new, 
                             name="New Cases",
@@ -340,7 +342,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             y = ((s/WORLD_POP)*1000000).astype(int)
             name = "Cases/1M pop"
         
-        x_axis_dates = [d for d in pd.to_datetime(s.index)]
+        #x_axis_dates = [d for d in pd.to_datetime(s.index)]
         
         trace1 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
@@ -371,7 +373,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         daily = s.loc[country,:]
         
         daily.fillna(0,inplace=True)
-        x_axis_dates = [d for d in pd.to_datetime(daily.index)]
+        #x_axis_dates = [d for d in pd.to_datetime(daily.index)]
 
         COUNTRY_POP =df_world_table[df_world_table["Country/Region"] == country]["Population"].values[0]
         if type == "Daily":
@@ -483,7 +485,7 @@ def plot_daily_trend(df, country, type, annot):
         daily = s.diff()
         daily.fillna(0,inplace=True)
         daily = daily.astype(int)
-        x_axis_dates = [d for d in pd.to_datetime(s.index)]
+        #x_axis_dates = [d for d in pd.to_datetime(s.index)]
 
         #trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
         #                marker={"color":Colors[type]})
@@ -537,7 +539,7 @@ def plot_daily_trend(df, country, type, annot):
         daily = daily.diff()
         daily.fillna(0,inplace=True)
         daily = daily.astype(int)
-        x_axis_dates = [d for d in pd.to_datetime(daily.index)]
+        #x_axis_dates = [d for d in pd.to_datetime(daily.index)]
 
         #trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
         #                marker={"color":Colors[type]})
@@ -605,7 +607,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
         gDeaths = df_de_inp.groupby(["Country/Region"]).sum()
 
-        x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
+        #x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
         active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
         #active = active.astype(int)
         traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.sum(), 
@@ -651,7 +653,7 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         gRecovered = df_re_inp[df_re_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
         gDeaths = df_de_inp[df_de_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
 
-        x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
+        #x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
         
         active = gConfirmed.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
         
@@ -738,7 +740,7 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     gRecovered = df_re_inp[df_re_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
     gDeaths = df_de_inp[df_de_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
 
-    x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
+    #x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
     
     country = "China"
     active = gConfirmed.loc[country,:] - gRecovered.loc[country,:] - gDeaths.loc[country,:]
