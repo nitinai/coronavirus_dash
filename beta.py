@@ -593,8 +593,8 @@ def plot_daily_trend(df, country, type, annot):
     
     return fig
 
-# trend graph for said country
-def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
+# trend graph for said country and World as well
+def get_country_trend(country):
     
     if country is None: return go.Figure()
 
@@ -603,9 +603,9 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
 
     if country is "World":
 
-        gConfirmed = df_co_inp.groupby(["Country/Region"]).sum()
-        gRecovered = df_re_inp.groupby(["Country/Region"]).sum()
-        gDeaths = df_de_inp.groupby(["Country/Region"]).sum()
+        gConfirmed = df_co.groupby(["Country/Region"]).sum()
+        gRecovered = df_re.groupby(["Country/Region"]).sum()
+        gDeaths = df_de.groupby(["Country/Region"]).sum()
 
         #x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
         active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
@@ -649,9 +649,9 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
 
     else:
     
-        gConfirmed = df_co_inp[df_co_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
-        gRecovered = df_re_inp[df_re_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
-        gDeaths = df_de_inp[df_de_inp["Country/Region"]==country].groupby(["Country/Region"]).sum()
+        gConfirmed = df_co[df_co["Country/Region"]==country].groupby(["Country/Region"]).sum()
+        gRecovered = df_re[df_re["Country/Region"]==country].groupby(["Country/Region"]).sum()
+        gDeaths = df_de[df_de["Country/Region"]==country].groupby(["Country/Region"]).sum()
 
         #x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
         
@@ -709,9 +709,9 @@ def get_country_trend(df_co_inp, df_re_inp, df_de_inp, country):
         fig.update_layout(xaxis_title="Toggle the legends to show/hide corresponding curve")
     return fig
 
-def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
+def relative_trend_graph_china_vs_world(df_co, df_re, df_de):
     
-    #df_ac_inp = df_co_inp.copy(deep=True)
+    #df_ac = df_co.copy(deep=True)
 
     #countries=["China trend","Rest of the World trend"]
     
@@ -736,9 +736,9 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     Types = ["Active", 'Recovered', 'Deaths', "Total Cases"]
     Colors = [COLOR_MAP["Orange"], COLOR_MAP["Green"], COLOR_MAP["Red"], COLOR_MAP["Brown"]]
 
-    gConfirmed = df_co_inp[df_co_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
-    gRecovered = df_re_inp[df_re_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
-    gDeaths = df_de_inp[df_de_inp["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+    gConfirmed = df_co[df_co["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+    gRecovered = df_re[df_re["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
+    gDeaths = df_de[df_de["Country/Region"]=="China"].groupby(["Country/Region"]).sum()
 
     #x_axis_dates = [d for d in pd.to_datetime(gConfirmed.columns)]
     
@@ -759,9 +759,9 @@ def relative_trend_graph_china_vs_world(df_co_inp, df_re_inp, df_de_inp):
     fig.add_trace(trace2, row=1, col=1)
     fig.add_trace(trace3, row=1, col=1)
 
-    gConfirmed = df_co_inp[df_co_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
-    gRecovered = df_re_inp[df_re_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
-    gDeaths = df_de_inp[df_de_inp["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+    gConfirmed = df_co[df_co["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+    gRecovered = df_re[df_re["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
+    gDeaths = df_de[df_de["Country/Region"]!="China"].groupby(["Country/Region"]).sum()
 
     active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
     
@@ -890,24 +890,17 @@ def create_datatable_country(df, id="create_datatable_country"):
                                                     f'{state} : {df.loc[df[df["Province/State"] == state].index[0], c]:,d} {c}'
                                     } for c in df.columns[1:]
                             } for state in df[df.columns[0]].values ],
-                    style_cell_conditional=[#{'if': {'column_id': 'Province/State'}, 'width': '10%'},
-                                            #{'if': {'column_id': 'Country/Region'}, 'width': '36%'},
-                                            #{'if': {'column_id': 'Active'}, 'width': '16%'},
-                                            #{'if': {'column_id': 'Total Cases'}, 'width': '16%'},
-                                            #{'if': {'column_id': 'Recovered'}, 'width': '16%'},
-                                            #{'if': {'column_id': 'Recovery rate'}, 'width': '16%'},
-                                            #{'if': {'column_id': 'Deaths'}, 'width': '16%'},
-                                            #{'if': {'column_id': 'Death rate'}, 'width': '16%'},
-                                            #{'if': {'column_id': 'Total Cases/100k'}, 'width': '19%'},
-                                            {'if': {'column_id': 'Active'}, 'color':COLOR_MAP["Orange"]},
-                                            {'if': {'column_id': 'Total Cases'}, 'color': COLOR_MAP["Brown"]},
-                                            {'if': {'column_id': 'Recovered'}, 'color': COLOR_MAP["Green"]},
-                                            {'if': {'column_id': 'Recovery rate'}, 'color': COLOR_MAP["Green"]},
-                                            {'if': {'column_id': 'Deaths'}, 'color': COLOR_MAP["Red"]},
-                                            {'if': {'column_id': 'Death rate'}, 'color': COLOR_MAP["Red"]},
-                                            {'textAlign': 'center'}],
+                    style_cell_conditional=[{'if': {'column_id': 'Province/State'}, 'width': '28%'},
+                                            {'if': {'column_id': 'Total Cases'}, 'width': '12%', 'color': COLOR_MAP["Brown"]},
+                                            {'if': {'column_id': 'Active'}, 'width': '12%', 'color':COLOR_MAP["Orange"]},
+                                            {'if': {'column_id': 'Recovered'}, 'width': '12%', 'color': COLOR_MAP["Green"]},
+                                            {'if': {'column_id': 'Recovery rate'}, 'width': '12%', 'color': COLOR_MAP["Green"]},
+                                            {'if': {'column_id': 'Deaths'}, 'width': '12%', 'color': COLOR_MAP["Red"]},
+                                            {'if': {'column_id': 'Death rate'}, 'width': '12%', 'color': COLOR_MAP["Red"]},
+                                            
+                                            {'textAlign': 'center'}
+                                            ],
                         )
-
 
 def create_datatable_world(id):
 
@@ -978,16 +971,17 @@ def create_datatable_world(id):
                                             #{'if': {'column_id': 'New Deaths'}, 'width': '15%'},
                                             #{'if': {'column_id': 'Death rate'}, 'width': '15%'},
                                             #{'if': {'column_id': 'Total Cases/100k'}, 'width': '19%'},
-                                            {'if': {'column_id': 'Active'}, 'color':COLOR_MAP["Orange"]},
                                             {'if': {'column_id': 'Total Cases'}, 'color': COLOR_MAP["Brown"]},
                                             {'if': {'column_id': 'New Cases'}, 'color': COLOR_MAP["Brown"]},
+                                            {'if': {'column_id': 'Active'}, 'color':COLOR_MAP["Orange"]},
                                             {'if': {'column_id': 'Recovered'}, 'color': COLOR_MAP["Green"]},
                                             {'if': {'column_id': 'New Recovered'}, 'color': COLOR_MAP["Green"]},
                                             {'if': {'column_id': 'Recovery rate'}, 'color': COLOR_MAP["Green"]},
                                             {'if': {'column_id': 'Deaths'}, 'color': COLOR_MAP["Red"]},
                                             {'if': {'column_id': 'New Deaths'}, 'color': COLOR_MAP["Red"]},
                                             {'if': {'column_id': 'Death rate'}, 'color': COLOR_MAP["Red"]},
-                                            {'textAlign': 'center'}],
+                                            {'textAlign': 'center'}
+                                            ],
                         )
 
 
@@ -1185,7 +1179,7 @@ app.layout = html.Div([
 #
                 dcc.Graph(
                     id="world_trend_graph",
-                    figure=get_country_trend(df_co, df_re, df_de, country="World"),
+                    figure=get_country_trend(country="World"),
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
                 ),
@@ -1597,7 +1591,7 @@ def update_country_specific(selected_country, view_option):
     #trend_graph
     ###############
     
-    trend_graph = get_country_trend(df_co, df_re, df_de, selected_country)
+    trend_graph = get_country_trend(selected_country)
     
     countryTrendCumulativeLabel = f'{selected_country} Trend (Cumulative)'
     countryTrendDailyLabel = f'{selected_country} Trend (Daily)'
