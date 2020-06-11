@@ -1561,15 +1561,15 @@ app.layout = html.Div([
         # Footer
         html.Div([
             html.P(id="sample_str",
-            children=['STAY Home | KEEP a safe distance | WASH hands often | COVER your cough']),
+            children=html.Strong(['STAY Home | KEEP a safe distance | WASH hands often | COVER your cough'])),
     
             html.P(
-            children=["Developed by ", html.A('NITIN PATIL', href='https://www.linkedin.com/in/nitinai', target='_blank'),
+            children=html.Strong(["Developed by ", html.A('NITIN PATIL', href='https://www.linkedin.com/in/nitinai', target='_blank'),
                         " | Data source: ", html.A('MoHFW GoI', href='https://www.mohfw.gov.in', target='_blank'), ' | ',
                         html.A('JHU CSSE', href='https://github.com/CSSEGISandData/COVID-19', target='_blank'), " | ",
                         html.A('WHO', href='https://www.who.int', target='_blank'),
                     #"NITIN PATIL | If you have any feedback on this dashboard, please let him know on ", html.A('Twitter', href='https://twitter.com/intent/tweet?source=webclient&text=%40_nitinp', target='_blank'), ' or ',
-                    ]),
+                    ])),
 
             #html.P(
             #children=["Data source: ", html.A('MoHFW GoI', href='https://www.mohfw.gov.in', target='_blank'), ' | ',
