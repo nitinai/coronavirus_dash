@@ -876,9 +876,9 @@ def create_datatable_country(df, id="create_datatable_country"):
                                 'padding': '.1rem',
                                 'backgroundColor': '#ffffff', },
                     fixed_rows={'headers': True, 'data': 0},
-                    style_table={'minHeight': '350px',
-                                 'height': '350px',
-                                 'maxHeight': '350px',
+                    style_table={'minHeight': '300px',
+                                 'height': '300px',
+                                 'maxHeight': '300px',
                                  #'overflowX': 'scroll',
                                  },
                     style_header={'backgroundColor': '#ffffff',
@@ -940,9 +940,9 @@ def create_datatable_world(id):
                                 'padding': '.1rem',
                                 'backgroundColor': '#ffffff', },
                     fixed_rows={'headers': True, 'data': 0},
-                    style_table={'minHeight': '450px',
-                                 'height': '450px',
-                                 'maxHeight': '450px',
+                    style_table={'minHeight': '430px',
+                                 'height': '430px',
+                                 'maxHeight': '430px',
                                  #'overflowX': 'scroll',
                                  #"margin-right": "-2.5rem",
                                  #"margin-left": "-2.5rem",
@@ -1260,9 +1260,9 @@ app.layout = html.Div([
 
         #],className="row"),
 
-        html.Div([
+        #html.Div([
             html.Hr(),
-        ]),
+        #]),
         ####
 
         # 
@@ -1333,11 +1333,13 @@ app.layout = html.Div([
             #style = dict(width= "40%"),
             ),
 
-        ],className="row"),
+        ],className="row",
+        style = {"margin-top": "-0.75rem"}
+        ),
 
-        html.Div([
+        #html.Div([
             html.Hr(),
-        ]),
+        #]),
 
         ##
         #### Country stat start
@@ -1441,6 +1443,8 @@ app.layout = html.Div([
 
                 html.Hr(),
 
+                
+
                 dcc.Tabs(
                         id="tabs_country_table",
                         #value='The World',
@@ -1458,8 +1462,11 @@ app.layout = html.Div([
                                     #]
                                     ),
                             
-                        ]),
+                        ],
+                        style = {"margin-top": "-1rem"},
+                        ),
 
+                
                 
 
             ], id="trend_graph_box", className="six columns",
@@ -1491,7 +1498,7 @@ app.layout = html.Div([
                     config={'displayModeBar': False, # Hide the floating toolbar
                             "scrollZoom": False,},
                 ),
-
+                html.Hr(),
                 html.Div([
                     html.H6(["Country Cases vs Deaths / M population",],
                     id="country_total_cases_vs_deaths_1M_pop_cumulative_label", className="graph_title"),
