@@ -34,7 +34,7 @@ def clean_data(df):
         'Haryana':29.0588,
         'Kerala':10.8505,
         'Rajasthan':27.0238,
-        'Telengana':18.1124,
+        'Telangana':18.1124,
         'Uttar Pradesh':26.8467,
         'Ladakh':34.2996,
         'Tamil Nadu':11.1271,
@@ -66,13 +66,14 @@ def clean_data(df):
         "Sikkim":27.533,
         "Dadar Nagar Haveli": 20.1809,
         "Daman & Diu" : 20.4283,
+        "Dadra and Nagar Haveli and Daman and Diu": 20.1809,
         }
 
     long = {'Delhi':77.1025,
             'Haryana':76.0856,
             'Kerala':76.2711,
             'Rajasthan':74.2179,
-            'Telengana':79.0193,
+            'Telangana':79.0193,
             'Uttar Pradesh':80.9462,
             'Ladakh':78.2932,
             'Tamil Nadu':78.6569,
@@ -104,7 +105,7 @@ def clean_data(df):
         "Sikkim": 88.5122,
         "Dadar Nagar Haveli": 73.0169,
         "Daman & Diu" : 72.8397,
-
+        "Dadra and Nagar Haveli and Daman and Diu": 73.0169,
 
         }
 
@@ -238,6 +239,13 @@ def save(df, filename, index=False):
     print("Data saved to: ", DATA_PATH)
 
 
+def replace_province_names(df, provinceCol):
+    df[provinceCol].replace({
+        "Azad Jammu and Kashmir": "Pak Occupied Jammu and Kashmir",
+        },inplace=True)
+    return df
+
+
 def replace_country_names(df, countryCol):
     df[countryCol].replace({
         "Mainland China": "China",
@@ -260,6 +268,8 @@ def load_world_latest_data():
     df_world["Province_State"].fillna("", inplace=True)
     #df_world["Country_Region"].replace({"Mainland China": "China","Taiwan*":"Taiwan", "Korea, South": "South Korea", "US":"United States"},inplace=True)
     df_world = replace_country_names(df_world, "Country_Region")
+    df_world = replace_province_names(df_world, "Province_State")
+    
     #df_world["Province_State"] = df_world["Province_State"].map(lambda x : x+", " if x else x)
     #df_world["hover_name"] = df_world["Province_State"] + df_world["Country_Region"]
     #df_world.drop(df_world[df_world["Confirmed"]==0].index,inplace=True)
@@ -270,10 +280,11 @@ def load_US_data():
     print("load latest US data")
     df_us = pd.read_csv(model.get_latest_day_data_file("./data_sources/COVID-19/csse_covid_19_data/csse_covid_19_daily_reports_us"))
 
-    
     df_us = replace_country_names(df_us, "Country_Region")
 
     df_us.drop(df_us[df_us["Province_State"] == "Recovered"].index, inplace=True)
+
+    #df_us.drop(df_us[df_us["Country_Region"] != "US"].index, inplace=True)
     
     return df_us
 
@@ -380,6 +391,7 @@ def process_data():
     # Delete columns we are not using
     df_world.drop(['FIPS', 'Admin2','Last_Update','Combined_Key'], axis=1, inplace=True)
 
+    #save(df_world, "world_latest_x1")
     ###############################
     # Time series data
     ###############################
@@ -453,6 +465,8 @@ def process_data():
     ###############################
     # save
     ###############################
+    
+    
     save(df_world, "world_latest")
     save(df_co, "confirmed_global")
     save(df_re, "recovered_global")

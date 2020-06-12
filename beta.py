@@ -337,10 +337,10 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             daily_new = s.diff()
             daily_new.fillna(0,inplace=True)
             y = ((daily_new/WORLD_POP)*1000000).astype(int)
-            name = "Daily New Cases/1M pop"
+            name = "Daily New Cases/M pop"
         else:
             y = ((s/WORLD_POP)*1000000).astype(int)
-            name = "Cases/1M pop"
+            name = "Cases/M pop"
         
         #x_axis_dates = [d for d in pd.to_datetime(s.index)]
         
@@ -356,10 +356,10 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             daily_deaths = s.diff()
             daily_deaths.fillna(0,inplace=True)
             y = ((daily_deaths/WORLD_POP)*1000000).astype(int)
-            name = "Daily Deaths/1M pop"
+            name = "Daily Deaths/M pop"
         else:
             y = ((s/WORLD_POP)*1000000).astype(int)
-            name = "Deaths/1M pop"
+            name = "Deaths/M pop"
         trace2 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
                             marker={"color":Colors["Total Deaths"]},
@@ -379,10 +379,10 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         if type is "Daily":
             daily = daily.diff()
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
-            name = "Daily New Cases/1M pop"
+            name = "Daily New Cases/M pop"
         else:
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
-            name = "Cases/1M pop"
+            name = "Cases/M pop"
         
         trace1 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
@@ -400,10 +400,10 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         if type is "Daily":
             daily = daily.diff()
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
-            name = "Daily Deaths/1M pop"
+            name = "Daily Deaths/M pop"
         else:
             y = ((daily/COUNTRY_POP)*1000000).astype(int)
-            name = "Deaths/1M pop"
+            name = "Deaths/M pop"
         
         trace2 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
@@ -990,7 +990,7 @@ def create_datatable_world(id):
 external_stylesheets = [#"https://codepen.io/plotly/pen/EQZeaW.css",
                         "./assets/Base.css"]
 
-TITLE="Coronavirus disease (COVID-19) Pandemic Dashboard"
+TITLE="Coronavirus (COVID-19) Pandemic Dashboard"
 DESCRIPTION = "The Coronavirus disease (COVID-19) Pandemic dashboard provides latest information about this outbreak across the World. Stay at home, maintain healthy habits to contain the Coronavirus"
 
 app = Dash(__name__, external_stylesheets=external_stylesheets,
@@ -1187,7 +1187,7 @@ app.layout = html.Div([
                 html.Hr(),
 
                 html.Div([
-                    html.H6(["Worldwide Cases vs Deaths / 1M pop",], className="graph_title"),
+                    html.H6(["Worldwide Cases vs Deaths / M population",], className="graph_title"),
 
                     dcc.Graph(
                         #id="world_daily_trend",
@@ -1493,7 +1493,7 @@ app.layout = html.Div([
                 ),
 
                 html.Div([
-                    html.H6(["Country Cases vs Deaths / 1M pop",],
+                    html.H6(["Country Cases vs Deaths / M population",],
                     id="country_total_cases_vs_deaths_1M_pop_cumulative_label", className="graph_title"),
 
                     dcc.Graph(
@@ -1600,7 +1600,7 @@ def update_country_specific(selected_country, view_option):
     fig_CountryTrendDailyNewRecovered = plot_daily_trend(df_re, country=selected_country, type="New Recovered", annot="Daily Recoveries")
     fig_CountryTrendDailyNewDeaths = plot_daily_trend(df_de, country=selected_country, type="New Deaths", annot="Daily Deaths")
 
-    fig_CountryTrendCum1Mpop_label = f'{selected_country} Cases vs Deaths / 1M pop'
+    fig_CountryTrendCum1Mpop_label = f'{selected_country} Cases vs Deaths / M population'
     fig_CountryTrendCum1Mpop = plot_total_per_1M_pop_trend(country=selected_country, type="Cum")
 
     label_CountryDoublingRate= f'{selected_country} Doubling Time'
