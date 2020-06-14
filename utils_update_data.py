@@ -20,7 +20,9 @@ def last_update():
         # '%d-%m-%Y, %H:%M %p'  DD-MM-YYYY HH:MM AM/PM
         # '%d-%b-%Y, %H:%M'     DD-MonthShort-YYYY HH:MM
         # '%d-%b-%Y, %H:%M'     DD-MonthFull-YYYY HH:MM
-        f.write(f"""{today_dt.today().strftime('%d %B %Y, %H:%M')}""")
+        update_date = today_dt.today().strftime('%d %B %Y, %H:%M')
+        f.write(f"""Last updated on {update_date} GMT+5:30""")
+        
 
 def clean_data(df):
     print("clean_data")

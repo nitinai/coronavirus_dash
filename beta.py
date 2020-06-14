@@ -63,8 +63,8 @@ TYPE_TO_COLOR={
 
 def last_update():
     with open("./data/LastUpdate.txt", "r") as f:
-        update_date = f.read()
-        return (f"""Last updated on {update_date} GMT+5:30""")
+        return f.read()
+        #return (f"""Last updated on {update_date} GMT+5:30""")
 
 def get_num_countries(df):
     count = df["Country/Region"].nunique() 
@@ -910,7 +910,7 @@ def create_datatable_world(id):
 
     POP_COLS = ['Total Cases/1M pop', 'Deaths/1M pop', "Population"]
     PRESENT_COLS+=POP_COLS
-    df = df_world_table#pd.read_csv(f"{PATH}/world_table.csv")
+    #df = df_world_table#pd.read_csv(f"{PATH}/world_table.csv")
     #df = df_world.groupby('Country/Region')[GRPBY].sum()
     #df.reset_index(inplace=True)
     #df["Recovery rate"] = df['Recovered']/df['Total Cases']
@@ -923,7 +923,7 @@ def create_datatable_world(id):
                              if i in ('Recovery rate', 'Death rate') else {"name": i, "id": i}
                              for i in PRESENT_COLS],
                     
-                    data=df[PRESENT_COLS].to_dict("rows"),
+                    data=df_world_table[PRESENT_COLS].to_dict("rows"),
                     row_selectable="single",# if countryName != 'Schengen' else False,
                     
                     
@@ -955,10 +955,10 @@ def create_datatable_world(id):
                     tooltip_data= [{c:
                                     {
                                         'type': 'markdown',
-                                        'value': f'{country} : {round(df.loc[df[df["Country/Region"] == country].index[0], c]*100,1)}% {c}' if c in ('Recovery rate', 'Death rate')  else
-                                                    f'{country} : {df.loc[df[df["Country/Region"] == country].index[0], c]:,d} {c}'
-                                    } for c in df.columns[1:]
-                            } for country in df[df.columns[0]].values ],
+                                        'value': f'{country} : {round(df_world_table.loc[df_world_table[df_world_table["Country/Region"] == country].index[0], c]*100,1)}% {c}' if c in ('Recovery rate', 'Death rate')  else
+                                                    f'{country} : {df_world_table.loc[df_world_table[df_world_table["Country/Region"] == country].index[0], c]:,d} {c}'
+                                    } for c in df_world_table.columns[1:]
+                            } for country in df_world_table[df_world_table.columns[0]].values ],
                     style_cell_conditional=[#{'if': {'column_id': 'Province/State'}, 'width': '36%'},
                                             #{'if': {'column_id': 'Country/Region'}, 'width': '10%'},
                                             #{'if': {'column_id': 'Active'}, 'width': '15%'},
