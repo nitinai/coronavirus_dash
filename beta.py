@@ -705,8 +705,8 @@ def get_country_trend(country):
      
     fig = apply_line_plot_layout(fig, country=country, annot=country, annot_size=60)
     fig.update_layout(height=350)
-    if country is "World":
-        fig.update_layout(xaxis_title="Toggle the legends to show/hide corresponding curve")
+    #if country is "World":
+    #    fig.update_layout(xaxis_title="Toggle the legends to show/hide corresponding curve")
     return fig
 
 def relative_trend_graph_china_vs_world(df_co, df_re, df_de):
@@ -1168,15 +1168,11 @@ app.layout = html.Div([
         html.Div([
             html.Div([
                 html.H6(["Worldwide Trend (Cumulative)",], className="graph_title"),
-#
-                #dcc.Dropdown(
-                #            placeholder="Select or type country",
-                #            options=[{'label':c, 'value':c} for c in all_countries],
-                #            value='India',
-                #            id='countries_dropdown',
-                #            #style={'border':BORDER}
-                #            ),
-#
+
+                html.P(children=[html.Strong("Toggle the legends to show / hide corresponding curve")],
+                        style = {'text-align':"center", "font-size": '1.3rem',
+                                "margin-top": "0.5rem","margin-bottom": "0.5rem"},),
+
                 dcc.Graph(
                     id="world_trend_graph",
                     figure=get_country_trend(country="World"),
@@ -1294,7 +1290,7 @@ app.layout = html.Div([
                 #                ),
 
                 html.H6(["The World",], className="graph_title"),
-                html.P(children=[html.Strong("Click the radio button for detail information of country.")],
+                html.P(children=[html.Strong("Click on the radio button for detailed information about the country.")],
                         style = {'text-align':"center", "font-size": '1.3rem',
                                 "margin-top": "0.5rem","margin-bottom": "0rem"},),
                 html.P(children=['To sort the table click arrows in front of column names. Initially sorted by Active cases.'],
@@ -1577,7 +1573,7 @@ app.layout = html.Div([
             #            html.A('JHU CSSE', href='https://github.com/CSSEGISandData/COVID-19', target='_blank'), " | ",
             #            html.A('WHO', href='https://www.who.int', target='_blank'),
             #        ]),
-
+            #html.P(id="hidden_value", className = "the_dynamic_style"),
 
             ], id='my-footer',),
 
@@ -1729,6 +1725,8 @@ def update_country_specific(selected_country, view_option):
     Output('country_total_cases_vs_deaths_1M_pop_cumulative', 'figure'),
     Output('country_doubling_rate_label', 'children'),
     Output('country_doubling_rate', 'figure'),
+    #Output('hidden_value', 'children'),
+    
     ],
     [Input("world_countries_table", "derived_virtual_data"),
     Input("world_countries_table", "derived_virtual_selected_rows"),
@@ -1758,6 +1756,26 @@ def update_country_trend(derived_virtual_data, derived_virtual_selected_rows, vi
     #print("view_option : ", view_option)
     return update_country_specific(selected_country, view_option)
 
+#@app.callback(
+#    [Output('world_trend_graph', 'config'),
+#    ],
+#    [
+#    Input('hidden_value', 'children'),
+#    Input('hidden_value', 'style'),
+#    ]
+#    )
+#def update_displayModeBar(value, style):
+#    print("update_displayModeBar ", value)
+#    print("update_displayModeBar ", style)  
+#
+#    if value == "India":
+#        config={'displayModeBar': False, # Hide the floating toolbar
+#                                "scrollZoom": False,},
+#    else:
+#        config={'displayModeBar': True,
+#                            "scrollZoom": True,},
+#
+#    return config
 
 if __name__ == '__main__':
     app.run_server(debug=True)

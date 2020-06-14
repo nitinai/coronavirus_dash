@@ -414,13 +414,25 @@ there.
 @media (min-width: 400px) {}
 
 /* Larger than phablet (also point when grid becomes active) */
-@media (min-width: 550px) {}
+@media (min-width: 550px) {
+  .the_dynamic_style{
+    display: inline-block;
+  }
+}
 
 /* Larger than tablet */
-@media (min-width: 750px) {}
+@media (min-width: 750px) {
+  .the_dynamic_style{
+    display: inline-block;
+  }
+}
 
 /* Larger than desktop */
-@media (min-width: 1000px) {}
+@media (min-width: 1000px) {
+  .the_dynamic_style{
+    display: none;
+  }
+}
 
 /* Larger than Desktop HD */
 @media (min-width: 1200px) {}
