@@ -1116,7 +1116,7 @@ app.layout = html.Div([
                                     ),
                         ]),# Div
 
-                html.Div(className="box",
+                html.Div(id= "world_total_cases", className="box",
                 children=[  html.P(children="Total Cases",),
                             html.H5(children=f"""{total_cases:,d}""",
                                         style = {'color':COLOR_MAP["Brown"]}
@@ -1125,6 +1125,7 @@ app.layout = html.Div([
                                         style = {'color':COLOR_MAP["Brown"]}
                                     ),
                         ]),# Div
+
 
                 html.Div(className="box",
                 children=[  html.P(children="Recovered",),
@@ -1169,7 +1170,7 @@ app.layout = html.Div([
             html.Div([
                 html.H6(["Worldwide Trend (Cumulative)",], className="graph_title"),
 
-                html.P(children=[html.Strong("Toggle the legends to show / hide corresponding curve")],
+                html.P(children=[html.Strong("Click on the legends to show / hide the corresponding curve")],
                         style = {'text-align':"center", "font-size": '1.3rem',
                                 "margin-top": "0.5rem","margin-bottom": "0.5rem"},),
 
