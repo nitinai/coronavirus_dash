@@ -1417,8 +1417,8 @@ app.layout = html.Div([
                 dcc.Graph(
                     id="trend_graph",
                     #figure=trend_graph
-                    config={'displayModeBar': False, # Hide the floating toolbar
-                            "scrollZoom": False,},
+                    #config={'displayModeBar': False, # Hide the floating toolbar
+                    #        "scrollZoom": False,},
                 ),
 
                 html.Hr(),
