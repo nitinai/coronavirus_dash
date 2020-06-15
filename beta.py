@@ -1001,7 +1001,7 @@ app = Dash(__name__, external_stylesheets=external_stylesheets,
                     {"name": "description", "content": DESCRIPTION},
                     {"property": "og:title", "content": TITLE},
                     {"property": "og:type", "content": "website"},
-                    {"property": "og:image", "content": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=w300-rw"},
+                    {"property": "og:image", "content": "https://github.com/nitinai/coronavirus_dash/blob/master/assets/share_img.jpg"},
                     {"property":"og:image:type" "content":"image/jpeg"}
                     {"property":"og:image:width" "content":"300"}
                     {"property":"og:image:height" "content":"300"}
@@ -1012,7 +1012,7 @@ app = Dash(__name__, external_stylesheets=external_stylesheets,
                     {"name": "twitter:site", "content": "@_nitinp"},
                     {"name": "twitter:title", "content": TITLE},
                     {"name": "twitter:description","content": DESCRIPTION},
-                    {"name": "twitter:image", "content": 'https://github.com/nitinai/coronavirus_dash/blob/master/assets/share_img.png'},
+                    {"name": "twitter:image", "content": 'https://github.com/nitinai/coronavirus_dash/blob/master/assets/share_img.jpg'},
                     {"charset":"UTF-8"},
                     {"name": "viewport", "content": "width=device-width, height=device-height, initial-scale=1.0"}, #, shrink-to-fit=no
                     {"name": "X-UA-Compatible", "content": "ie=edge"},
