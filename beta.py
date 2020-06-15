@@ -1001,7 +1001,10 @@ app = Dash(__name__, external_stylesheets=external_stylesheets,
                     {"name": "description", "content": DESCRIPTION},
                     {"property": "og:title", "content": TITLE},
                     {"property": "og:type", "content": "website"},
-                    {"property": "og:image", "content": "https://github.com/nitinai/coronavirus_dash/blob/master/assets/share_img.png"},
+                    {"property": "og:image", "content": "https://lh3.googleusercontent.com/J6_coFbogxhRI9iM864NL_liGXvsQp2AupsKei7z0cNNfDvGUmWUy20nuUhkREQyrpY4bEeIBuc=w300-rw"},
+                    {"property":"og:image:type" "content":"image/jpeg"}
+                    {"property":"og:image:width" "content":"300"}
+                    {"property":"og:image:height" "content":"300"}
                     {"property": "og:image:alt", "content": "The dashboard preview image."},
                     {"property": "og:url", "content": "https://covid19updates.herokuapp.com/"},
                     {"property": "og:description", "content":DESCRIPTION},
