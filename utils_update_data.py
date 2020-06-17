@@ -243,7 +243,7 @@ def save(df, filename, index=False):
 
 def replace_province_names(df, provinceCol):
     df[provinceCol].replace({
-        "Azad Jammu and Kashmir": "Pak Occupied Jammu and Kashmir",
+        "Azad Jammu and Kashmir": "Pak Occupied Kashmir",
         },inplace=True)
     return df
 
@@ -485,7 +485,7 @@ def prepare_world_table(df_world):
     MAIN_COLS = ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Deaths', "New Deaths"]
     PRESENT_COLS = ['Country/Region'] + MAIN_COLS + RATE_COLS
 
-    POP_COLS = ['Total Cases/1M pop', 'Deaths/1M pop', "Population"]
+    POP_COLS = ['Cases/M pop', 'Deaths/M pop', "Population"]
     PRESENT_COLS+=POP_COLS
     INT_COLS = MAIN_COLS + POP_COLS
 
@@ -497,19 +497,19 @@ def prepare_world_table(df_world):
 
     #save(df, "world_table")
     #return
-    df['Total Cases/1M pop']=0
-    df['Deaths/1M pop'] = 0
+    df['Cases/M pop']=0
+    df['Deaths/M pop'] = 0
     for i in range(len(df)):
         if df.loc[i,"Population"]:
-            df.loc[i,'Total Cases/1M pop'] = (df.loc[i,'Total Cases']/df.loc[i,"Population"])*1000000
-            df.loc[i,'Deaths/1M pop'] = (df.loc[i,'Deaths']/df.loc[i,"Population"])*1000000
+            df.loc[i,'Cases/M pop'] = (df.loc[i,'Total Cases']/df.loc[i,"Population"])*1000000
+            df.loc[i,'Deaths/M pop'] = (df.loc[i,'Deaths']/df.loc[i,"Population"])*1000000
 
-    #df['Total Cases/1M pop'] = (df['Total Cases']/df["Population"])*1000000
-    #df['Deaths/1M pop'] = (df['Deaths']/df["Population"])*1000000
-    df['Total Cases/1M pop'].fillna(0, inplace=True)
-    df['Deaths/1M pop'].fillna(0, inplace=True)
-    df['Total Cases/1M pop'] = df['Total Cases/1M pop'].astype(int)
-    df['Deaths/1M pop'] = df['Deaths/1M pop'].astype(int)
+    #df['Cases/M pop'] = (df['Total Cases']/df["Population"])*1000000
+    #df['Deaths/M pop'] = (df['Deaths']/df["Population"])*1000000
+    df['Cases/M pop'].fillna(0, inplace=True)
+    df['Deaths/M pop'].fillna(0, inplace=True)
+    df['Cases/M pop'] = df['Cases/M pop'].astype(int)
+    df['Deaths/M pop'] = df['Deaths/M pop'].astype(int)
     df['Population'].fillna(0, inplace=True)
     df['Population'] = df['Population'].astype(int)
 

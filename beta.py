@@ -908,7 +908,7 @@ def create_datatable_world(id):
     PRESENT_COLS = ['Country/Region'] + \
     ['Total Cases', "New Cases", 'Active', 'Recovered', "New Recovered", 'Recovery rate', 'Deaths', "New Deaths"] + ['Death rate']
 
-    POP_COLS = ['Total Cases/1M pop', 'Deaths/1M pop', "Population"]
+    POP_COLS = ['Cases/M pop', 'Deaths/M pop', "Population"]
     PRESENT_COLS+=POP_COLS
     #df = df_world_table#pd.read_csv(f"{PATH}/world_table.csv")
     #df = df_world.groupby('Country/Region')[GRPBY].sum()
