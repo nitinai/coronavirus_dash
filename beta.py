@@ -27,7 +27,7 @@ cache = Cache(config={
     'CACHE_DIR': './cache/'
 })
 TIMEOUT = 300
-LINE_WIDTH = 4
+LINE_WIDTH = 3
 
 MAPBOX_TOKEN= "pk.eyJ1IjoicGF0aWxuaXRpbjIzIiwiYSI6ImNrN2JoNTB6ODA0NDIzbnB2ZzI4MTdsYnMifQ.Sw8udcIf539mektKpvgRYw"
 
@@ -1097,7 +1097,9 @@ app.layout = html.Div([
         #html.Div([
 
             html.Div([
-                html.P(children=last_update()), 
+                html.P(children=[html.Strong(last_update()),
+                " | Daily update at @ 10:30 GMT+5:30"
+                ]), 
             ], className="last_update"),
 
             html.Hr(),
