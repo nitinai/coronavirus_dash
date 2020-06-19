@@ -294,9 +294,9 @@ def plot_daily_cases_vs_recoveries_trend(country):
         
         trace1 = go.Scatter(x=x_axis_dates, y=daily_new, 
                             name="New Cases",
-                            marker={"color":Colors["New Cases"]},
+                            #marker={"color":Colors["New Cases"]},
                             line_shape='spline',
-                            line=dict(color=Colors["New Cases"], width=LINE_WIDTH)
+                            line={"color":Colors["New Cases"], "width":LINE_WIDTH}
                                    
                                     )
 
@@ -304,9 +304,9 @@ def plot_daily_cases_vs_recoveries_trend(country):
         daily_rec = s.diff()
         trace2 = go.Scatter(x=x_axis_dates, y=daily_rec, 
                             name="New Recoveries",
-                            marker={"color":Colors["New Recovered"]},
+                            #marker={"color":Colors["New Recovered"]},
                             line_shape='spline',
-                            line=dict(color=Colors["New Recovered"], width=LINE_WIDTH)
+                            line={"color":Colors["New Recovered"], "width":LINE_WIDTH}
                                 )
     
     fig = go.Figure(data=[trace1,trace2])
@@ -346,7 +346,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         
         trace1 = go.Scatter(x=x_axis_dates, y=y,
                             name=name,
-                            marker={"color":Colors["Total Cases"]},
+                            #marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
                             line={"color":Colors["Total Cases"], "width":LINE_WIDTH}
                             )
@@ -362,7 +362,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
             name = "Deaths/M pop"
         trace2 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
-                            marker={"color":Colors["Total Deaths"]},
+                            #marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
                             line={"color":Colors["Total Deaths"], "width":LINE_WIDTH}
                             )
@@ -386,7 +386,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         
         trace1 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
-                            marker={"color":Colors["Total Cases"]},
+                            #marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
                             line={"color":Colors["Total Cases"], "width":LINE_WIDTH}
                             )
@@ -407,7 +407,7 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
         
         trace2 = go.Scatter(x=x_axis_dates, y=y, 
                             name=name,
-                            marker={"color":Colors["Total Deaths"]},
+                            #marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
                             line={"color":Colors["Total Deaths"], "width":LINE_WIDTH}
                                 )
@@ -449,13 +449,13 @@ def plot_doubling_rate(country):
     x_axis_dates = [d for d in pd.to_datetime(total_d.index)]
     trace1 = go.Scatter(x=x_axis_dates, y=total_d, 
                             name="Cases Doubling Time",
-                            marker={"color":Colors["Total Cases"]},
+                            #marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
                             line={"color":Colors["Total Cases"], "width":LINE_WIDTH}
                             )
     trace2 = go.Scatter(x=x_axis_dates, y=deaths_d, 
                             name="Deaths Doubling Time",
-                            marker={"color":Colors["Total Deaths"]},
+                            #marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
                             line={"color":Colors["Total Deaths"], "width":LINE_WIDTH}
                             )
@@ -611,8 +611,9 @@ def get_country_trend(country):
         active = gConfirmed.sum() - gRecovered.sum() - gDeaths.sum()
         #active = active.astype(int)
         traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.sum(), 
-                                    name=Types[3], mode='markers+lines', 
-                                    marker={"color":Colors[3]},
+                                    name=Types[3], #mode='lines',
+                                    #marker={"color":Colors[3]},
+                                    line={"color":Colors[3], "width":LINE_WIDTH, "shape":'spline'},
                                     text=[d for d in x_axis_dates],
                                     hovertext=['{} : {:,d}'.format(Types[3],
                                         i) for i in gConfirmed.sum()],
@@ -620,8 +621,9 @@ def get_country_trend(country):
                                               '<extra></extra>'
                                     )
         trace1 = go.Scatter(x=x_axis_dates, y=active, 
-                            name=Types[0], mode='markers+lines', 
-                            marker={"color":Colors[0]},
+                            name=Types[0], #mode='markers+lines', 
+                            #marker={"color":Colors[0]},
+                            line={"color":Colors[0], "width":LINE_WIDTH, "shape":'spline'},
                             text=[d for d in x_axis_dates],
                             hovertext=['{} Cases : {:,d}'.format(Types[0],
                                 i) for i in active],
@@ -629,8 +631,9 @@ def get_country_trend(country):
                                         '<extra></extra>'
                             )
         trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.sum(), 
-                            name=Types[1], mode='markers+lines', 
-                            marker={"color":Colors[1]},
+                            name=Types[1], #mode='markers+lines', 
+                            #marker={"color":Colors[1]},
+                            line={"color":Colors[1], "width":LINE_WIDTH, "shape":'spline'},
                             text=[d for d in x_axis_dates],
                             hovertext=['{} : {:,d}'.format(Types[1],
                                 i) for i in gRecovered.sum()],
@@ -638,8 +641,9 @@ def get_country_trend(country):
                                         '<extra></extra>'
                             )
         trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.sum(), 
-                            name=Types[2], mode='markers+lines', 
-                            marker={"color":Colors[2]},
+                            name=Types[2], #mode='markers+lines', 
+                            #marker={"color":Colors[2]},
+                            line={"color":Colors[2], "width":LINE_WIDTH, "shape":'spline'},
                             text=[d for d in x_axis_dates],
                             hovertext=['{} : {:,d}'.format(Types[2],
                                 i) for i in gDeaths.sum()],
@@ -661,8 +665,9 @@ def get_country_trend(country):
         # go.Scatter creates SVG plots. WebGL plots loads faster than SVG plots.
         # https://plotly.com/python/webgl-vs-svg/
         traceTotal = go.Scatter(x=x_axis_dates, y=gConfirmed.loc[country,:],
-                                name=Types[3], mode='markers+lines', 
-                                marker={"color":Colors[3]},
+                                name=Types[3], #mode='markers+lines', 
+                                #marker={"color":Colors[3]},
+                                line={"color":Colors[3], "width":LINE_WIDTH, "shape":'spline'},
                                 text=[d for d in x_axis_dates],
                                 hovertext=['{} : {:,d}'.format(Types[3],
                                     i) for i in gConfirmed.loc[country,:]],
@@ -671,8 +676,9 @@ def get_country_trend(country):
                                 )
 
         trace1 = go.Scatter(x=x_axis_dates, y=active, 
-                            name=Types[0], mode='markers+lines', 
-                            marker={"color":Colors[0]},
+                            name=Types[0], #mode='markers+lines', 
+                            #marker={"color":Colors[0]},
+                            line={"color":Colors[0], "width":LINE_WIDTH, "shape":'spline'},
                             text=[d for d in x_axis_dates],
                             hovertext=['{} Cases : {:,d}'.format(Types[0],
                                 i) for i in active],
@@ -681,8 +687,9 @@ def get_country_trend(country):
                             )
 
         trace2 = go.Scatter(x=x_axis_dates, y=gRecovered.loc[country,:], 
-                            name=Types[1], mode='markers+lines', 
-                            marker={"color":Colors[1]},
+                            name=Types[1], #mode='markers+lines', 
+                            #marker={"color":Colors[1]},
+                            line={"color":Colors[1], "width":LINE_WIDTH, "shape":'spline'},
                             text=[d for d in x_axis_dates],
                             hovertext=['{} : {:,d}'.format(Types[1],
                                 i) for i in gRecovered.loc[country,:]],
@@ -692,8 +699,9 @@ def get_country_trend(country):
                             )
 
         trace3 = go.Scatter(x=x_axis_dates, y=gDeaths.loc[country,:], 
-                            name=Types[2], mode='markers+lines', 
-                            marker={"color":Colors[2]},
+                            name=Types[2], #mode='markers+lines', 
+                            #marker={"color":Colors[2]},
+                            line={"color":Colors[2], "width":LINE_WIDTH, "shape":'spline'},
                             text=[d for d in x_axis_dates],
                             hovertext=['{} : {:,d}'.format(Types[2],
                                 i) for i in gDeaths.loc[country,:]],
