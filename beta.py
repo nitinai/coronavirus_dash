@@ -164,12 +164,15 @@ def graph_scatter_mapbox():
     longitude=8
     zoom=1
     
+    COLORS = [COLOR_MAP["Green"] if (a == 0) else COLOR_MAP["Orange"] if (rr >= 0.7) else COLOR_MAP["Red"] for a, rr in zip(df_world["Active"],
+                df_world["Recovery rate"])]
+
     fig = go.Figure(go.Scattermapbox(
     lat=df_world['Lat'],
     lon=df_world['Long_'],
     mode='markers',
     marker=go.scattermapbox.Marker(
-        color=[COLOR_MAP["Red"] if (a > 0) else COLOR_MAP["Green"] for a in df_world["Active"]],
+        color=COLORS,
 
         size=[i**(1/3) for i in df_world['Total Cases']],
         sizemin=1,
@@ -185,7 +188,7 @@ def graph_scatter_mapbox():
                                                                                                                                         df_world['Recovery rate'],
                                                                                                                                         df_world['Death rate'])],
     hoverlabel = {
-        "bgcolor":[f"{COLOR_MAP['Light_Red']}" if (a > 0) else f"{COLOR_MAP['Light_Green']}" for a in df_world['Active']],
+        "bgcolor":COLORS,
     },
     hovertemplate="<b>%{text}</b><br><br>" +
                     "%{hovertext}<br>" +
@@ -216,7 +219,7 @@ def graph_scatter_mapbox():
             "y":-.01,
             "align":'center',
             "showarrow":False,
-            "text":"Green circle indicates no active cases. Hover over the circles for more details.",
+            "text": "Circle size represents Total Cases<br>Orange color represents Recovery rate >= 70% and Green color for no Active Cases",
             "xref":"paper",
             "yref":"paper",
             "font": {"size":10, "color":'#292929'},
