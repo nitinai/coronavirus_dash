@@ -1201,7 +1201,7 @@ app.layout = html.Div([
                 html.Hr(),
 
                 html.Div([
-                    html.H6(["Worldwide Cases vs Deaths / M population",], className="graph_title"),
+                    html.H6(["Worldwide Cases and Deaths / M population",], className="graph_title"),
 
                     dcc.Graph(
                         #id="world_daily_trend",
@@ -1514,7 +1514,7 @@ app.layout = html.Div([
                 ),
                 html.Hr(),
                 html.Div([
-                    html.H6(["Country Cases vs Deaths / M population",],
+                    html.H6(["Country Cases and Deaths / M population",],
                     id="country_total_cases_vs_deaths_1M_pop_cumulative_label", className="graph_title"),
 
                     dcc.Graph(
@@ -1621,7 +1621,7 @@ def update_country_specific(selected_country, view_option):
     fig_CountryTrendDailyNewRecovered = plot_daily_trend(df_re, country=selected_country, type="New Recovered", annot="Daily Recoveries")
     fig_CountryTrendDailyNewDeaths = plot_daily_trend(df_de, country=selected_country, type="New Deaths", annot="Daily Deaths")
 
-    fig_CountryTrendCum1Mpop_label = f'{selected_country} Cases vs Deaths / M population'
+    fig_CountryTrendCum1Mpop_label = f'{selected_country} Cases and Deaths / M population'
     fig_CountryTrendCum1Mpop = plot_total_per_1M_pop_trend(country=selected_country, type="Cum")
 
     label_CountryDoublingRate= f'{selected_country} Doubling Time'
