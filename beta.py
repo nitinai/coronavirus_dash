@@ -1579,7 +1579,7 @@ app.layout = html.Div([
             children=html.Strong(['STAY Home | KEEP a safe distance | WASH hands often | COVER your cough'])),
     
             html.P(
-            children=html.Strong(["Developed by ", html.A('NITIN PATIL', href='https://www.linkedin.com/in/nitinai', target='_blank'),
+            children=html.Strong(["Developed by ", html.A('NITIN PATIL', href='https://www.linkedin.com/in/nitinai', target='_blank'), " in after hours",
                         " | Data source: ", html.A('MoHFW GoI', href='https://www.mohfw.gov.in', target='_blank'), ' | ',
                         html.A('JHU CSSE', href='https://github.com/CSSEGISandData/COVID-19', target='_blank'), " | ",
                         html.A('WHO', href='https://www.who.int', target='_blank'),

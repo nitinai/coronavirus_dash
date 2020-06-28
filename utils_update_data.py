@@ -168,6 +168,14 @@ def scrap_pandas():
         if len(df[df["Province_State"] == "*States wise distribution is subject to further verification and reconciliation"]) > 0:
             df.drop(df[df["Province_State"] == "*States wise distribution is subject to further verification and reconciliation"].index, inplace=True)
 
+        if len(df[df["Province_State"] == "Total#"]) > 0:
+            start_ind = df[df["Province_State"] == "Total#"].index.values[0]
+            index_list = list(range(start_ind, len(df)))
+            df.drop(index_list, inplace=True)
+
+        df["Deaths"].fillna(0, inplace=True)
+        df["Recovered"].fillna(0, inplace=True)
+        
     except Exception as ex:
         print("Error while dropping total count row : ", str(ex))   
 
