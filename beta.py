@@ -736,7 +736,7 @@ def get_country_trend(country):
                                         '<extra></extra>'
                             )
         
-    fig = go.Figure(data=[traceTotal, trace1,trace2,trace3])
+    fig = go.Figure(data=[traceTotal, trace2, trace3, trace1])
      
     fig = apply_line_plot_layout(fig, country=country, annot=country, annot_size=60)
     fig.update_layout(height=350)
