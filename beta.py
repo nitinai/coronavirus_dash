@@ -351,7 +351,11 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                             name=name,
                             #marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
-                            line={"color":Colors["Total Cases"], "width":LINE_WIDTH}
+                            line={"color":Colors["Total Cases"], "width":LINE_WIDTH},
+                            text=x_axis_dates,
+                            hovertext=['Cases/M pop : {:,d}'.format(i) for i in y],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
 
         s = df_de[DATE_COLUMN_NAME].sum()
@@ -367,7 +371,11 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                             name=name,
                             #marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
-                            line={"color":Colors["Total Deaths"], "width":LINE_WIDTH}
+                            line={"color":Colors["Total Deaths"], "width":LINE_WIDTH},
+                            text=x_axis_dates,
+                            hovertext=['Deaths/M pop : {:,d}'.format(i) for i in y],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
 
     else:
@@ -391,7 +399,11 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                             name=name,
                             #marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
-                            line={"color":Colors["Total Cases"], "width":LINE_WIDTH}
+                            line={"color":Colors["Total Cases"], "width":LINE_WIDTH},
+                            text=x_axis_dates,
+                            hovertext=['Cases/M pop : {:,d}'.format(i) for i in y],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
 
         s = df_de[df_de["Country/Region"]==country].groupby(["Country/Region"]).sum()
@@ -412,8 +424,12 @@ def plot_total_per_1M_pop_trend(country, type='Daily' ,# "Cum"
                             name=name,
                             #marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
-                            line={"color":Colors["Total Deaths"], "width":LINE_WIDTH}
-                                )
+                            line={"color":Colors["Total Deaths"], "width":LINE_WIDTH},
+                            text=x_axis_dates,
+                            hovertext=['Deaths/M pop : {:,d}'.format(i) for i in y],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
+                            )
 
     fig = go.Figure(data=[trace1,trace2])
     fig = apply_line_plot_layout(fig, country, annot)
@@ -454,13 +470,21 @@ def plot_doubling_rate(country):
                             name="Cases Doubling Time",
                             #marker={"color":Colors["Total Cases"]},
                             line_shape='spline',
-                            line={"color":Colors["Total Cases"], "width":LINE_WIDTH}
+                            line={"color":Colors["Total Cases"], "width":LINE_WIDTH},
+                            text=x_axis_dates,
+                            hovertext=["Cases Doubling Time : %.2f Days" % i for i in total_d],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
     trace2 = go.Scatter(x=x_axis_dates, y=deaths_d, 
                             name="Deaths Doubling Time",
                             #marker={"color":Colors["Total Deaths"]},
                             line_shape='spline',
-                            line={"color":Colors["Total Deaths"], "width":LINE_WIDTH}
+                            line={"color":Colors["Total Deaths"], "width":LINE_WIDTH},
+                            text=x_axis_dates,
+                            hovertext=["Deaths Doubling Time : %.2f Days" % i for i in deaths_d],
+                            hovertemplate='%{hovertext}' +
+                                        '<extra></extra>'
                             )
 
     fig = go.Figure(data=[trace1,trace2])
@@ -498,7 +522,7 @@ def plot_daily_trend(df, country, type, annot):
                             name=type, 
                             mode= 'lines',
                             line={"color":Colors[type], "width":0},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['{} : {:,d}'.format(type,
                                 i) for i in daily],
                             hovertemplate='%{hovertext}' +
@@ -513,7 +537,7 @@ def plot_daily_trend(df, country, type, annot):
                             name="3-day moving average",
                             #line_shape='spline',
                             line={"color":Colors["3-day"], "width":LINE_WIDTH},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['3-day moving average : {:,d}'.format(
                                 i) for i in roll_3],
                             hovertemplate='%{hovertext}' +
@@ -528,7 +552,7 @@ def plot_daily_trend(df, country, type, annot):
                             name="7-day moving average",
                             #line_shape='spline',
                             line={"color":Colors["7-day"], "width":LINE_WIDTH},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['7-day moving average : {:,d}'.format(
                                 i) for i in roll_7],
                             hovertemplate='%{hovertext}' +
@@ -553,7 +577,7 @@ def plot_daily_trend(df, country, type, annot):
                             name=type, 
                             mode= 'lines',
                             line={"color":Colors[type], "width":0},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['{} : {:,d}'.format(type,
                                 i) for i in daily],
                             hovertemplate='%{hovertext}' +
@@ -568,7 +592,7 @@ def plot_daily_trend(df, country, type, annot):
                             name="3-day moving average",
                             #line_shape='spline',
                             line={"color":Colors["3-day"], "width":LINE_WIDTH},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['3-day moving average : {:,d}'.format(
                                 i) for i in roll_3],
                             hovertemplate='%{hovertext}' +
@@ -583,7 +607,7 @@ def plot_daily_trend(df, country, type, annot):
                             name="7-day moving average",
                             #line_shape='spline',
                             line={"color":Colors["7-day"], "width":LINE_WIDTH},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['7-day moving average : {:,d}'.format(
                                 i) for i in roll_7],
                             hovertemplate='%{hovertext}' +
@@ -617,7 +641,7 @@ def get_country_trend(country):
                                     name=Types[3], #mode='lines',
                                     #marker={"color":Colors[3]},
                                     line={"color":Colors[3], "width":LINE_WIDTH, "shape":'spline'},
-                                    text=[d for d in x_axis_dates],
+                                    text=x_axis_dates,
                                     hovertext=['{} : {:,d}'.format(Types[3],
                                         i) for i in gConfirmed.sum()],
                                     hovertemplate='%{hovertext}' +
@@ -627,7 +651,7 @@ def get_country_trend(country):
                             name=Types[0], #mode='markers+lines', 
                             #marker={"color":Colors[0]},
                             line={"color":Colors[0], "width":LINE_WIDTH, "shape":'spline'},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['{} Cases : {:,d}'.format(Types[0],
                                 i) for i in active],
                             hovertemplate='%{hovertext}' +
@@ -637,7 +661,7 @@ def get_country_trend(country):
                             name=Types[1], #mode='markers+lines', 
                             #marker={"color":Colors[1]},
                             line={"color":Colors[1], "width":LINE_WIDTH, "shape":'spline'},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['{} : {:,d}'.format(Types[1],
                                 i) for i in gRecovered.sum()],
                             hovertemplate='%{hovertext}' +
@@ -647,7 +671,7 @@ def get_country_trend(country):
                             name=Types[2], #mode='markers+lines', 
                             #marker={"color":Colors[2]},
                             line={"color":Colors[2], "width":LINE_WIDTH, "shape":'spline'},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['{} : {:,d}'.format(Types[2],
                                 i) for i in gDeaths.sum()],
                             hovertemplate='%{hovertext}' +
@@ -671,7 +695,7 @@ def get_country_trend(country):
                                 name=Types[3], #mode='markers+lines', 
                                 #marker={"color":Colors[3]},
                                 line={"color":Colors[3], "width":LINE_WIDTH, "shape":'spline'},
-                                text=[d for d in x_axis_dates],
+                                text=x_axis_dates,
                                 hovertext=['{} : {:,d}'.format(Types[3],
                                     i) for i in gConfirmed.loc[country,:]],
                                 hovertemplate='%{hovertext}' +
@@ -682,7 +706,7 @@ def get_country_trend(country):
                             name=Types[0], #mode='markers+lines', 
                             #marker={"color":Colors[0]},
                             line={"color":Colors[0], "width":LINE_WIDTH, "shape":'spline'},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['{} Cases : {:,d}'.format(Types[0],
                                 i) for i in active],
                             hovertemplate='%{hovertext}' +
@@ -693,7 +717,7 @@ def get_country_trend(country):
                             name=Types[1], #mode='markers+lines', 
                             #marker={"color":Colors[1]},
                             line={"color":Colors[1], "width":LINE_WIDTH, "shape":'spline'},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['{} : {:,d}'.format(Types[1],
                                 i) for i in gRecovered.loc[country,:]],
                             hovertemplate='%{hovertext}' +
@@ -705,7 +729,7 @@ def get_country_trend(country):
                             name=Types[2], #mode='markers+lines', 
                             #marker={"color":Colors[2]},
                             line={"color":Colors[2], "width":LINE_WIDTH, "shape":'spline'},
-                            text=[d for d in x_axis_dates],
+                            text=x_axis_dates,
                             hovertext=['{} : {:,d}'.format(Types[2],
                                 i) for i in gDeaths.loc[country,:]],
                             hovertemplate='%{hovertext}' +
