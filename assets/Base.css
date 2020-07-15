@@ -409,13 +409,23 @@ on small devices, paste the mobile query code up in the buttons section and styl
 there.
 */
 
+/* Adjust the P font-size in stats for lower size screen*/
+@media (max-width: 549px) {
+  .stats .box p {
+    font-size: 3vw; }
+}
+
+@media (min-width: 550px) and (max-width: 750px) {
+  .stats .box p {
+    font-size: 2vw; }
+}
 
 /* Larger than mobile */
 @media (min-width: 400px) {}
 
+
 /* Larger than phablet (also point when grid becomes active) */
 @media (min-width: 550px) {
-  
 }
 
 /* Larger than tablet */
@@ -500,6 +510,7 @@ div, svg {
 /*stats*/
 .stats {
   display: grid;
+  font-size: 1vw; /*https://stackoverflow.com/questions/16056591/font-scaling-based-on-width-of-container?page=1&tab=votes#tab-top*/
   grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
