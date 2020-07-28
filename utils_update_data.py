@@ -491,6 +491,7 @@ def process_data():
     save(df_de, "deaths_global")
 
     prepare_world_table(df_world)
+    last_update()
 
     #prepare_daily_trend_data(df_co)
 
