@@ -325,6 +325,7 @@ def load_time_series_data():
     
     return df_confirmed, df_recovered, df_deaths
 
+INDIA_SPECIAL_PROCESS = False
 
 def process_data():
     print("process_data")
@@ -332,17 +333,19 @@ def process_data():
     ###############################
     # Read India data
     ###############################
-    now  = datetime.now()
-    file_name = now.strftime("%m-%d-%Y")+'_India.csv'
-    INDIA_DATA = os.path.join("./data_sources/covid-19-india-data", file_name)
-    df_India = pd.read_csv(INDIA_DATA)
-    print("India data : ", INDIA_DATA)
+    if INDIA_SPECIAL_PROCESS:
+        now  = datetime.now()
+        file_name = now.strftime("%m-%d-%Y")+'_India.csv'
+        INDIA_DATA = os.path.join("./data_sources/covid-19-india-data", file_name)
+        df_India = pd.read_csv(INDIA_DATA)
+        print("India data : ", INDIA_DATA)
 
     ###############################
     # Read world data and infuse India data in it
     ###############################
     df_world = load_world_latest_data()
-    df_world.drop(df_world[df_world["Country_Region"] == "India"].index, inplace=True)
+    if INDIA_SPECIAL_PROCESS:
+        df_world.drop(df_world[df_world["Country_Region"] == "India"].index, inplace=True)
 
 
     ###############################
@@ -353,7 +356,11 @@ def process_data():
 
     COMMON_COLS = ["Province_State","Confirmed","Recovered","Deaths","Country_Region","Last_Update","Lat","Long_"]
 
-    df_world = pd.concat([df_world, df_India, df_us[COMMON_COLS]], ignore_index=True)
+    if INDIA_SPECIAL_PROCESS:
+        df_world = pd.concat([df_world, df_India, df_us[COMMON_COLS]], ignore_index=True)
+    else:
+        df_world = pd.concat([df_world, df_us[COMMON_COLS]], ignore_index=True)
+
     df_world.dropna(how="all", inplace=True) # drop rows with all null values
     df_world["Province_State"].fillna("", inplace=True)
     df_world["Confirmed"].fillna(0, inplace=True)
@@ -407,17 +414,18 @@ def process_data():
     ###############################
     df_co, df_re, df_de = load_time_series_data()
     
-    conf_val = df_India["Confirmed"].sum()
-    rec_val = df_India["Recovered"].sum()
-    death_val = df_India["Deaths"].sum()
+    if INDIA_SPECIAL_PROCESS:
+        conf_val = df_India["Confirmed"].sum()
+        rec_val = df_India["Recovered"].sum()
+        death_val = df_India["Deaths"].sum()
 
-    cidx = df_co[df_co["Country/Region"]=="India"].index[0]
-    ridx = df_re[df_re["Country/Region"]=="India"].index[0]
-    didx = df_de[df_de["Country/Region"]=="India"].index[0]
+        cidx = df_co[df_co["Country/Region"]=="India"].index[0]
+        ridx = df_re[df_re["Country/Region"]=="India"].index[0]
+        didx = df_de[df_de["Country/Region"]=="India"].index[0]
 
-    df_co.iloc[cidx,-1] = conf_val
-    df_re.iloc[ridx,-1] = rec_val
-    df_de.iloc[didx,-1] = death_val
+        df_co.iloc[cidx,-1] = conf_val
+        df_re.iloc[ridx,-1] = rec_val
+        df_de.iloc[didx,-1] = death_val
 
     #isConfLess, isRecLess, isDeathLess = (False, False, False)
     #if df_co.iloc[cidx,-1] <= conf_val:
