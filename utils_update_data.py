@@ -326,7 +326,7 @@ def load_time_series_data():
     
     return df_confirmed, df_recovered, df_deaths
 
-INDIA_SPECIAL_PROCESS = True
+INDIA_SPECIAL_PROCESS = False
 
 def process_data():
     print("process_data")
