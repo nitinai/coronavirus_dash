@@ -444,16 +444,16 @@ def doubling(indata):
     double[:] = np.NaN
     for i in range(readingsLength - 1, -1, -1):
         target = readings[i]
-        count = 0
+        half = target / 2
+        days = 0
         for j in range(i, -1, -1):
             diffsofar = target-readings[j]
-            exact = target / 2
-            if diffsofar > exact:
-                f = (exact - readings[j]) / (readings[j]-readings[j+1]) + count
+            if diffsofar > half:
+                f = (half - readings[j]) / (readings[j]-readings[j+1]) + days
                 double[i] = f
                 break
             else:
-                count = count+1
+                days += 1
     outdata = pd.Series(data=np.round(double, 2), name=indata.name, index=indata.index)
     return outdata
 

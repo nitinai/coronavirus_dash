@@ -153,6 +153,7 @@ def scrap_pandas():
     try:
         df = pd.read_html("https://www.mohfw.gov.in")
         df = df[0]
+        
         df.drop("S. No.", axis=1, inplace=True)
 
         df.columns = ['Province_State', "Active",
@@ -187,7 +188,7 @@ def download_India_data():
     print("download_India_data")
     df = scrap_pandas()
 
-    df = clean_data(df)
+    #df = clean_data(df)
     # saving data
     
     # -----------
@@ -325,7 +326,7 @@ def load_time_series_data():
     
     return df_confirmed, df_recovered, df_deaths
 
-INDIA_SPECIAL_PROCESS = False
+INDIA_SPECIAL_PROCESS = True
 
 def process_data():
     print("process_data")
@@ -595,8 +596,8 @@ if __name__ == '__main__':
     print("##########################################################################")
     print("Do remember to 'git pull' at './data_sources/COVID-19' to pull world data")
     print("##########################################################################")
-        
-    if opt.d:        
+
+    if opt.d and INDIA_SPECIAL_PROCESS:        
         df_India = download_India_data()
     if opt.p:
         process_data()
