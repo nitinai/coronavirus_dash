@@ -195,7 +195,8 @@ def download_India_data():
     now  = datetime.now()
     file_name = now.strftime("%m-%d-%Y")+'_India.csv'
     DATA_PATH = os.path.join(cwd, "data_sources\covid-19-india-data", file_name).replace('\\', '/')
-
+    #df.to_csv(DATA_PATH, index=False)
+    #print("Data is same as previous. Still new file is saved at :", DATA_PATH)
     try:
         PREVIOUS_DATA_PATH = os.path.join(cwd, "data_sources\covid-19-india-data", file_name).replace('\\', '/')
         if(not os.path.exists(PREVIOUS_DATA_PATH)):
