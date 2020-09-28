@@ -481,6 +481,7 @@ def process_data():
     df_world["New Cases"].clip(lower=0, inplace=True)
     df_world["New Recovered"].clip(lower=0, inplace=True)
     df_world["New Deaths"].clip(lower=0, inplace=True)
+    df_world['Total Cases'].clip(lower=0, inplace=True)
         
     ###############################
     # save
