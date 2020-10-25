@@ -19,5 +19,4 @@ Please check out at https://covid19updates.herokuapp.com
   *  Test at http://127.0.0.1:8050/
   *  push the data with `push.bat`
 
-
-* Please open an issue if you find a bug
+Please open an issue if you find a bug
