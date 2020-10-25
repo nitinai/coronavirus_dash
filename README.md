@@ -12,11 +12,6 @@ Please check out at https://covid19updates.herokuapp.com
   * `python -m pip install -r requirements.txt`
 
 ## How to update the dashboard with daily data
-  * `git pull` the global data in `./data_sources/COVID-19`
-  * `python utils_update_data.py --d True`
-  * `python utils_update_data.py --p True`
-  * `heroku local web -f Procfile.Windows`
-  *  Test at http://127.0.0.1:8050/
-  *  push the data with `push.bat`
+  * Run `auto.bat` script
 
 Please open an issue if you find a bug
