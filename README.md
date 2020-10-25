@@ -11,7 +11,7 @@ Please check out at https://covid19updates.herokuapp.com
   * `conda activate dashboard`
   * `python -m pip install -r requirements.txt`
 
-## Daily Updates
+## How to update the dashboard with daily data
   * `git pull` the global data in `./data_sources/COVID-19`
   * `python utils_update_data.py --d True`
   * `python utils_update_data.py --p True`
@@ -20,29 +20,4 @@ Please check out at https://covid19updates.herokuapp.com
   *  push the data with `push.bat`
 
 
-
-## TODO
-- Doubling rate
-- Total cases / 1M pop
-- Total Deaths / 1M pop
-- Outcome of cases (% of recoveries vs deaths)
-
-
-## Performance improvement
-> This doesn't worked very well. The pickle file of all country accumlates big in size. Even performance degraded.
-    - utils_offline_plots : create and pickle the plotly figures
-    - app : just load the pickled figure and render
-
-> beta_1.py : separate callbacks for each graph
-    - Slight improvement.
-    - utils_graphs.py has all the graph plotting functions.
-    - utils_comman.py has global variables
-    - utils_update_data.py : downloads India data and merge it with global data
-    - The selected country was cached in hidden html tag. Initially the datatable has
-        a issue with getting the row selection. This is causing further issues as the 
-        selected country is not getting set in html tag.
-
-
-
-
-
+* Please open an issue if you find a bug
