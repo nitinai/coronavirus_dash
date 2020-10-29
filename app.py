@@ -653,7 +653,7 @@ def get_country_trend(country):
                             line={"color":Colors[0], "width":LINE_WIDTH, "shape":'spline'},
                             text=x_axis_dates,
                             hovertext=['{} Cases : {:,d}'.format(Types[0],
-                                i) for i in active],
+                                int(i)) for i in active],
                             hovertemplate='%{hovertext}' +
                                         '<extra></extra>'
                             )
