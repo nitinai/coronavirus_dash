@@ -322,6 +322,14 @@ def load_time_series_data():
     df_recovered.drop(["Lat","Long"], axis=1, inplace=True)
     df_deaths.drop(["Lat","Long"], axis=1, inplace=True)
 
+    df_confirmed.iloc[:,4:].fillna(0, inplace=True)
+    df_recovered.iloc[:,4:].fillna(0, inplace=True)
+    df_deaths.iloc[:,4:].fillna(0, inplace=True)
+
+    df_confirmed.iloc[:,4:] = df_confirmed.iloc[:,4:].astype(int)
+    df_recovered.iloc[:,4:] = df_recovered.iloc[:,4:].astype(int)
+    df_deaths.iloc[:,4:] = df_deaths.iloc[:,4:].astype(int)
+
     # Mismatch in Date column formating
     df_recovered.columns = df_confirmed.columns
     
@@ -331,7 +339,7 @@ INDIA_SPECIAL_PROCESS = False
 
 def process_data():
     print("process_data")
-    
+
     ###############################
     # Read India data
     ###############################
@@ -387,7 +395,7 @@ def process_data():
 
     df_world["Recovery rate"] = df_world['Recovered']/df_world['Confirmed']
     df_world["Death rate"] = df_world['Deaths']/df_world['Confirmed']
-    
+
     
     df_world["hover_name"] = ""
     for i in range(len(df_world)):
