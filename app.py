@@ -507,14 +507,16 @@ def plot_daily_trend(df, country, type, annot):
 
     #COLS = df.columns
     if country is "World":
-        # Patch to remove the negative recovery count on 14-Dec-2020
-        if annot is "Daily Recoveries":
-            df = df.clip(lower=0)
 
         s = df[DATE_COLUMN_NAME].sum()
         daily = s.diff()
         daily.fillna(0,inplace=True)
         daily = daily.astype(int)
+
+        # Patch to remove the negative recovery count on 14-Dec-2020
+        if annot is "Daily Recoveries":
+            daily = daily.clip(lower=0)
+
         #x_axis_dates = [d for d in pd.to_datetime(s.index)]
 
         #trace1 = go.Bar(x=x_axis_dates, y=daily, name=type, 
