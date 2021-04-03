@@ -507,6 +507,9 @@ def plot_daily_trend(df, country, type, annot):
 
     #COLS = df.columns
     if country is "World":
+        # Patch to remove the negative recovery count on 14-Dec-2020
+        if annot is "Daily Recoveries":
+            df = df.clip(lower=0)
 
         s = df[DATE_COLUMN_NAME].sum()
         daily = s.diff()
