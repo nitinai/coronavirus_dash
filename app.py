@@ -512,7 +512,7 @@ def plot_daily_trend(df, country, type, annot):
         daily = s.diff()
         # Patch to remove the negative recovery count on 14-Dec-2020
         # if annot is "Daily Recoveries":
-        daily = daily.clip(lower=0)
+        daily.clip(lower=0, inplace=True)
         daily.fillna(0,inplace=True)
         daily = daily.astype(int)
 
@@ -568,7 +568,7 @@ def plot_daily_trend(df, country, type, annot):
 
         daily = s.loc[country,:]
         daily = daily.diff()
-        daily = daily.clip(lower=0)
+        daily.clip(lower=0, inplace=True)
         daily.fillna(0,inplace=True)
         daily = daily.astype(int)
         #x_axis_dates = [d for d in pd.to_datetime(daily.index)]
