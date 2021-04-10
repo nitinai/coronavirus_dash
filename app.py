@@ -1111,27 +1111,27 @@ app.layout = html.Div([
 
     html.Div([
         
-        html.Div([
-            
-            html.Div([
-                    html.P([
-                            html.Span("Coronavirus disease (COVID-19) is an infectious disease caused by a new virus. It spreads mainly through contact with an infected person when they cough or sneeze. It also spreads when a person touches a surface or object that has the virus on it and then touches the eyes, nose or mouth."),
-                            html.Span("The disease causes respiratory diseases (like the flu) with symptoms such as cough, fever and in more severe cases breathing difficulties. You can stop the spread of the corona virus by washing your hands frequently, not touching your face and keeping social distance."),
-                    ]),
-            ], className="info_column"),
-
-            html.Div([
-                    html.A(html.Img(src=app.get_asset_url('PMcares.png')),
-                            href='https://www.pmindia.gov.in/en/', target='_blank'),
-                    html.A(html.Img(src=app.get_asset_url('cmrfmahacovid19.png')),
-                            href='https://cmrf.maharashtra.gov.in/CMRFCitizen/mainindexaction', target='_blank'),
-                    html.P([
-                            html.Span("HELP Government in the fight against Coronavirus, STAY Home Stay Safe, DONATE to the Chief Minister's Relief Fund, PM CARES"),
-                    ]),
-
-            ], className="help_column"),
-            
-        ], className="row"),
+        #html.Div([
+        #
+        #    html.Div([
+        #            html.P([
+        #                    html.Span("Coronavirus disease (COVID-19) is an infectious disease caused by a new virus. It spreads mainly through contact with an infected person when they cough or sneeze. It also spreads when a person touches a surface or object that has the virus on it and then touches the eyes, nose or mouth."),
+        #                    html.Span("The disease causes respiratory diseases (like the flu) with symptoms such as cough, fever and in more severe cases breathing difficulties. You can stop the spread of the corona virus by washing your hands frequently, not touching your face and keeping social distance."),
+        #            ]),
+        #    ], className="info_column"),
+#
+        #    html.Div([
+        #            html.A(html.Img(src=app.get_asset_url('PMcares.png')),
+        #                    href='https://www.pmindia.gov.in/en/', target='_blank'),
+        #            html.A(html.Img(src=app.get_asset_url('cmrfmahacovid19.png')),
+        #                    href='https://cmrf.maharashtra.gov.in/CMRFCitizen/mainindexaction', target='_blank'),
+        #            html.P([
+        #                    html.Span("HELP Government in the fight against Coronavirus, STAY Home Stay Safe, DONATE to the Chief Minister's Relief Fund, PM CARES"),
+        #            ]),
+#
+        #    ], className="help_column"),
+        #
+        #], className="row"),
 
         
         #html.Div([
