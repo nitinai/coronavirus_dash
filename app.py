@@ -164,7 +164,7 @@ def graph_scatter_mapbox():
     longitude=8
     zoom=1
     
-    COLORS = [COLOR_MAP["Green"] if (a == 0) else COLOR_MAP["Orange"] if (rr >= 0.7) else COLOR_MAP["Red"] for a, rr in zip(df_world["Active"],
+    COLORS = [COLOR_MAP["Green"] if (a == 0) else COLOR_MAP["Orange"] if (rr >= 0.9) else COLOR_MAP["Red"] for a, rr in zip(df_world["Active"],
                 df_world["Recovery rate"])]
 
     fig = go.Figure(go.Scattermapbox(
@@ -219,7 +219,7 @@ def graph_scatter_mapbox():
             "y":-.01,
             "align":'center',
             "showarrow":False,
-            "text": "Circle size represents Total Cases<br>Orange color represents Recovery rate >= 70% and Green color for no Active Cases",
+            "text": "Circle size represents Total Cases<br>Orange color represents Recovery rate >= 90% and Green color for no Active Cases",
             "xref":"paper",
             "yref":"paper",
             "font": {"size":10, "color":'#292929'},
